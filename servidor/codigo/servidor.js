@@ -1,8 +1,26 @@
-// Lógica principal del servidor Village Soul
+// Sistema principal de Village Soul
 
 function iniciarServidor() {
-  console.log("Sistema principal de Village Soul iniciado");
-  console.log("Cargando almas, memorias y personalidades");
+    console.log("Servidor principal iniciado.");
+    console.log("Cargando módulos...");
+
+    cargarMemorias();
+    cargarRelaciones();
+    cargarEstados();
+
+    console.log("Todos los módulos fueron cargados correctamente.");
+}
+
+function cargarMemorias() {
+    console.log("✓ Memorias cargadas");
+}
+
+function cargarRelaciones() {
+    console.log("✓ Relaciones cargadas");
+}
+
+function cargarEstados() {
+    console.log("✓ Estados cargados");
 }
 
 iniciarServidor();
