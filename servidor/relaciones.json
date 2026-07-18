@@ -1,3 +1,13 @@
 {
-  "relaciones": []
+  "relaciones": [
+    {
+      "id": 1,
+      "habitante_a": 0,
+      "habitante_b": 0,
+      "tipo": "desconocidos",
+      "confianza": 0,
+      "afinidad": 0,
+      "historial": []
+    }
+  ]
 }
