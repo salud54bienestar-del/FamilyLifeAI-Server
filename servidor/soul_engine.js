@@ -3,6 +3,13 @@ console.log("        SOUL ENGINE");
 console.log("=================================");
 
 const cargarArchivo = require("./cargador_datos.js");
+const sistemas = require("./sistemas.js");
+
+console.log("Sistemas activos:");
+
+sistemas.forEach((sistema) => {
+  console.log("✓ " + sistema);
+});
 
 console.log("Cargando mundo...");
 
