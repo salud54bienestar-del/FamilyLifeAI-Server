@@ -1,4 +1,17 @@
 {
   "almas": [
+    {
+      "id": 1,
+      "nombre": "",
+      "edad": 0,
+      "personalidad": [],
+      "emociones": [],
+      "memorias": [],
+      "relaciones": [],
+      "objetivos": [],
+      "profesion": "",
+      "familia": [],
+      "estado": "naciendo"
+    }
   ]
 }
