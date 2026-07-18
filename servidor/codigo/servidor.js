@@ -1,5 +1,17 @@
 // Sistema principal de Village Soul
 
+const fs = require("fs");
+
+function cargarArchivo(nombre) {
+    try {
+        const datos = fs.readFileSync("../datos/" + nombre, "utf8");
+        return JSON.parse(datos);
+    } catch (error) {
+        console.log("No se pudo cargar: " + nombre);
+        return null;
+    }
+}
+
 function iniciarServidor() {
     console.log("=================================");
     console.log("      VILLAGE SOUL");
@@ -9,15 +21,27 @@ function iniciarServidor() {
     console.log("Cargando módulos...");
 
     cargarMundo();
+    cargarAlmas();
     cargarMemorias();
     cargarRelaciones();
-    cargarEstados();
 
     console.log("Todos los módulos fueron cargados correctamente.");
 }
 
 function cargarMundo() {
-    console.log("✓ Núcleo del mundo cargado");
+    const mundo = cargarArchivo("mundo.json");
+
+    if (mundo) {
+        console.log("✓ Mundo cargado: " + mundo.nombre);
+    }
+}
+
+function cargarAlmas() {
+    const almas = cargarArchivo("almas.json");
+
+    if (almas) {
+        console.log("✓ Almas cargadas: " + almas.almas.length);
+    }
 }
 
 function cargarMemorias() {
@@ -26,10 +50,6 @@ function cargarMemorias() {
 
 function cargarRelaciones() {
     console.log("✓ Relaciones cargadas");
-}
-
-function cargarEstados() {
-    console.log("✓ Estados cargados");
 }
 
 iniciarServidor();
