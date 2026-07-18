@@ -4,7 +4,7 @@ const fs = require("fs");
 
 function cargarArchivo(nombre) {
     try {
-        const datos = fs.readFileSync("../datos/" + nombre, "utf8");
+        const datos = fs.readFileSync(nombre, "utf8");
         return JSON.parse(datos);
     } catch (error) {
         console.log("Error cargando: " + nombre);
