@@ -1,3 +1,13 @@
 {
-  "objetivos": []
+  "objetivos": [
+    {
+      "id": 1,
+      "habitante_id": 0,
+      "titulo": "",
+      "descripcion": "",
+      "tipo": "personal",
+      "progreso": 0,
+      "estado": "pendiente"
+    }
+  ]
 }
