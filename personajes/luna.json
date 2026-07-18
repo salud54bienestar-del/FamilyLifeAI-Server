@@ -1,0 +1,26 @@
+{
+  "nombre": "Luna",
+  "edad": 24,
+  "etapa_vida": "adulto",
+  "personalidad": [
+    "amable",
+    "curiosa"
+  ],
+  "gustos": [
+    "flores",
+    "gatos",
+    "pan"
+  ],
+  "hobby": "jardineria",
+  "cualidades": {
+    "inteligencia": 70,
+    "fuerza": 40,
+    "velocidad": 50,
+    "empatia": 90
+  },
+  "recuerdos": [],
+  "relacion_jugador": {
+    "amistad": 0,
+    "confianza": 0
+  }
+}
