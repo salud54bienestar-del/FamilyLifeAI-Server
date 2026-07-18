@@ -1,14 +1,26 @@
+// Registro de sistemas de Village Soul
+
 const sistemas = [
   "nucleo_mundo",
+  "mundo",
   "almas",
   "memorias",
+  "emociones",
   "relaciones",
-  "eventos",
+  "objetivos",
   "decisiones",
-  "comunicacion"
+  "eventos",
+  "comunicacion",
+  "familias",
+  "cultura",
+  "recursos",
+  "historia"
 ];
 
 console.log("Sistemas registrados:");
+
 sistemas.forEach((sistema) => {
   console.log("- " + sistema);
 });
+
+module.exports = sistemas;
