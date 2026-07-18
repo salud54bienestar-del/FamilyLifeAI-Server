@@ -4,8 +4,8 @@ console.log("=================================");
 console.log("      VILLAGE SOUL");
 console.log("=================================");
 
-console.log("Iniciando servidor...");
-console.log("Cargando sistema de almas...");
-console.log("Cargando memorias...");
-console.log("Cargando relaciones...");
-console.log("Servidor listo.");
+console.log("Iniciando aplicación...");
+
+require("./servidor.js");
+
+console.log("Aplicación lista.");
