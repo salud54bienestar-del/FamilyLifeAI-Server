@@ -1,0 +1,24 @@
+{
+  "etapas": [
+    {
+      "nombre": "infancia",
+      "edad_minima": 0,
+      "edad_maxima": 12
+    },
+    {
+      "nombre": "adolescencia",
+      "edad_minima": 13,
+      "edad_maxima": 17
+    },
+    {
+      "nombre": "adulto",
+      "edad_minima": 18,
+      "edad_maxima": 59
+    },
+    {
+      "nombre": "anciano",
+      "edad_minima": 60,
+      "edad_maxima": 120
+    }
+  ]
+}
