@@ -2,13 +2,15 @@ console.log("=================================");
 console.log("        SOUL ENGINE");
 console.log("=================================");
 
-const sistemas = require("./sistemas.js");
+const cargarArchivo = require("./cargador_datos.js");
 
-console.log("Iniciando Núcleo del Mundo...");
-console.log("Cargando sistemas...");
+console.log("Cargando mundo...");
 
-sistemas.forEach((sistema) => {
-  console.log("Activando: " + sistema);
-});
+const mundo = cargarArchivo("./mundo.json");
+
+if (mundo) {
+  console.log("Mundo cargado:");
+  console.log(mundo.nombre);
+}
 
 console.log("Sistema listo.");
