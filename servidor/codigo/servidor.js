@@ -20,10 +20,13 @@ function iniciarServidor() {
     console.log("Servidor principal iniciado.");
     console.log("Cargando módulos...");
 
-    cargarMundo();
-    cargarAlmas();
-    cargarMemorias();
-    cargarRelaciones();
+cargarMundo();
+cargarAlmas();
+cargarMemorias();
+cargarRelaciones();
+cargarEmociones();
+cargarObjetivos();
+cargarDecisiones();
 
     console.log("Todos los módulos fueron cargados correctamente.");
 }
@@ -41,6 +44,30 @@ function cargarAlmas() {
 
     if (almas) {
         console.log("✓ Almas cargadas: " + almas.almas.length);
+    }
+}
+
+function cargarEmociones() {
+    const emociones = cargarArchivo("emociones.json");
+
+    if (emociones) {
+        console.log("✓ Emociones cargadas");
+    }
+}
+
+function cargarObjetivos() {
+    const objetivos = cargarArchivo("objetivos.json");
+
+    if (objetivos) {
+        console.log("✓ Objetivos cargados");
+    }
+}
+
+function cargarDecisiones() {
+    const decisiones = cargarArchivo("decisiones.json");
+
+    if (decisiones) {
+        console.log("✓ Decisiones cargadas");
     }
 }
 
