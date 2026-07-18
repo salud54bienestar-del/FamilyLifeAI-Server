@@ -1,3 +1,14 @@
 {
-  "emociones": []
+  "emociones": [
+    {
+      "habitante_id": 0,
+      "felicidad": 50,
+      "confianza": 0,
+      "miedo": 0,
+      "tristeza": 0,
+      "ira": 0,
+      "calma": 50,
+      "estado_actual": "neutral"
+    }
+  ]
 }
