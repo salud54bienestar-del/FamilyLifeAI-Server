@@ -1,4 +1,16 @@
 Village Soul Server
 
 Inicio del sistema.
-Aquí estará el código encargado de leer personajes, memorias y conexiones.
+
+Este proyecto contiene el núcleo del servidor de Village Soul.
+Aquí se gestionan personajes, memorias, relaciones, eventos y conexiones entre los diferentes sistemas del mundo.
+
+Componentes principales:
+- Sistema de Almas
+- Sistema de Memorias
+- Sistema de Relaciones
+- Sistema de Eventos
+- Núcleo del Mundo
+
+Estado:
+Base inicial del Soul Engine.
