@@ -1,0 +1,8 @@
+{
+  "nombre": "persona_alma",
+  "tipo": "habitante",
+  "sistema": "Village Soul",
+  "memoria": true,
+  "personalidad": true,
+  "conexion_servidor": false
+}
