@@ -1,0 +1,4 @@
+Village Soul Server
+
+Inicio del sistema.
+Aquí estará el código encargado de leer personajes, memorias y conexiones.
