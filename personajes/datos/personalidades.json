@@ -1,0 +1,28 @@
+{
+  "personalidades": [
+    {
+      "nombre": "amable",
+      "rasgos": [
+        "ayuda a otros",
+        "paciente",
+        "sociable"
+      ]
+    },
+    {
+      "nombre": "curioso",
+      "rasgos": [
+        "explora",
+        "hace preguntas",
+        "aprende"
+      ]
+    },
+    {
+      "nombre": "serio",
+      "rasgos": [
+        "responsable",
+        "tranquilo",
+        "organizado"
+      ]
+    }
+  ]
+}
