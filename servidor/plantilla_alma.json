@@ -1,0 +1,20 @@
+{
+  "nombre": "",
+  "edad": 0,
+  "personalidad": {
+    "amabilidad": 50,
+    "valentia": 50,
+    "curiosidad": 50,
+    "paciencia": 50
+  },
+  "emociones": {
+    "felicidad": 50,
+    "tristeza": 0,
+    "miedo": 0,
+    "confianza": 50
+  },
+  "memorias": [],
+  "relaciones": [],
+  "objetivos": [],
+  "legado": []
+}
