@@ -2,5 +2,9 @@
   "nombre": "Nuevo Mundo",
   "dia_actual": 1,
   "estacion": "primavera",
-  "estado": "tranquilo"
+  "estado": "tranquilo",
+  "poblacion": 0,
+  "aldeas": 0,
+  "epoca": "inicio",
+  "historia_iniciada": false
 }
