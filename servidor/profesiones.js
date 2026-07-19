@@ -5,39 +5,63 @@ const crearEvento = require("./eventos.js");
 const crearMemoria = require("./memorias.js");
 
 
-function asignarProfesion(habitante_id, profesion) {
+function asignarProfesion(habitante_id, nombreProfesion) {
 
-    const datos = cargarArchivo("../datos/profesiones.json");
+    const catalogo = cargarArchivo("../datos/profesiones.json");
+    const almas = cargarArchivo("../datos/almas.json");
 
-    if (!datos) {
+    if (!catalogo || !almas) {
 
-        console.log("No se pudieron cargar las profesiones.");
+        console.log("No se pudieron cargar los datos.");
 
         return null;
 
     }
 
 
-    const registro = {
+    const profesionExiste = catalogo.profesiones.find(
 
-        id: datos.profesiones.length + 1,
+        (p) => p.nombre === nombreProfesion.toLowerCase()
 
-        habitante_id: habitante_id,
+    );
 
-        profesion: profesion,
+
+    if (!profesionExiste) {
+
+        console.log("La profesión no existe.");
+
+        return null;
+
+    }
+
+
+    const habitante = almas.almas.find(
+
+        (a) => a.id === habitante_id
+
+    );
+
+
+    if (!habitante) {
+
+        console.log("Habitante no encontrado.");
+
+        return null;
+
+    }
+
+
+    habitante.profesion = {
+
+        nombre: profesionExiste.nombre,
 
         nivel: 1,
 
         experiencia: 0,
 
-        estado: "activa",
-
-        fecha_inicio: new Date().toISOString()
+        estado: "activa"
 
     };
-
-
-    datos.profesiones.push(registro);
 
 
     crearEvento(
@@ -48,7 +72,7 @@ function asignarProfesion(habitante_id, profesion) {
 
         {
 
-            profesion: profesion
+            profesion: profesionExiste.nombre
 
         }
 
@@ -61,7 +85,7 @@ function asignarProfesion(habitante_id, profesion) {
 
         "profesion",
 
-        "Comenzó a trabajar como " + profesion + ".",
+        "Comenzó a trabajar como " + profesionExiste.nombre + ".",
 
         "media",
 
@@ -74,10 +98,10 @@ function asignarProfesion(habitante_id, profesion) {
 
     console.log("Profesión asignada:");
 
-    console.log(registro);
+    console.log(habitante.profesion);
 
 
-    return registro;
+    return habitante.profesion;
 
 }
 
@@ -85,35 +109,52 @@ function asignarProfesion(habitante_id, profesion) {
 
 function cambiarProfesion(habitante_id, nuevaProfesion) {
 
-    const datos = cargarArchivo("../datos/profesiones.json");
+    const catalogo = cargarArchivo("../datos/profesiones.json");
+    const almas = cargarArchivo("../datos/almas.json");
 
-    if (!datos) {
+    if (!catalogo || !almas) {
 
         return null;
 
     }
 
 
-    const profesion = datos.profesiones.find(
+    const profesionExiste = catalogo.profesiones.find(
 
-        (p) => p.habitante_id === habitante_id
+        (p) => p.nombre === nuevaProfesion.toLowerCase()
 
     );
 
 
-    if (!profesion) {
+    if (!profesionExiste) {
 
-        console.log("El habitante no tiene profesión.");
+        console.log("La profesión no existe.");
 
         return null;
 
     }
 
 
-    profesion.profesion = nuevaProfesion;
-    profesion.nivel = 1;
-    profesion.experiencia = 0;
-    profesion.fecha_inicio = new Date().toISOString();
+    const habitante = almas.almas.find(
+
+        (a) => a.id === habitante_id
+
+    );
+
+
+    if (!habitante) {
+
+        console.log("Habitante no encontrado.");
+
+        return null;
+
+    }
+
+
+    habitante.profesion.nombre = profesionExiste.nombre;
+    habitante.profesion.nivel = 1;
+    habitante.profesion.experiencia = 0;
+    habitante.profesion.estado = "activa";
 
 
     crearMemoria(
@@ -122,7 +163,7 @@ function cambiarProfesion(habitante_id, nuevaProfesion) {
 
         "profesion",
 
-        "Cambió de profesión a " + nuevaProfesion + ".",
+        "Cambió de profesión a " + profesionExiste.nombre + ".",
 
         "media",
 
@@ -133,12 +174,12 @@ function cambiarProfesion(habitante_id, nuevaProfesion) {
     );
 
 
-    console.log("Profesión actualizada.");
+    console.log("Profesión actualizada:");
 
-    console.log(profesion);
+    console.log(habitante.profesion);
 
 
-    return profesion;
+    return habitante.profesion;
 
 }
 
@@ -146,20 +187,31 @@ function cambiarProfesion(habitante_id, nuevaProfesion) {
 
 function obtenerProfesion(habitante_id) {
 
-    const datos = cargarArchivo("../datos/profesiones.json");
+    const almas = cargarArchivo("../datos/almas.json");
 
-    if (!datos) {
+
+    if (!almas) {
 
         return null;
 
     }
 
 
-    return datos.profesiones.find(
+    const habitante = almas.almas.find(
 
-        (p) => p.habitante_id === habitante_id
+        (a) => a.id === habitante_id
 
     );
+
+
+    if (!habitante) {
+
+        return null;
+
+    }
+
+
+    return habitante.profesion;
 
 }
 
@@ -171,7 +223,7 @@ asignarProfesion(
 
     1,
 
-    "Aprendiz"
+    "agricultor"
 
 );
 
