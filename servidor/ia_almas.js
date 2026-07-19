@@ -7,12 +7,12 @@ const procesarDecision = require("./decisiones.js");
 function pensarAlma(habitante_id) {
 
 
-    const almas = cargarArchivo("./almas.json");
-    const emociones = cargarArchivo("./emociones.json");
-    const memorias = cargarArchivo("./memorias.json");
-    const objetivos = cargarArchivo("./objetivos.json");
-    const relaciones = cargarArchivo("./relaciones.json");
-    const familias = cargarArchivo("./familias.json");
+    const almas = cargarArchivo("../datos/almas.json");
+    const emociones = cargarArchivo("../datos/emociones.json");
+    const memorias = cargarArchivo("../datos/memorias.json");
+    const objetivos = cargarArchivo("../datos/objetivos.json");
+    const relaciones = cargarArchivo("../datos/relaciones.json");
+    const familias = cargarArchivo("../datos/familias.json");
 
 
     if (
@@ -27,6 +27,7 @@ function pensarAlma(habitante_id) {
         console.log("No se pudieron cargar los datos de la IA.");
 
         return null;
+
     }
 
 
@@ -72,26 +73,6 @@ function pensarAlma(habitante_id) {
 
 
 
-    console.log("=================================");
-    console.log("        IA DE ALMA");
-    console.log("=================================");
-
-
-    console.log("Habitante:", alma.nombre);
-
-    console.log(
-        "Estado emocional:",
-        estadoEmocional.estado_actual
-    );
-
-
-    console.log(
-        "Recuerdos:",
-        memorias.memorias.length
-    );
-
-
-
     const contexto = {
 
         familia:
@@ -100,6 +81,10 @@ function pensarAlma(habitante_id) {
 
         emocion:
             estadoEmocional.estado_actual,
+
+
+        emociones_secundarias:
+            estadoEmocional.emociones_secundarias || {},
 
 
         objetivo:
@@ -115,9 +100,25 @@ function pensarAlma(habitante_id) {
 
 
         personalidad:
-            alma.personalidad_id
+            alma.personalidad_id,
+
+
+        recuerdos:
+            memorias.memorias.filter(
+                (m) => m.habitante_id === habitante_id
+            )
 
     };
+
+
+
+    console.log("=================================");
+    console.log("        IA DE ALMA");
+    console.log("=================================");
+
+
+    console.log("Habitante:", alma.nombre);
+    console.log("Estado emocional:", estadoEmocional.estado_actual);
 
 
 
@@ -129,7 +130,6 @@ function pensarAlma(habitante_id) {
 
 
     const pensamiento = {
-
 
         habitante: alma.nombre,
 
@@ -165,7 +165,6 @@ function pensarAlma(habitante_id) {
 
 
     console.log("Pensamiento generado:");
-
     console.log(pensamiento);
 
 
