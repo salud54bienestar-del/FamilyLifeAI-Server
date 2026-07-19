@@ -1,3 +1,70 @@
 {
-  "objetivos": []
+  "objetivos": [
+    {
+      "nombre": "formar_una_familia",
+      "descripcion": "El habitante desea crear una familia y formar vínculos fuertes.",
+      "categoria": "social",
+      "acciones": [
+        "conocer_personas",
+        "crear_relaciones",
+        "casarse",
+        "tener_hijos"
+      ]
+    },
+
+    {
+      "nombre": "crear_un_hogar",
+      "descripcion": "El habitante busca construir y mejorar un lugar donde vivir.",
+      "categoria": "hogar",
+      "acciones": [
+        "conseguir_recursos",
+        "construir_casa",
+        "decorar_hogar"
+      ]
+    },
+
+    {
+      "nombre": "mejorar_profesion",
+      "descripcion": "El habitante busca desarrollar sus habilidades laborales.",
+      "categoria": "trabajo",
+      "acciones": [
+        "aprender_habilidad",
+        "trabajar",
+        "ascender"
+      ]
+    },
+
+    {
+      "nombre": "ayudar_comunidad",
+      "descripcion": "El habitante quiere mejorar la vida de otros miembros de la aldea.",
+      "categoria": "comunidad",
+      "acciones": [
+        "ayudar_vecinos",
+        "proteger_aldea",
+        "participar_eventos"
+      ]
+    },
+
+    {
+      "nombre": "educar_hijos",
+      "descripcion": "El habitante busca cuidar y enseñar a sus hijos.",
+      "categoria": "familia",
+      "acciones": [
+        "cuidar_bebe",
+        "llevar_hijo_escuela",
+        "transmitir_habilidades"
+      ]
+    },
+
+    {
+      "nombre": "explorar_mundo",
+      "descripcion": "El habitante desea descubrir nuevos lugares y experiencias.",
+      "categoria": "aventura",
+      "acciones": [
+        "viajar",
+        "descubrir_lugares",
+        "conocer_personas"
+      ]
+    }
+  ]
 }
