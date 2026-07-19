@@ -1,9 +1,28 @@
 // Sistema de eventos de Village Soul
 
-function crearEvento(nombre, descripcion) {
+const cargarArchivo = require("./cargador_datos.js");
+
+function crearEvento(id) {
+    const sistemaEventos = cargarArchivo("./sistema_eventos.json");
+
+    if (!sistemaEventos) {
+        console.log("No se pudo cargar el sistema de eventos.");
+        return null;
+    }
+
+    const eventoBase = sistemaEventos.eventos_disponibles.find(
+        (evento) => evento.id === id
+    );
+
+    if (!eventoBase) {
+        console.log("Evento no encontrado.");
+        return null;
+    }
+
     const evento = {
-        nombre: nombre,
-        descripcion: descripcion,
+        nombre: eventoBase.nombre,
+        descripcion: eventoBase.descripcion,
+        tipo: eventoBase.tipo,
         fecha: new Date().toISOString()
     };
 
@@ -13,9 +32,8 @@ function crearEvento(nombre, descripcion) {
     return evento;
 }
 
-crearEvento(
-    "Primer encuentro",
-    "Un habitante descubre el mundo por primera vez."
-);
+// Evento inicial de prueba
+
+crearEvento(1);
 
 module.exports = crearEvento;
