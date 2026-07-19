@@ -4,6 +4,46 @@
     "complexion": "",
     "cabello": "",
     "ojos": "",
-    "rasgos_especiales": []
+    "rasgos_especiales": [],
+
+    "apariencia": {
+      "color_piel": "",
+      "estilo_ropa": "",
+      "accesorios": []
+    },
+
+    "herencia": {
+      "rasgos_padre": [],
+      "rasgos_madre": []
+    },
+
+    "cambios_edad": {
+      "bebe": {
+        "altura": "pequeño",
+        "rasgos": [
+          "apariencia_infantil"
+        ]
+      },
+
+      "niño": {
+        "altura": "mediana",
+        "rasgos": [
+          "crecimiento_activo"
+        ]
+      },
+
+      "adulto": {
+        "altura": "completa",
+        "rasgos": [
+          "apariencia_adulta"
+        ]
+      }
+    },
+
+    "estado_visual": {
+      "embarazo": false,
+      "heridas": false,
+      "efectos_temporales": []
+    }
   }
 }
