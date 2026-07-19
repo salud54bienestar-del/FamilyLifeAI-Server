@@ -3,66 +3,80 @@
     "comida": [
       {
         "nombre": "frutas",
-        "preferencia": "alta"
+        "preferencia": "alta",
+        "efecto": "aumenta_felicidad",
+        "conversacion": "puede_compartir_gustos"
       },
       {
         "nombre": "comida_casera",
-        "preferencia": "media"
+        "preferencia": "media",
+        "efecto": "aumenta_bienestar",
+        "conversacion": "crea_recuerdos_familiares"
       }
     ],
 
     "animales": [
       {
         "nombre": "perros",
-        "preferencia": "alta"
+        "preferencia": "alta",
+        "efecto": "aumenta_compañia"
       },
       {
         "nombre": "caballos",
-        "preferencia": "media"
+        "preferencia": "media",
+        "efecto": "aumenta_aventura"
       }
     ],
 
     "arte": [
       {
         "nombre": "pintura",
-        "preferencia": "media"
+        "preferencia": "media",
+        "efecto": "aumenta_creatividad"
       },
       {
         "nombre": "escultura",
-        "preferencia": "media"
+        "preferencia": "media",
+        "efecto": "aumenta_concentracion"
       }
     ],
 
     "musica": [
       {
         "nombre": "instrumental",
-        "preferencia": "media"
+        "preferencia": "media",
+        "efecto": "reduce_estres"
       }
     ],
 
     "hobbies": [
       {
         "nombre": "cultivar",
-        "efecto": "aumenta_felicidad"
+        "efecto": "aumenta_felicidad",
+        "habilidad_relacionada": "agricultura"
       },
       {
         "nombre": "explorar",
-        "efecto": "aumenta_experiencia"
+        "efecto": "aumenta_experiencia",
+        "habilidad_relacionada": "aprendizaje"
       },
       {
         "nombre": "cocinar",
-        "efecto": "mejora_relaciones"
+        "efecto": "mejora_relaciones",
+        "habilidad_relacionada": "cocina"
       }
     ],
 
     "lugares": [
       {
         "nombre": "naturaleza",
-        "efecto": "reduce_estres"
+        "efecto": "reduce_estres",
+        "actividad": "descansar"
       },
       {
         "nombre": "aldea",
-        "efecto": "aumenta_seguridad"
+        "efecto": "aumenta_seguridad",
+        "actividad": "socializar"
       }
     ]
   }
