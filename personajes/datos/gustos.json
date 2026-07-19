@@ -1,10 +1,69 @@
 {
   "categorias": {
-    "comida": [],
-    "animales": [],
-    "arte": [],
-    "musica": [],
-    "hobbies": [],
-    "lugares": []
+    "comida": [
+      {
+        "nombre": "frutas",
+        "preferencia": "alta"
+      },
+      {
+        "nombre": "comida_casera",
+        "preferencia": "media"
+      }
+    ],
+
+    "animales": [
+      {
+        "nombre": "perros",
+        "preferencia": "alta"
+      },
+      {
+        "nombre": "caballos",
+        "preferencia": "media"
+      }
+    ],
+
+    "arte": [
+      {
+        "nombre": "pintura",
+        "preferencia": "media"
+      },
+      {
+        "nombre": "escultura",
+        "preferencia": "media"
+      }
+    ],
+
+    "musica": [
+      {
+        "nombre": "instrumental",
+        "preferencia": "media"
+      }
+    ],
+
+    "hobbies": [
+      {
+        "nombre": "cultivar",
+        "efecto": "aumenta_felicidad"
+      },
+      {
+        "nombre": "explorar",
+        "efecto": "aumenta_experiencia"
+      },
+      {
+        "nombre": "cocinar",
+        "efecto": "mejora_relaciones"
+      }
+    ],
+
+    "lugares": [
+      {
+        "nombre": "naturaleza",
+        "efecto": "reduce_estres"
+      },
+      {
+        "nombre": "aldea",
+        "efecto": "aumenta_seguridad"
+      }
+    ]
   }
 }
