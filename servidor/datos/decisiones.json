@@ -1,0 +1,15 @@
+{
+  "decisiones": [
+    {
+      "id": 1,
+      "habitante_id": 1,
+      "situacion": "Luna encuentra un camino desconocido durante una exploración.",
+      "opciones": [
+        "seguir el camino",
+        "regresar a la aldea"
+      ],
+      "eleccion": "seguir el camino",
+      "resultado": "Luna descubre una nueva zona del mundo y gana experiencia."
+    }
+  ]
+}
