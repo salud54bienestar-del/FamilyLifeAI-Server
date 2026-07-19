@@ -1,3 +1,22 @@
 {
-  "personalidades": []
+  "personalidades": [
+    {
+      "id": 1,
+      "nombre": "amable",
+      "rasgos": [
+        "ayuda a otros",
+        "confía fácilmente",
+        "evita conflictos"
+      ]
+    },
+    {
+      "id": 2,
+      "nombre": "aventurero",
+      "rasgos": [
+        "explora",
+        "busca novedades",
+        "acepta riesgos"
+      ]
+    }
+  ]
 }
