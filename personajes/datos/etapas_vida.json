@@ -1,24 +1,56 @@
 {
   "etapas": [
     {
-      "nombre": "infancia",
+      "nombre": "bebe",
       "edad_minima": 0,
-      "edad_maxima": 12
+      "edad_maxima": 2,
+      "caracteristicas": [
+        "necesita_cuidados",
+        "toma_biberon",
+        "puede_usar_chupon",
+        "necesita_atencion"
+      ]
     },
     {
-      "nombre": "adolescencia",
+      "nombre": "niño",
+      "edad_minima": 3,
+      "edad_maxima": 12,
+      "caracteristicas": [
+        "puede_aprender",
+        "puede_asistir_escuela",
+        "desarrolla_gustos",
+        "puede_tener_hobbies"
+      ]
+    },
+    {
+      "nombre": "adolescente",
       "edad_minima": 13,
-      "edad_maxima": 17
+      "edad_maxima": 17,
+      "caracteristicas": [
+        "desarrolla_habilidades",
+        "elige_intereses",
+        "prepara_profesion"
+      ]
     },
     {
       "nombre": "adulto",
       "edad_minima": 18,
-      "edad_maxima": 59
+      "edad_maxima": 59,
+      "caracteristicas": [
+        "puede_trabajar",
+        "puede_formar_familia",
+        "puede_casarse"
+      ]
     },
     {
       "nombre": "anciano",
       "edad_minima": 60,
-      "edad_maxima": 120
+      "edad_maxima": 120,
+      "caracteristicas": [
+        "tiene_mas_experiencia",
+        "puede_compartir_recuerdos",
+        "puede_ser_abuelo"
+      ]
     }
   ]
 }
