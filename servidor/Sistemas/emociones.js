@@ -12,7 +12,7 @@ function cambiarEmocion(
 ) {
 
 
-    const datos = cargarArchivo("./emociones.json");
+    const datos = cargarArchivo("../datos/emociones.json");
 
 
     if (!datos) {
@@ -207,152 +207,66 @@ function aplicarEventoEmocional(
 
     switch(evento) {
 
-
         case "primer_encuentro":
 
-            cambiarEmocion(
-                habitante_id,
-                "felicidad",
-                5,
-                "primer encuentro"
-            );
-
-            cambiarEmocion(
-                habitante_id,
-                "confianza",
-                5,
-                "primer encuentro"
-            );
+            cambiarEmocion(habitante_id,"felicidad",5,"primer encuentro");
+            cambiarEmocion(habitante_id,"confianza",5,"primer encuentro");
 
             break;
-
 
 
         case "amistad":
 
-            cambiarEmocion(
-                habitante_id,
-                "felicidad",
-                10,
-                "amistad"
-            );
-
-            cambiarEmocion(
-                habitante_id,
-                "confianza",
-                10,
-                "amistad"
-            );
+            cambiarEmocion(habitante_id,"felicidad",10,"amistad");
+            cambiarEmocion(habitante_id,"confianza",10,"amistad");
 
             break;
-
 
 
         case "nacimiento":
 
-            cambiarEmocion(
-                habitante_id,
-                "felicidad",
-                20,
-                "nacimiento"
-            );
-
-            cambiarEmocion(
-                habitante_id,
-                "amor",
-                20,
-                "nacimiento"
-            );
-
-            cambiarEmocion(
-                habitante_id,
-                "orgullo",
-                10,
-                "nacimiento"
-            );
+            cambiarEmocion(habitante_id,"felicidad",20,"nacimiento");
+            cambiarEmocion(habitante_id,"amor",20,"nacimiento");
+            cambiarEmocion(habitante_id,"orgullo",10,"nacimiento");
 
             break;
-
 
 
         case "boda":
 
-            cambiarEmocion(
-                habitante_id,
-                "felicidad",
-                20,
-                "boda"
-            );
-
-            cambiarEmocion(
-                habitante_id,
-                "amor",
-                20,
-                "boda"
-            );
+            cambiarEmocion(habitante_id,"felicidad",20,"boda");
+            cambiarEmocion(habitante_id,"amor",20,"boda");
 
             break;
-
 
 
         case "divorcio":
 
-            cambiarEmocion(
-                habitante_id,
-                "tristeza",
-                20,
-                "divorcio"
-            );
-
-            cambiarEmocion(
-                habitante_id,
-                "soledad",
-                10,
-                "divorcio"
-            );
+            cambiarEmocion(habitante_id,"tristeza",20,"divorcio");
+            cambiarEmocion(habitante_id,"soledad",10,"divorcio");
 
             break;
-
 
 
         case "conflicto":
 
-            cambiarEmocion(
-                habitante_id,
-                "tristeza",
-                15,
-                "conflicto"
-            );
-
-            cambiarEmocion(
-                habitante_id,
-                "ira",
-                10,
-                "conflicto"
-            );
+            cambiarEmocion(habitante_id,"tristeza",15,"conflicto");
+            cambiarEmocion(habitante_id,"ira",10,"conflicto");
 
             break;
-
 
 
         case "familia":
 
-            cambiarEmocion(
-                habitante_id,
-                "confianza",
-                15,
-                "familia"
-            );
+            cambiarEmocion(habitante_id,"confianza",15,"familia");
 
             break;
-
 
 
         default:
 
             console.log(
-                "Evento emocional sin efecto definido:"
-                + evento
+                "Evento emocional sin efecto definido:" + evento
             );
 
             break;
