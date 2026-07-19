@@ -2,12 +2,21 @@
   "objetivos": [
     {
       "id": 1,
-      "habitante_id": 0,
-      "titulo": "",
-      "descripcion": "",
+      "habitante_id": 1,
+      "titulo": "Conocer el mundo",
+      "descripcion": "Explorar nuevos lugares y descubrir qué existe más allá de la aldea.",
       "tipo": "personal",
       "progreso": 0,
-      "estado": "pendiente"
+      "estado": "activo"
+    },
+    {
+      "id": 2,
+      "habitante_id": 1,
+      "titulo": "Crear una amistad",
+      "descripcion": "Conocer habitantes y formar vínculos con ellos.",
+      "tipo": "social",
+      "progreso": 0,
+      "estado": "activo"
     }
   ]
 }
