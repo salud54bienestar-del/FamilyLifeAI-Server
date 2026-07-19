@@ -4,61 +4,39 @@
       "habitante_id": 1,
 
       "felicidad": 70,
-
       "confianza": 20,
-
       "miedo": 10,
-
       "tristeza": 10,
-
       "ira": 0,
-
       "calma": 80,
-
 
       "estado_actual": "tranquila",
 
-
       "emociones_secundarias": {
-
         "amor": 0,
-
         "orgullo": 0,
-
         "culpa": 0,
-
         "soledad": 0,
-
         "estres": 0,
-
         "esperanza": 50
-
       },
-
 
       "factores_influencia": {
-
         "familia": 0,
-
         "pareja": 0,
-
         "hijos": 0,
-
         "trabajo": 0,
-
         "eventos": 0
-
       },
 
+      "estabilidad_emocional": 50,
 
       "ultima_emocion_importante": {
-
         "evento": "ninguno",
-
         "fecha": null
+      },
 
-      }
-
+      "historial_emocional": []
     }
   ]
 }
