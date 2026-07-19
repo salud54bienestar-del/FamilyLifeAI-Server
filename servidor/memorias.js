@@ -13,7 +13,7 @@ function crearMemoria(
 ) {
 
 
-    const datos = cargarArchivo("../datos/memorias.json");
+    const datos = cargarArchivo("./memorias.json");
 
 
     if (!datos) {
@@ -21,6 +21,21 @@ function crearMemoria(
         console.log("No se pudieron cargar las memorias.");
 
         return null;
+
+    }
+
+
+
+    let impacto = "ninguno";
+
+
+    if (importancia === "alta") {
+
+        impacto = "fuerte";
+
+    } else if (importancia === "media") {
+
+        impacto = "moderado";
 
     }
 
@@ -50,7 +65,7 @@ function crearMemoria(
         personas_relacionadas: personas,
 
 
-        afecta_comportamiento: importancia === "alta",
+        impacto_comportamiento: impacto,
 
 
         fecha: new Date().toISOString()
@@ -75,8 +90,6 @@ function crearMemoria(
 }
 
 
-
-// Prueba inicial
 
 crearMemoria(
 
