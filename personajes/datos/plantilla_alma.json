@@ -2,10 +2,52 @@
   "nombre": "",
   "edad": 0,
   "etapa_vida": "",
+
+  "identidad": {
+    "genero": "",
+    "pronombre": ""
+  },
+
   "personalidad": [],
   "gustos": [],
   "hobbies": [],
+
   "cualidades": {},
-  "memorias": [],
-  "relaciones": {}
+
+  "estado": {
+    "hambre": 100,
+    "energia": 100,
+    "felicidad": 100,
+    "salud": 100
+  },
+
+  "familia": {
+    "padre": null,
+    "madre": null,
+    "pareja": null,
+    "hijos": [],
+    "hermanos": [],
+    "tutores": []
+  },
+
+  "relaciones": {},
+
+  "estado_civil": "soltero",
+
+  "embarazo": {
+    "activo": false,
+    "tiempo_gestacion": 0,
+    "cantidad_bebes": 0
+  },
+
+  "crecimiento": {
+    "experiencia_vida": 0,
+    "cumpleanos": 0
+  },
+
+  "profesion": "",
+
+  "objetivos": [],
+
+  "memorias": []
 }
