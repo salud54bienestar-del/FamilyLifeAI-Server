@@ -4,11 +4,20 @@
       "nombre": "formar_una_familia",
       "descripcion": "El habitante desea crear una familia y formar vínculos fuertes.",
       "categoria": "social",
+      "prioridad": "alta",
+      "requisitos": [
+        "confianza_suficiente",
+        "relacion_estable"
+      ],
       "acciones": [
         "conocer_personas",
         "crear_relaciones",
         "casarse",
         "tener_hijos"
+      ],
+      "recompensas": [
+        "aumenta_felicidad",
+        "crea_vinculos_familiares"
       ]
     },
 
@@ -16,10 +25,18 @@
       "nombre": "crear_un_hogar",
       "descripcion": "El habitante busca construir y mejorar un lugar donde vivir.",
       "categoria": "hogar",
+      "prioridad": "media",
+      "requisitos": [
+        "tener_recursos"
+      ],
       "acciones": [
         "conseguir_recursos",
         "construir_casa",
         "decorar_hogar"
+      ],
+      "recompensas": [
+        "aumenta_seguridad",
+        "mejora_calidad_vida"
       ]
     },
 
@@ -27,10 +44,18 @@
       "nombre": "mejorar_profesion",
       "descripcion": "El habitante busca desarrollar sus habilidades laborales.",
       "categoria": "trabajo",
+      "prioridad": "media",
+      "requisitos": [
+        "tener_profesion"
+      ],
       "acciones": [
         "aprender_habilidad",
         "trabajar",
         "ascender"
+      ],
+      "recompensas": [
+        "aumenta_habilidad",
+        "mejora_economia"
       ]
     },
 
@@ -38,10 +63,18 @@
       "nombre": "ayudar_comunidad",
       "descripcion": "El habitante quiere mejorar la vida de otros miembros de la aldea.",
       "categoria": "comunidad",
+      "prioridad": "alta",
+      "requisitos": [
+        "vivir_en_comunidad"
+      ],
       "acciones": [
         "ayudar_vecinos",
         "proteger_aldea",
         "participar_eventos"
+      ],
+      "recompensas": [
+        "aumenta_reputacion",
+        "fortalece_comunidad"
       ]
     },
 
@@ -49,10 +82,18 @@
       "nombre": "educar_hijos",
       "descripcion": "El habitante busca cuidar y enseñar a sus hijos.",
       "categoria": "familia",
+      "prioridad": "alta",
+      "requisitos": [
+        "tener_hijos"
+      ],
       "acciones": [
         "cuidar_bebe",
         "llevar_hijo_escuela",
         "transmitir_habilidades"
+      ],
+      "recompensas": [
+        "fortalece_familia",
+        "mejora_desarrollo_hijo"
       ]
     },
 
@@ -60,10 +101,19 @@
       "nombre": "explorar_mundo",
       "descripcion": "El habitante desea descubrir nuevos lugares y experiencias.",
       "categoria": "aventura",
+      "prioridad": "media",
+      "requisitos": [
+        "tener_energia",
+        "tener_libertad"
+      ],
       "acciones": [
         "viajar",
         "descubrir_lugares",
         "conocer_personas"
+      ],
+      "recompensas": [
+        "aumenta_experiencia",
+        "descubre_lugares"
       ]
     }
   ]
