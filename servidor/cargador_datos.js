@@ -1,15 +1,44 @@
 // Cargador de datos de Village Soul
 
 const fs = require("fs");
+const path = require("path");
+
 
 function cargarArchivo(nombre) {
+
     try {
-        const datos = fs.readFileSync(nombre, "utf8");
+
+        const rutaCompleta = path.resolve(__dirname, nombre);
+
+
+        const datos = fs.readFileSync(
+            rutaCompleta,
+            "utf8"
+        );
+
+
         return JSON.parse(datos);
+
+
     } catch (error) {
-        console.log("Error cargando: " + nombre);
+
+
+        console.log("===============================");
+        console.log("ERROR CARGANDO ARCHIVO");
+        console.log("===============================");
+
+
+        console.log("Archivo:", nombre);
+
+        console.log("Motivo:", error.message);
+
+
         return null;
+
     }
+
 }
+
+
 
 module.exports = cargarArchivo;
