@@ -7,48 +7,65 @@ const crearMemoria = require("./memorias.js");
 
 function crearRelacion(habitante1, habitante2, tipo) {
 
-    const datos = cargarArchivo("../datos/relaciones.json");
+
+    const datos = cargarArchivo("./relaciones.json");
 
 
     if (!datos) {
+
         console.log("No se pudieron cargar las relaciones.");
+
         return null;
+
     }
+
 
 
     const relacion = {
 
+
         id: datos.relaciones.length + 1,
 
+
         habitante_1: habitante1,
+
         habitante_2: habitante2,
 
+
         tipo: tipo,
+
 
         confianza: 0,
 
         romance: 0,
 
+
         estado: "nuevo",
 
+
         estado_pareja: "ninguno",
+
 
         compatibilidad: 50,
 
 
-        limites:
+        limites: {
 
-        {
             parentesco: false,
+
             relacion_permitida: true
+
         },
 
 
         historia: [],
 
+
         eventos: []
 
+
     };
+
 
 
     datos.relaciones.push(relacion);
@@ -56,29 +73,44 @@ function crearRelacion(habitante1, habitante2, tipo) {
 
 
     crearEvento(
-        "Nueva relación",
-        "Se creó una relación de tipo: " + tipo
+
+        2,
+
+        [habitante1, habitante2],
+
+        {
+            tipo_relacion: tipo
+        }
+
     );
+
 
 
     crearMemoria(
+
         habitante1,
+
         "relacion",
+
         "Comenzó una relación con el habitante " + habitante2,
+
         "media"
+
     );
 
 
+
     console.log("Nueva relación creada:");
+
     console.log(relacion);
 
 
+
     return relacion;
+
 }
 
 
-
-// Prueba inicial
 
 crearRelacion(
     1,
