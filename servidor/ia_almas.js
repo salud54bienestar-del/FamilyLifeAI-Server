@@ -41,27 +41,48 @@ function pensarAlma(habitante_id) {
     console.log("=================================");
 
     console.log("Habitante:", alma.nombre);
-    console.log("Personalidad ID:", alma.personalidad_id);
     console.log("Estado emocional:", estadoEmocional.estado_actual);
     console.log("Recuerdos:", memorias.memorias.length);
 
-    if (objetivoActual) {
-        console.log("Objetivo actual:", objetivoActual.titulo);
+    let decision = "";
+    let motivo = "";
+
+    // Sistema básico de elección
+
+    if (estadoEmocional.tristeza > 50) {
+
+        decision = "buscar compañía";
+        motivo = "necesita mejorar su estado emocional";
+
+    } else if (estadoEmocional.miedo > 50) {
+
+        decision = "regresar a un lugar seguro";
+        motivo = "busca protección";
+
+    } else if (objetivoActual) {
+
+        decision = "trabajar en su objetivo";
+        motivo = "quiere avanzar en sus metas";
+
+    } else if (estadoEmocional.calma > 50) {
+
+        decision = "explorar el mundo";
+        motivo = "se siente tranquila y curiosa";
+
+    } else {
+
+        decision = "descansar";
+        motivo = "necesita recuperar energía";
+
     }
 
-    if (relacionActual) {
-        console.log("Relación actual:", relacionActual.tipo);
-        console.log("Nivel de confianza:", relacionActual.confianza);
-    }
-
-    console.log("La IA está analizando...");
 
     const pensamiento = {
         habitante: alma.nombre,
         objetivo: objetivoActual ? objetivoActual.titulo : "sin objetivo",
         relacion: relacionActual ? relacionActual.tipo : "sin relaciones",
-        decision: "explorar el mundo",
-        motivo: "cumplir sus metas, aprender y relacionarse con otros habitantes"
+        decision: decision,
+        motivo: motivo
     };
 
     console.log("Decisión generada:");
