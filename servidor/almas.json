@@ -2,9 +2,19 @@
   "almas": [
     {
       "id": 1,
+
       "nombre": "Luna",
+
+      "genero": "mujer",
+
       "edad": 20,
+
+      "etapa_vida": "adulto",
+
+
       "personalidad_id": 1,
+
+
       "emociones": {
         "felicidad": 70,
         "confianza": 20,
@@ -13,14 +23,73 @@
         "ira": 0,
         "calma": 80
       },
+
+
       "memorias": [],
+
+
       "relaciones": [],
+
+
       "objetivos": [
         "conocer el mundo",
-        "crear una amistad"
+        "crear una amistad",
+        "formar una familia"
       ],
+
+
       "profesion": "aprendiz",
-      "familia": [],
+
+
+      "habilidades": [],
+
+
+      "familia": {
+
+        "padre": null,
+
+        "madre": null,
+
+        "pareja": null,
+
+        "hijos": [],
+
+        "generacion": 1
+
+      },
+
+
+      "estado_familiar": {
+
+        "estado_civil": "soltera",
+
+        "embarazo": false,
+
+        "mes_embarazo": 0
+
+      },
+
+
+      "identidad_familiar": {
+
+        "llamado_por_hijos": "madre"
+
+      },
+
+
+      "necesidades": {
+
+        "hambre": 0,
+
+        "energia": 100,
+
+        "social": 50,
+
+        "diversion": 50
+
+      },
+
+
       "estado": "viviendo"
     }
   ]
