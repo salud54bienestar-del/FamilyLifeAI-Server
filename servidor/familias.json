@@ -19,7 +19,19 @@
 
       "custodia": {},
 
-      "historial": []
+      "historial": [],
+
+      "hogar": null,
+
+      "legado_id": null,
+
+      "relaciones_familiares": [],
+
+      "recursos_compartidos": [],
+
+      "tradiciones": [],
+
+      "reputacion": 0
     }
   ]
 }
