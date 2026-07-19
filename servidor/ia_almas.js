@@ -7,8 +7,9 @@ function pensarAlma(habitante_id) {
     const almas = cargarArchivo("../datos/almas.json");
     const emociones = cargarArchivo("../datos/emociones.json");
     const memorias = cargarArchivo("../datos/memorias.json");
+    const objetivos = cargarArchivo("../datos/objetivos.json");
 
-    if (!almas || !emociones || !memorias) {
+    if (!almas || !emociones || !memorias || !objetivos) {
         console.log("No se pudieron cargar los datos de la IA.");
         return null;
     }
@@ -19,6 +20,10 @@ function pensarAlma(habitante_id) {
 
     const estadoEmocional = emociones.emociones.find(
         (e) => e.habitante_id === habitante_id
+    );
+
+    const objetivoActual = objetivos.objetivos.find(
+        (o) => o.habitante_id === habitante_id && o.estado === "activo"
     );
 
     if (!alma || !estadoEmocional) {
@@ -35,12 +40,17 @@ function pensarAlma(habitante_id) {
     console.log("Estado emocional:", estadoEmocional.estado_actual);
     console.log("Recuerdos:", memorias.memorias.length);
 
+    if (objetivoActual) {
+        console.log("Objetivo actual:", objetivoActual.titulo);
+    }
+
     console.log("La IA está analizando...");
 
     const pensamiento = {
         habitante: alma.nombre,
+        objetivo: objetivoActual ? objetivoActual.titulo : "sin objetivo",
         decision: "explorar el mundo",
-        motivo: "curiosidad y deseo de conocer"
+        motivo: "cumplir sus metas y adquirir nuevas experiencias"
     };
 
     console.log("Decisión generada:");
