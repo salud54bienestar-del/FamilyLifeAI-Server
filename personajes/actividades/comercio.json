@@ -1,3 +1,57 @@
 {
-  "comercio": []
+  "comercio": [
+    {
+      "id": "productos_bebe",
+      "nombre": "Productos para bebés",
+      "tipo": "familia",
+      "objetos": [
+        {
+          "nombre": "biberón",
+          "uso": "Alimentar bebés"
+        },
+        {
+          "nombre": "chupete",
+          "uso": "Calmar al bebé"
+        },
+        {
+          "nombre": "mordedor",
+          "uso": "Ayudar durante la dentición"
+        }
+      ]
+    },
+    {
+      "id": "objetos_matrimonio",
+      "nombre": "Objetos de matrimonio",
+      "tipo": "relaciones",
+      "objetos": [
+        {
+          "nombre": "anillo_compromiso",
+          "uso": "Formalizar compromiso"
+        },
+        {
+          "nombre": "decoracion_boda",
+          "uso": "Preparar ceremonia"
+        }
+      ]
+    },
+    {
+      "id": "alimentos_familia",
+      "nombre": "Alimentos familiares",
+      "tipo": "comida",
+      "objetos": [
+        {
+          "nombre": "papilla_zanahoria",
+          "uso": "Alimentación infantil"
+        },
+        {
+          "nombre": "papilla_calabaza",
+          "uso": "Alimentación infantil"
+        },
+        {
+          "nombre": "papilla_sandia",
+          "uso": "Alimentación infantil"
+        }
+      ]
+    }
+  ]
 }
