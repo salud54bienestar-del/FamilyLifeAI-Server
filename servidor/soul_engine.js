@@ -1,9 +1,12 @@
+// Motor principal de Village Soul
+
 console.log("=================================");
 console.log("        SOUL ENGINE");
 console.log("=================================");
 
 const cargarArchivo = require("./cargador_datos.js");
 const sistemas = require("./sistemas.js");
+const crearEvento = require("./eventos.js");
 
 console.log("Sistemas activos:");
 
@@ -19,5 +22,10 @@ if (mundo) {
   console.log("Mundo cargado:");
   console.log(mundo.nombre);
 }
+
+crearEvento(
+  "Inicio del mundo",
+  "El mundo de Village Soul comienza su primera historia."
+);
 
 console.log("Sistema listo.");
