@@ -1,0 +1,10 @@
+{
+  "configuracion_ia": {
+    "memoria_activa": true,
+    "emociones_influyen": true,
+    "personalidad_influye": true,
+    "aprendizaje": true,
+    "nivel_autonomia": 1,
+    "toma_decisiones": true
+  }
+}
