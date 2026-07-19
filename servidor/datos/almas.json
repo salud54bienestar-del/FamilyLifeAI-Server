@@ -1,0 +1,39 @@
+{
+  "almas": [
+    {
+      "id": 1,
+      "nombre": "Luna",
+      "edad": 20,
+      "personalidad_id": 1,
+
+      "emociones": {
+        "felicidad": 70,
+        "confianza": 20,
+        "miedo": 10,
+        "tristeza": 10,
+        "ira": 0,
+        "calma": 80
+      },
+
+      "memorias": [],
+
+      "relaciones": [],
+
+      "objetivos": [
+        "conocer el mundo",
+        "crear una amistad"
+      ],
+
+      "profesion": {
+        "nombre": "aprendiz",
+        "nivel": 1,
+        "experiencia": 0,
+        "estado": "activa"
+      },
+
+      "familia": [],
+
+      "estado": "viviendo"
+    }
+  ]
+}
