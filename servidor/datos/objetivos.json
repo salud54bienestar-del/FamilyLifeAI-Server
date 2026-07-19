@@ -1,0 +1,79 @@
+{
+  "objetivos": [
+    {
+      "id": 1,
+      "habitante_id": 1,
+      "titulo": "Conocer el mundo",
+      "descripcion": "Explorar nuevos lugares y descubrir qué existe más allá de la aldea.",
+      "tipo": "aventura",
+      "progreso": 0,
+      "estado": "activo",
+      "prioridad": "media",
+      "requisitos": [],
+      "recompensa": "experiencia"
+    },
+
+    {
+      "id": 2,
+      "habitante_id": 1,
+      "titulo": "Crear una amistad",
+      "descripcion": "Conocer habitantes y formar vínculos con ellos.",
+      "tipo": "social",
+      "progreso": 0,
+      "estado": "activo",
+      "prioridad": "alta",
+      "requisitos": [
+        "conversar",
+        "ayudar"
+      ],
+      "recompensa": "aumento_confianza"
+    },
+
+    {
+      "id": 3,
+      "habitante_id": 1,
+      "titulo": "Formar una familia",
+      "descripcion": "Crear vínculos fuertes, encontrar pareja y construir una familia.",
+      "tipo": "familia",
+      "progreso": 0,
+      "estado": "bloqueado",
+      "prioridad": "alta",
+      "requisitos": [
+        "crear_relacion",
+        "tener_confianza",
+        "casarse"
+      ],
+      "recompensa": "nueva_generacion"
+    },
+
+    {
+      "id": 4,
+      "habitante_id": 1,
+      "titulo": "Cuidar hijos",
+      "descripcion": "Proteger, alimentar y enseñar a los hijos durante su crecimiento.",
+      "tipo": "familia",
+      "progreso": 0,
+      "estado": "bloqueado",
+      "prioridad": "alta",
+      "requisitos": [
+        "tener_hijos"
+      ],
+      "recompensa": "fortalecer_familia"
+    },
+
+    {
+      "id": 5,
+      "habitante_id": 1,
+      "titulo": "Mejorar profesión",
+      "descripcion": "Aprender habilidades y avanzar en su trabajo.",
+      "tipo": "trabajo",
+      "progreso": 0,
+      "estado": "activo",
+      "prioridad": "media",
+      "requisitos": [
+        "aprender_habilidad"
+      ],
+      "recompensa": "nuevo_rango"
+    }
+  ]
+}
