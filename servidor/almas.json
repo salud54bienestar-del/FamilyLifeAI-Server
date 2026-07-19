@@ -4,11 +4,7 @@
       "id": 1,
       "nombre": "Luna",
       "edad": 20,
-      "personalidad": [
-        "amable",
-        "curiosa",
-        "protectora"
-      ],
+      "personalidad_id": 1,
       "emociones": {
         "felicidad": 70,
         "confianza": 20,
