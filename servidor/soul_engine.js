@@ -8,6 +8,7 @@ const cargarArchivo = require("./cargador_datos.js");
 const sistemas = require("./sistemas.js");
 const crearEvento = require("./eventos.js");
 const pensarAlma = require("./ia_almas.js");
+const avanzarTiempo = require("./tiempo.js");
 
 console.log("Sistemas activos:");
 
@@ -32,5 +33,9 @@ crearEvento(
 console.log("Iniciando inteligencia artificial...");
 
 pensarAlma(1);
+
+console.log("Iniciando ciclo de tiempo...");
+
+avanzarTiempo();
 
 console.log("Sistema listo.");
