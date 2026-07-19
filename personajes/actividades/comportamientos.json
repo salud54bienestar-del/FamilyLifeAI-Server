@@ -1,3 +1,23 @@
 {
-  "comportamientos": []
+  "comportamientos": [
+    {
+      "id": "cuidar_familia",
+      "nombre": "Cuidar familia",
+      "descripcion": "El habitante prioriza ayudar y proteger a los miembros de su familia.",
+      "acciones": [
+        "alimentar_bebe",
+        "ayudar_hijo",
+        "acompanar_pareja"
+      ]
+    },
+    {
+      "id": "duelo",
+      "nombre": "Duelo",
+      "descripcion": "El habitante cambia su comportamiento después de perder a un ser querido.",
+      "acciones": [
+        "buscar_apoyo",
+        "recordar_familiar"
+      ]
+    }
+  ]
 }
