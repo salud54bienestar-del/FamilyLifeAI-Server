@@ -7,6 +7,7 @@ console.log("=================================");
 const cargarArchivo = require("./cargador_datos.js");
 const sistemas = require("./sistemas.js");
 const crearEvento = require("./eventos.js");
+const pensarAlma = require("./ia_almas.js");
 
 console.log("Sistemas activos:");
 
@@ -16,7 +17,7 @@ sistemas.forEach((sistema) => {
 
 console.log("Cargando mundo...");
 
-const mundo = cargarArchivo("./mundo.json");
+const mundo = cargarArchivo("../datos/mundo.json");
 
 if (mundo) {
   console.log("Mundo cargado:");
@@ -27,5 +28,9 @@ crearEvento(
   "Inicio del mundo",
   "El mundo de Village Soul comienza su primera historia."
 );
+
+console.log("Iniciando inteligencia artificial...");
+
+pensarAlma(1);
 
 console.log("Sistema listo.");
