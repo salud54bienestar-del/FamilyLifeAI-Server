@@ -1,7 +1,7 @@
 // Sistema de tiempo de Village Soul
 
 const cargarArchivo = require("./cargador_datos.js");
-const pensarAlma = require("./ia_almas.js");
+const pensarAlma = require("../ia/ia_almas.js");
 const ejecutarAccion = require("./acciones.js");
 const crearEvento = require("./eventos.js");
 
@@ -39,8 +39,6 @@ function avanzarTiempo() {
 
     const tiempo = datos.tiempo;
 
-
-    // Avance del reloj
 
     tiempo.minuto += 10;
 
@@ -83,35 +81,23 @@ function avanzarTiempo() {
     if (pensamiento) {
 
         ejecutarAccion(
-
             1,
-
             pensamiento.decision
-
         );
 
     }
 
 
 
-    // Evento periódico cada 30 días
-
     if (tiempo.dia % 30 === 0) {
 
         crearEvento(
-
             2,
-
             [1],
-
             {
-
                 tipo: "paso_del_tiempo",
-
                 descripcion: "Ha transcurrido un ciclo completo."
-
             }
-
         );
 
     }
@@ -123,8 +109,6 @@ function avanzarTiempo() {
 }
 
 
-
-// Prueba inicial
 
 avanzarTiempo();
 
