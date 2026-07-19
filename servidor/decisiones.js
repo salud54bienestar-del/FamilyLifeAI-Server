@@ -6,7 +6,7 @@ const cargarArchivo = require("./cargador_datos.js");
 function procesarDecision(id, contexto = {}) {
 
 
-    const datos = cargarArchivo("../datos/decisiones.json");
+    const datos = cargarArchivo("./decisiones.json");
 
 
     if (!datos) {
@@ -18,13 +18,9 @@ function procesarDecision(id, contexto = {}) {
     }
 
 
-
     const decision = datos.decisiones.find(
-
         (d) => d.id === id
-
     );
-
 
 
     if (!decision) {
@@ -37,69 +33,34 @@ function procesarDecision(id, contexto = {}) {
 
 
 
-    console.log("=================================");
-
-    console.log("        DECISIÓN");
-
-    console.log("=================================");
-
-
-
-    console.log(
-        "Habitante ID:",
-        decision.habitante_id
-    );
-
-
-    console.log(
-        "Situación:",
-        decision.situacion
-    );
-
-
-
-    console.log("Opciones:");
-
-
-
-    decision.opciones.forEach((opcion) => {
-
-        console.log("- " + opcion);
-
-    });
-
-
-
     let eleccion = decision.eleccion;
 
 
 
-    // Influencia por contexto
-
-
     if (contexto.familia) {
 
-
         eleccion = "proteger_familia";
-
 
     }
 
 
     if (contexto.emocion === "tristeza") {
 
-
         eleccion = "buscar_apoyo";
-
 
     }
 
 
     if (contexto.relacion === "conflicto") {
 
-
         eleccion = "resolver_conflicto";
 
+    }
+
+
+    if (contexto.objetivo === "crear_una_familia") {
+
+        eleccion = "crear_vinculos";
 
     }
 
@@ -110,27 +71,21 @@ function procesarDecision(id, contexto = {}) {
 
         habitante_id: decision.habitante_id,
 
-
         situacion: decision.situacion,
-
 
         eleccion: eleccion,
 
-
         resultado: decision.resultado,
 
-
         contexto: contexto
-
 
     };
 
 
 
-    console.log("Elección:", eleccion);
+    console.log("Decisión generada:");
 
-
-    console.log("Resultado:", resultado);
+    console.log(resultado);
 
 
 
@@ -140,20 +95,12 @@ function procesarDecision(id, contexto = {}) {
 
 
 
-// Prueba inicial
-
 procesarDecision(
-
     1,
-
     {
-
         familia: true,
-
         emocion: "felicidad"
-
     }
-
 );
 
 
