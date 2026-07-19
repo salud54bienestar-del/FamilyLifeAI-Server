@@ -2,14 +2,38 @@
   "relaciones": [
     {
       "id": 1,
+
       "habitante_a": 1,
+
       "habitante_b": 2,
+
       "tipo": "amistad",
+
+      "nivel": "amigos",
+
       "confianza": 50,
+
       "afinidad": 60,
+
+      "romance": 0,
+
+      "estado_pareja": "ninguno",
+
       "historial": [
         "Primer encuentro"
-      ]
+      ],
+
+      "familia": {
+        "parentesco": false,
+        "tipo": null
+      },
+
+      "limites": {
+        "relacion_permitida": true,
+        "motivo_bloqueo": null
+      },
+
+      "eventos_importantes": []
     }
   ]
 }
