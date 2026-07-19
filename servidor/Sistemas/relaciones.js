@@ -8,7 +8,7 @@ const crearMemoria = require("./memorias.js");
 function crearRelacion(habitante1, habitante2, tipo) {
 
 
-    const datos = cargarArchivo("./relaciones.json");
+    const datos = cargarArchivo("../datos/relaciones.json");
 
 
     if (!datos) {
@@ -62,7 +62,6 @@ function crearRelacion(habitante1, habitante2, tipo) {
 
 
         eventos: []
-
 
     };
 
