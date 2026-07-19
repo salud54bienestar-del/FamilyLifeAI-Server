@@ -8,7 +8,6 @@
       "importancia": "media",
       "emocion": "curiosidad"
     },
-
     {
       "id": 2,
       "nombre": "nuevo_dia",
@@ -17,7 +16,6 @@
       "importancia": "baja",
       "emocion": "calma"
     },
-
     {
       "id": 3,
       "nombre": "embarazo_confirmado",
@@ -26,7 +24,6 @@
       "importancia": "alta",
       "emocion": "alegria"
     },
-
     {
       "id": 4,
       "nombre": "nacimiento",
@@ -35,7 +32,6 @@
       "importancia": "alta",
       "emocion": "felicidad"
     },
-
     {
       "id": 5,
       "nombre": "nacimiento_multiple",
@@ -44,7 +40,6 @@
       "importancia": "muy_alta",
       "emocion": "sorpresa"
     },
-
     {
       "id": 6,
       "nombre": "boda",
@@ -53,7 +48,6 @@
       "importancia": "alta",
       "emocion": "felicidad"
     },
-
     {
       "id": 7,
       "nombre": "divorcio",
@@ -62,7 +56,6 @@
       "importancia": "alta",
       "emocion": "tristeza"
     },
-
     {
       "id": 8,
       "nombre": "adopcion",
@@ -71,7 +64,6 @@
       "importancia": "alta",
       "emocion": "amor"
     },
-
     {
       "id": 9,
       "nombre": "cumpleaños",
@@ -80,7 +72,6 @@
       "importancia": "media",
       "emocion": "felicidad"
     },
-
     {
       "id": 10,
       "nombre": "cambio_etapa_vida",
@@ -89,7 +80,6 @@
       "importancia": "media",
       "emocion": "orgullo"
     },
-
     {
       "id": 11,
       "nombre": "fallecimiento",
@@ -98,7 +88,6 @@
       "importancia": "muy_alta",
       "emocion": "tristeza"
     },
-
     {
       "id": 12,
       "nombre": "nuevo_trabajo",
