@@ -1,3 +1,75 @@
 {
-  "rutinas": []
+  "rutinas": [
+    {
+      "id": "rutina_adulto_trabajo",
+      "nombre": "Rutina de adulto trabajador",
+      "etapa": "adulto",
+      "actividades": [
+        {
+          "hora": "mañana",
+          "accion": "despertar",
+          "descripcion": "El habitante inicia su día."
+        },
+        {
+          "hora": "dia",
+          "accion": "trabajar",
+          "descripcion": "El habitante realiza su profesión."
+        },
+        {
+          "hora": "tarde",
+          "accion": "interactuar_familia",
+          "descripcion": "Pasa tiempo con familiares o amigos."
+        },
+        {
+          "hora": "noche",
+          "accion": "descansar",
+          "descripcion": "El habitante recupera energía."
+        }
+      ]
+    },
+    {
+      "id": "rutina_nino",
+      "nombre": "Rutina de niño",
+      "etapa": "niño",
+      "actividades": [
+        {
+          "hora": "mañana",
+          "accion": "asistir_escuela",
+          "descripcion": "El niño aprende nuevas habilidades."
+        },
+        {
+          "hora": "tarde",
+          "accion": "jugar",
+          "descripcion": "El niño juega y desarrolla su personalidad."
+        },
+        {
+          "hora": "noche",
+          "accion": "dormir",
+          "descripcion": "El niño descansa."
+        }
+      ]
+    },
+    {
+      "id": "rutina_bebe",
+      "nombre": "Rutina de bebé",
+      "etapa": "bebe",
+      "actividades": [
+        {
+          "hora": "dia",
+          "accion": "alimentarse",
+          "descripcion": "El bebé recibe alimento y cuidados."
+        },
+        {
+          "hora": "dia",
+          "accion": "interactuar",
+          "descripcion": "El bebé recibe atención de sus cuidadores."
+        },
+        {
+          "hora": "noche",
+          "accion": "dormir",
+          "descripcion": "El bebé descansa."
+        }
+      ]
+    }
+  ]
 }
