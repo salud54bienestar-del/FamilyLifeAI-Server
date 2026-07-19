@@ -6,79 +6,123 @@ const crearMemoria = require("./memorias.js");
 
 function crearEvento(id, participantes = [], datosExtra = {}) {
 
+
     const sistemaEventos = cargarArchivo("./sistema_eventos.json");
 
 
     if (!sistemaEventos) {
+
         console.log("No se pudo cargar el sistema de eventos.");
+
         return null;
+
     }
+
 
 
     const eventoBase = sistemaEventos.eventos_disponibles.find(
+
         (evento) => evento.id === id
+
     );
 
 
+
     if (!eventoBase) {
+
         console.log("Evento no encontrado.");
+
         return null;
+
     }
+
 
 
     const evento = {
 
+
         id: id,
+
 
         nombre: eventoBase.nombre,
 
+
         descripcion: eventoBase.descripcion,
+
 
         tipo: eventoBase.tipo,
 
+
         fecha: new Date().toISOString(),
+
 
         participantes: participantes,
 
+
         datos: datosExtra,
 
-        importancia: "media"
+
+        importancia: eventoBase.importancia || "media"
+
 
     };
 
 
+
     console.log("Nuevo evento creado:");
+
     console.log(evento);
+
 
 
 
     participantes.forEach((habitante) => {
 
+
         crearMemoria(
+
             habitante,
+
             "evento",
+
             evento.nombre,
-            evento.importancia
+
+            evento.importancia,
+
+            participantes,
+
+            eventoBase.emocion || "neutral"
+
         );
+
 
     });
 
 
 
     return evento;
+
 }
 
 
 
-// Evento inicial de prueba
+
+// Evento inicial
 
 crearEvento(
+
     1,
+
     [1],
+
     {
+
         inicio: "primera historia del mundo"
+
     }
+
 );
+
 
 
 module.exports = crearEvento;
