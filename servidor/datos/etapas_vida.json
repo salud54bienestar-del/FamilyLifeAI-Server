@@ -1,0 +1,28 @@
+{
+  "etapas": [
+    {
+      "nombre": "bebe",
+      "edad_minima": 0,
+      "edad_maxima": 2,
+      "descripcion": "Etapa inicial donde el habitante depende de su familia y desarrolla sus primeros vínculos."
+    },
+    {
+      "nombre": "niño",
+      "edad_minima": 3,
+      "edad_maxima": 12,
+      "descripcion": "Etapa de aprendizaje, juego y desarrollo de habilidades básicas."
+    },
+    {
+      "nombre": "adolescente",
+      "edad_minima": 13,
+      "edad_maxima": 17,
+      "descripcion": "Etapa donde desarrolla personalidad, gustos, habilidades y objetivos propios."
+    },
+    {
+      "nombre": "adulto",
+      "edad_minima": 18,
+      "edad_maxima": 120,
+      "descripcion": "Etapa donde puede trabajar, formar relaciones, crear una familia y participar en la comunidad."
+    }
+  ]
+}
