@@ -1,16 +1,7 @@
 // Sistema principal de Village Soul
 
-const fs = require("fs");
-
-function cargarArchivo(nombre) {
-    try {
-        const datos = fs.readFileSync("../datos/" + nombre, "utf8");
-        return JSON.parse(datos);
-    } catch (error) {
-        console.log("No se pudo cargar: " + nombre);
-        return null;
-    }
-}
+const cargarArchivo = require("./cargador_datos.js");
+const soulEngine = require("./soul_engine.js");
 
 function iniciarServidor() {
     console.log("=================================");
@@ -20,13 +11,13 @@ function iniciarServidor() {
     console.log("Servidor principal iniciado.");
     console.log("Cargando módulos...");
 
-cargarMundo();
-cargarAlmas();
-cargarMemorias();
-cargarRelaciones();
-cargarEmociones();
-cargarObjetivos();
-cargarDecisiones();
+    cargarMundo();
+    cargarAlmas();
+    cargarMemorias();
+    cargarRelaciones();
+    cargarEmociones();
+    cargarObjetivos();
+    cargarDecisiones();
 
     console.log("Todos los módulos fueron cargados correctamente.");
 }
@@ -47,36 +38,24 @@ function cargarAlmas() {
     }
 }
 
-function cargarEmociones() {
-    const emociones = cargarArchivo("emociones.json");
-
-    if (emociones) {
-        console.log("✓ Emociones cargadas");
-    }
-}
-
-function cargarObjetivos() {
-    const objetivos = cargarArchivo("objetivos.json");
-
-    if (objetivos) {
-        console.log("✓ Objetivos cargados");
-    }
-}
-
-function cargarDecisiones() {
-    const decisiones = cargarArchivo("decisiones.json");
-
-    if (decisiones) {
-        console.log("✓ Decisiones cargadas");
-    }
-}
-
 function cargarMemorias() {
     console.log("✓ Memorias cargadas");
 }
 
 function cargarRelaciones() {
     console.log("✓ Relaciones cargadas");
+}
+
+function cargarEmociones() {
+    console.log("✓ Emociones cargadas");
+}
+
+function cargarObjetivos() {
+    console.log("✓ Objetivos cargados");
+}
+
+function cargarDecisiones() {
+    console.log("✓ Decisiones cargadas");
 }
 
 iniciarServidor();
