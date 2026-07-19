@@ -1,3 +1,76 @@
 {
-  "ubicaciones": []
+  "ubicaciones": [
+    {
+      "id": "aldea_principal",
+      "nombre": "Aldea principal",
+      "tipo": "comunidad",
+      "descripcion": "Lugar donde viven e interactúan los habitantes.",
+      "usos": [
+        "socializar",
+        "realizar_eventos",
+        "comercio"
+      ]
+    },
+
+    {
+      "id": "escuela",
+      "nombre": "Escuela",
+      "tipo": "educacion",
+      "descripcion": "Lugar donde niños y jóvenes desarrollan conocimientos y habilidades.",
+      "usos": [
+        "estudiar",
+        "aprender_habilidades",
+        "conocer_personas"
+      ],
+      "requiere": "profesor"
+    },
+
+    {
+      "id": "capilla",
+      "nombre": "Capilla",
+      "tipo": "ceremonia",
+      "descripcion": "Lugar destinado a bodas y eventos importantes de la comunidad.",
+      "usos": [
+        "boda",
+        "celebraciones",
+        "reuniones"
+      ]
+    },
+
+    {
+      "id": "guarderia",
+      "nombre": "Guardería",
+      "tipo": "cuidado",
+      "descripcion": "Lugar donde los bebés y niños pueden recibir cuidados.",
+      "usos": [
+        "cuidar_bebes",
+        "socializar_ninos"
+      ],
+      "requiere": "niñera"
+    },
+
+    {
+      "id": "granja",
+      "nombre": "Granja",
+      "tipo": "trabajo",
+      "descripcion": "Zona donde los habitantes cultivan y producen alimentos.",
+      "usos": [
+        "agricultura",
+        "recoleccion",
+        "aprendizaje"
+      ]
+    },
+
+    {
+      "id": "hogar_familiar",
+      "nombre": "Casa familiar",
+      "tipo": "vivienda",
+      "descripcion": "Lugar donde una familia vive y desarrolla su vida privada.",
+      "usos": [
+        "descansar",
+        "crianza",
+        "interacciones_familiares"
+      ]
+    }
+  ]
 }
