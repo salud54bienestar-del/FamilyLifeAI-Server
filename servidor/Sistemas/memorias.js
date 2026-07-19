@@ -13,7 +13,7 @@ function crearMemoria(
 ) {
 
 
-    const datos = cargarArchivo("./memorias.json");
+    const datos = cargarArchivo("../datos/memorias.json");
 
 
     if (!datos) {
