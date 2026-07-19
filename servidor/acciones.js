@@ -18,7 +18,7 @@ function ejecutarAccion(habitante_id, accion) {
 
 
 
-    const mundo = cargarArchivo("../datos/mundo.json");
+    const mundo = cargarArchivo("./mundo.json");
 
 
     if (!mundo) {
@@ -47,6 +47,8 @@ function ejecutarAccion(habitante_id, accion) {
 
     let resultadoAccion = "";
 
+    let evento = null;
+
 
 
     switch (accion) {
@@ -68,7 +70,12 @@ function ejecutarAccion(habitante_id, accion) {
             });
 
 
-            resultadoAccion = "Descubrió un nuevo lugar.";
+            resultadoAccion =
+            "Descubrió un nuevo lugar.";
+
+
+            evento = 1;
+
 
             break;
 
@@ -77,18 +84,26 @@ function ejecutarAccion(habitante_id, accion) {
         case "buscar compañía":
 
 
-            resultadoAccion = 
+            resultadoAccion =
             "El habitante busca fortalecer sus relaciones.";
+
+
+            evento = 2;
+
 
             break;
 
 
 
-        case "regresar a un lugar seguro":
+        case "cuidar familia":
 
 
             resultadoAccion =
-            "El habitante regresó para sentirse protegido.";
+            "El habitante dedicó tiempo a su familia.";
+
+
+            evento = 2;
+
 
             break;
 
@@ -98,47 +113,8 @@ function ejecutarAccion(habitante_id, accion) {
 
 
             resultadoAccion =
-            "El habitante avanzó hacia sus metas.";
+            "El habitante avanzó hacia su meta.";
 
-            break;
-
-
-
-        case "cuidar bebé":
-
-
-            resultadoAccion =
-            "El habitante cuidó a un bebé de la familia.";
-
-            break;
-
-
-
-        case "alimentar bebé":
-
-
-            resultadoAccion =
-            "El bebé recibió alimento y cuidados.";
-
-            break;
-
-
-
-        case "estudiar":
-
-
-            resultadoAccion =
-            "El habitante aprendió nuevos conocimientos.";
-
-            break;
-
-
-
-        case "visitar familia":
-
-
-            resultadoAccion =
-            "El habitante fortaleció sus vínculos familiares.";
 
             break;
 
@@ -148,17 +124,11 @@ function ejecutarAccion(habitante_id, accion) {
 
 
             resultadoAccion =
-            "Dos habitantes formaron una nueva familia.";
-
-            break;
+            "Dos habitantes formaron una familia.";
 
 
+            evento = 6;
 
-        case "divorciarse":
-
-
-            resultadoAccion =
-            "La relación terminó y comienza una nueva etapa.";
 
             break;
 
@@ -168,7 +138,11 @@ function ejecutarAccion(habitante_id, accion) {
 
 
             resultadoAccion =
-            "El habitante creó un vínculo de adopción.";
+            "El habitante creó un vínculo familiar mediante adopción.";
+
+
+            evento = 8;
+
 
             break;
 
@@ -180,6 +154,7 @@ function ejecutarAccion(habitante_id, accion) {
             resultadoAccion =
             "El habitante recuperó energía.";
 
+
             break;
 
 
@@ -190,7 +165,22 @@ function ejecutarAccion(habitante_id, accion) {
             resultadoAccion =
             "Realizó una acción desconocida.";
 
+
             break;
+
+    }
+
+
+
+    if (evento) {
+
+        crearEvento(
+
+            evento,
+
+            [habitante_id]
+
+        );
 
     }
 
@@ -226,8 +216,6 @@ function ejecutarAccion(habitante_id, accion) {
 }
 
 
-
-// Prueba inicial
 
 ejecutarAccion(
 
