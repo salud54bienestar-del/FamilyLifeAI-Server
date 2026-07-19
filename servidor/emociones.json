@@ -1,14 +1,14 @@
 {
   "emociones": [
     {
-      "habitante_id": 0,
-      "felicidad": 50,
-      "confianza": 0,
-      "miedo": 0,
-      "tristeza": 0,
+      "habitante_id": 1,
+      "felicidad": 70,
+      "confianza": 20,
+      "miedo": 10,
+      "tristeza": 10,
       "ira": 0,
-      "calma": 50,
-      "estado_actual": "neutral"
+      "calma": 80,
+      "estado_actual": "tranquila"
     }
   ]
 }
