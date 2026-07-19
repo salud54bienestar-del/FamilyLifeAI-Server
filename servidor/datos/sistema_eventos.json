@@ -1,0 +1,111 @@
+{
+  "eventos_disponibles": [
+    {
+      "id": 1,
+      "nombre": "primer_encuentro",
+      "descripcion": "Un habitante descubre el mundo por primera vez.",
+      "tipo": "inicio",
+      "importancia": "media",
+      "emocion": "curiosidad"
+    },
+
+    {
+      "id": 2,
+      "nombre": "nuevo_dia",
+      "descripcion": "Comienza un nuevo día en el mundo.",
+      "tipo": "tiempo",
+      "importancia": "baja",
+      "emocion": "calma"
+    },
+
+    {
+      "id": 3,
+      "nombre": "embarazo_confirmado",
+      "descripcion": "Una habitante inicia una etapa de embarazo.",
+      "tipo": "familia",
+      "importancia": "alta",
+      "emocion": "alegria"
+    },
+
+    {
+      "id": 4,
+      "nombre": "nacimiento",
+      "descripcion": "Un nuevo habitante llega al mundo.",
+      "tipo": "familia",
+      "importancia": "alta",
+      "emocion": "felicidad"
+    },
+
+    {
+      "id": 5,
+      "nombre": "nacimiento_multiple",
+      "descripcion": "Nacen gemelos o más bebés en un mismo embarazo.",
+      "tipo": "familia",
+      "importancia": "muy_alta",
+      "emocion": "sorpresa"
+    },
+
+    {
+      "id": 6,
+      "nombre": "boda",
+      "descripcion": "Dos habitantes unen sus vidas y forman una familia.",
+      "tipo": "relacion",
+      "importancia": "alta",
+      "emocion": "felicidad"
+    },
+
+    {
+      "id": 7,
+      "nombre": "divorcio",
+      "descripcion": "Una relación matrimonial termina.",
+      "tipo": "familia",
+      "importancia": "alta",
+      "emocion": "tristeza"
+    },
+
+    {
+      "id": 8,
+      "nombre": "adopcion",
+      "descripcion": "Un habitante crea un vínculo familiar mediante adopción.",
+      "tipo": "familia",
+      "importancia": "alta",
+      "emocion": "amor"
+    },
+
+    {
+      "id": 9,
+      "nombre": "cumpleaños",
+      "descripcion": "Un habitante cumple un nuevo año de vida.",
+      "tipo": "vida",
+      "importancia": "media",
+      "emocion": "felicidad"
+    },
+
+    {
+      "id": 10,
+      "nombre": "cambio_etapa_vida",
+      "descripcion": "Un habitante pasa a una nueva etapa de crecimiento.",
+      "tipo": "vida",
+      "importancia": "media",
+      "emocion": "orgullo"
+    },
+
+    {
+      "id": 11,
+      "nombre": "fallecimiento",
+      "descripcion": "Un habitante deja este mundo y su legado continúa.",
+      "tipo": "vida",
+      "importancia": "muy_alta",
+      "emocion": "tristeza"
+    },
+
+    {
+      "id": 12,
+      "nombre": "nuevo_trabajo",
+      "descripcion": "Un habitante comienza una nueva profesión.",
+      "tipo": "profesion",
+      "importancia": "media",
+      "emocion": "motivacion"
+    }
+  ]
+}
