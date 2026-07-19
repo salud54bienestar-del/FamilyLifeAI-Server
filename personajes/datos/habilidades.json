@@ -1,3 +1,59 @@
 {
-  "habilidades": []
+  "habilidades": [
+    {
+      "nombre": "agricultura",
+      "nivel": 0,
+      "descripcion": "Capacidad para cultivar plantas y cuidar cultivos.",
+      "usos": [
+        "trabajar_granja",
+        "ayudar_comunidad"
+      ]
+    },
+    {
+      "nombre": "cocina",
+      "nivel": 0,
+      "descripcion": "Capacidad para preparar alimentos y comidas especiales.",
+      "usos": [
+        "cocinar",
+        "preparar_alimentos_bebe"
+      ]
+    },
+    {
+      "nombre": "comunicacion",
+      "nivel": 0,
+      "descripcion": "Capacidad para conversar y crear vínculos con otros habitantes.",
+      "usos": [
+        "hacer_amigos",
+        "mejorar_relaciones"
+      ]
+    },
+    {
+      "nombre": "crianza",
+      "nivel": 0,
+      "descripcion": "Capacidad para cuidar bebés y niños.",
+      "usos": [
+        "alimentar_bebe",
+        "educar_hijo",
+        "cuidar_familia"
+      ]
+    },
+    {
+      "nombre": "combate",
+      "nivel": 0,
+      "descripcion": "Capacidad para defenderse y proteger a otros.",
+      "usos": [
+        "defender_aldea",
+        "proteger_familia"
+      ]
+    },
+    {
+      "nombre": "aprendizaje",
+      "nivel": 0,
+      "descripcion": "Capacidad general para adquirir nuevos conocimientos.",
+      "usos": [
+        "estudiar",
+        "mejorar_profesion"
+      ]
+    }
+  ]
 }
