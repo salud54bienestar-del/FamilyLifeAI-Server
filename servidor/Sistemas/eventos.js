@@ -8,7 +8,7 @@ const emociones = require("./emociones.js");
 function crearEvento(id, participantes = [], datosExtra = {}) {
 
 
-    const sistemaEventos = cargarArchivo("./sistema_eventos.json");
+    const sistemaEventos = cargarArchivo("../datos/sistema_eventos.json");
 
 
     if (!sistemaEventos) {
