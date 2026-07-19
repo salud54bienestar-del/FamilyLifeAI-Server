@@ -1,3 +1,16 @@
 {
-  "eventos_disponibles": []
+  "eventos_disponibles": [
+    {
+      "id": 1,
+      "nombre": "primer_encuentro",
+      "descripcion": "Un habitante descubre el mundo por primera vez.",
+      "tipo": "inicio"
+    },
+    {
+      "id": 2,
+      "nombre": "nuevo_dia",
+      "descripcion": "Comienza un nuevo día en el mundo.",
+      "tipo": "tiempo"
+    }
+  ]
 }
