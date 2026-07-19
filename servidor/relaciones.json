@@ -2,12 +2,14 @@
   "relaciones": [
     {
       "id": 1,
-      "habitante_a": 0,
-      "habitante_b": 0,
-      "tipo": "desconocidos",
-      "confianza": 0,
-      "afinidad": 0,
-      "historial": []
+      "habitante_a": 1,
+      "habitante_b": 2,
+      "tipo": "amistad",
+      "confianza": 50,
+      "afinidad": 60,
+      "historial": [
+        "Primer encuentro"
+      ]
     }
   ]
 }
