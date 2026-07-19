@@ -1,3 +1,29 @@
 {
-  "historia": []
+  "historia": [
+    {
+      "id": 1,
+
+      "titulo": "Inicio de Village Soul",
+
+      "descripcion": "El mundo comienza su primera etapa de desarrollo.",
+
+      "tipo": "fundacion",
+
+      "fecha": {
+        "dia": 1,
+        "mes": 1,
+        "año": 1
+      },
+
+      "participantes": [],
+
+      "lugar": null,
+
+      "importancia": "alta",
+
+      "consecuencias": [],
+
+      "estado": "registrado"
+    }
+  ]
 }
