@@ -3,8 +3,21 @@
   "dia_actual": 1,
   "estacion": "primavera",
   "estado": "tranquilo",
-  "poblacion": 0,
-  "aldeas": 0,
+  "poblacion": 1,
+  "aldeas": 1,
   "epoca": "inicio",
-  "historia_iniciada": false
+  "historia_iniciada": true,
+  "lugares": [
+    {
+      "id": 1,
+      "nombre": "Aldea inicial",
+      "tipo": "aldea",
+      "descubierto": true
+    }
+  ],
+  "recursos": {
+    "comida": 100,
+    "madera": 100,
+    "piedra": 50
+  }
 }
