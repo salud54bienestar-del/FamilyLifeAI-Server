@@ -45,23 +45,19 @@ function cambiarEmocion(
 
         estado[emocion] += cantidad;
 
+    }
 
-        // Limitar valores entre 0 y 100
+    else if (
+        estado.emociones_secundarias &&
+        estado.emociones_secundarias[emocion] !== undefined
+    ) {
 
-        if (estado[emocion] > 100) {
-
-            estado[emocion] = 100;
-
-        }
-
-
-        if (estado[emocion] < 0) {
-
-            estado[emocion] = 0;
-
-        }
+        estado.emociones_secundarias[emocion] += cantidad;
 
     }
+
+
+    limitarValores(estado);
 
 
 
@@ -85,7 +81,7 @@ function cambiarEmocion(
 
         "emocion",
 
-        "Su emoción cambió: " + emocion,
+        "Su emoción cambió por: " + motivo,
 
         "media",
 
@@ -104,6 +100,57 @@ function cambiarEmocion(
 
 
     return estado;
+
+}
+
+
+
+function limitarValores(estado) {
+
+
+    Object.keys(estado).forEach((clave) => {
+
+        if (typeof estado[clave] === "number") {
+
+            if (estado[clave] > 100) {
+
+                estado[clave] = 100;
+
+            }
+
+
+            if (estado[clave] < 0) {
+
+                estado[clave] = 0;
+
+            }
+
+        }
+
+    });
+
+
+
+    if (estado.emociones_secundarias) {
+
+        Object.keys(estado.emociones_secundarias).forEach((clave) => {
+
+            if (estado.emociones_secundarias[clave] > 100) {
+
+                estado.emociones_secundarias[clave] = 100;
+
+            }
+
+
+            if (estado.emociones_secundarias[clave] < 0) {
+
+                estado.emociones_secundarias[clave] = 0;
+
+            }
+
+        });
+
+    }
 
 }
 
@@ -161,20 +208,107 @@ function aplicarEventoEmocional(
     switch(evento) {
 
 
+        case "primer_encuentro":
+
+            cambiarEmocion(
+                habitante_id,
+                "felicidad",
+                5,
+                "primer encuentro"
+            );
+
+            cambiarEmocion(
+                habitante_id,
+                "confianza",
+                5,
+                "primer encuentro"
+            );
+
+            break;
+
+
+
         case "amistad":
 
             cambiarEmocion(
                 habitante_id,
                 "felicidad",
                 10,
-                "nueva amistad"
+                "amistad"
             );
 
             cambiarEmocion(
                 habitante_id,
                 "confianza",
                 10,
-                "nueva amistad"
+                "amistad"
+            );
+
+            break;
+
+
+
+        case "nacimiento":
+
+            cambiarEmocion(
+                habitante_id,
+                "felicidad",
+                20,
+                "nacimiento"
+            );
+
+            cambiarEmocion(
+                habitante_id,
+                "amor",
+                20,
+                "nacimiento"
+            );
+
+            cambiarEmocion(
+                habitante_id,
+                "orgullo",
+                10,
+                "nacimiento"
+            );
+
+            break;
+
+
+
+        case "boda":
+
+            cambiarEmocion(
+                habitante_id,
+                "felicidad",
+                20,
+                "boda"
+            );
+
+            cambiarEmocion(
+                habitante_id,
+                "amor",
+                20,
+                "boda"
+            );
+
+            break;
+
+
+
+        case "divorcio":
+
+            cambiarEmocion(
+                habitante_id,
+                "tristeza",
+                20,
+                "divorcio"
+            );
+
+            cambiarEmocion(
+                habitante_id,
+                "soledad",
+                10,
+                "divorcio"
             );
 
             break;
@@ -201,26 +335,6 @@ function aplicarEventoEmocional(
 
 
 
-        case "nacimiento":
-
-            cambiarEmocion(
-                habitante_id,
-                "felicidad",
-                20,
-                "nacimiento"
-            );
-
-            cambiarEmocion(
-                habitante_id,
-                "amor",
-                20,
-                "nacimiento"
-            );
-
-            break;
-
-
-
         case "familia":
 
             cambiarEmocion(
@@ -233,16 +347,17 @@ function aplicarEventoEmocional(
             break;
 
 
+
         default:
 
             console.log(
-                "Evento emocional sin efecto definido."
+                "Evento emocional sin efecto definido:"
+                + evento
             );
 
             break;
 
     }
-
 
 }
 
