@@ -1,12 +1,3 @@
 {
-  "memorias": [
-    {
-      "id": 1,
-      "habitante_id": 0,
-      "tipo": "",
-      "descripcion": "",
-      "importancia": "baja",
-      "fecha": 0
-    }
-  ]
+  "memorias": []
 }
