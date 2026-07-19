@@ -1,17 +1,18 @@
 // Inteligencia artificial de almas - Village Soul
 
 const cargarArchivo = require("./cargador_datos.js");
+const procesarDecision = require("./decisiones.js");
 
 
 function pensarAlma(habitante_id) {
 
 
-    const almas = cargarArchivo("../datos/almas.json");
-    const emociones = cargarArchivo("../datos/emociones.json");
-    const memorias = cargarArchivo("../datos/memorias.json");
-    const objetivos = cargarArchivo("../datos/objetivos.json");
-    const relaciones = cargarArchivo("../datos/relaciones.json");
-    const familias = cargarArchivo("../datos/familias.json");
+    const almas = cargarArchivo("./almas.json");
+    const emociones = cargarArchivo("./emociones.json");
+    const memorias = cargarArchivo("./memorias.json");
+    const objetivos = cargarArchivo("./objetivos.json");
+    const relaciones = cargarArchivo("./relaciones.json");
+    const familias = cargarArchivo("./familias.json");
 
 
     if (
@@ -35,11 +36,9 @@ function pensarAlma(habitante_id) {
     );
 
 
-
     const estadoEmocional = emociones.emociones.find(
         (e) => e.habitante_id === habitante_id
     );
-
 
 
     const objetivoActual = objetivos.objetivos.find(
@@ -49,13 +48,11 @@ function pensarAlma(habitante_id) {
     );
 
 
-
     const relacionActual = relaciones.relaciones.find(
         (r) =>
             r.habitante_1 === habitante_id ||
             r.habitante_2 === habitante_id
     );
-
 
 
     const familiaActual = familias.familias.find(
@@ -95,75 +92,39 @@ function pensarAlma(habitante_id) {
 
 
 
-    let decision = "";
+    const contexto = {
 
-    let motivo = "";
-
-
-
-    // Prioridad familiar
-
-    if (familiaActual) {
-
-        decision = "cuidar familia";
-
-        motivo = "tiene vínculos familiares importantes";
+        familia:
+            !!familiaActual,
 
 
-    }
-
-    // Necesidad emocional
-
-    else if (estadoEmocional.tristeza > 50) {
+        emocion:
+            estadoEmocional.estado_actual,
 
 
-        decision = "buscar compañía";
-
-        motivo = "necesita apoyo emocional";
-
-
-    }
-
-    else if (estadoEmocional.miedo > 50) {
+        objetivo:
+            objetivoActual
+            ? objetivoActual.titulo
+            : null,
 
 
-        decision = "regresar a un lugar seguro";
-
-        motivo = "busca protección";
-
-
-    }
-
-    else if (objetivoActual) {
+        relacion:
+            relacionActual
+            ? relacionActual.tipo
+            : null,
 
 
-        decision = "trabajar en su objetivo";
+        personalidad:
+            alma.personalidad_id
 
-        motivo = "quiere avanzar en sus metas";
-
-
-    }
-
-    else if (estadoEmocional.calma > 50) {
+    };
 
 
-        decision = "explorar el mundo";
 
-        motivo = "quiere descubrir nuevas experiencias";
-
-
-    }
-
-    else {
-
-
-        decision = "descansar";
-
-        motivo = "necesita recuperar energía";
-
-
-    }
-
+    const decisionFinal = procesarDecision(
+        habitante_id,
+        contexto
+    );
 
 
 
@@ -191,16 +152,19 @@ function pensarAlma(habitante_id) {
             : "sin familia",
 
 
-        decision: decision,
+        decision:
+            decisionFinal
+            ? decisionFinal.eleccion
+            : "sin decisión",
 
 
-        motivo: motivo
+        contexto: contexto
 
     };
 
 
 
-    console.log("Decisión generada:");
+    console.log("Pensamiento generado:");
 
     console.log(pensamiento);
 
