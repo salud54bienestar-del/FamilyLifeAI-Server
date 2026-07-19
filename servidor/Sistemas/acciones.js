@@ -18,7 +18,7 @@ function ejecutarAccion(habitante_id, accion) {
 
 
 
-    const mundo = cargarArchivo("./mundo.json");
+    const mundo = cargarArchivo("../datos/mundo.json");
 
 
     if (!mundo) {
