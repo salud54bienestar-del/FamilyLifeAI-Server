@@ -2,6 +2,7 @@
 
 const cargarArchivo = require("./cargador_datos.js");
 const crearMemoria = require("./memorias.js");
+const emociones = require("./emociones.js");
 
 
 function crearEvento(id, participantes = [], datosExtra = {}) {
@@ -43,27 +44,19 @@ function crearEvento(id, participantes = [], datosExtra = {}) {
 
         id: id,
 
-
         nombre: eventoBase.nombre,
-
 
         descripcion: eventoBase.descripcion,
 
-
         tipo: eventoBase.tipo,
-
 
         fecha: new Date().toISOString(),
 
-
         participantes: participantes,
-
 
         datos: datosExtra,
 
-
         importancia: eventoBase.importancia || "media"
-
 
     };
 
@@ -77,6 +70,7 @@ function crearEvento(id, participantes = [], datosExtra = {}) {
 
 
     participantes.forEach((habitante) => {
+
 
 
         crearMemoria(
@@ -94,6 +88,17 @@ function crearEvento(id, participantes = [], datosExtra = {}) {
             eventoBase.emocion || "neutral"
 
         );
+
+
+
+        emociones.aplicarEventoEmocional(
+
+            habitante,
+
+            evento.nombre
+
+        );
+
 
 
     });
