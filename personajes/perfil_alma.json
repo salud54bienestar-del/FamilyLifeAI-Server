@@ -1,10 +1,30 @@
 {
-  "nombre": "",
-  "edad": 0,
-  "etapa_vida": "",
-  "personalidad": [],
-  "gustos": [],
-  "habilidades": [],
-  "objetivos": [],
-  "caracteristicas": {}
+  "perfil": {
+    "id": 1,
+    "nombre": "",
+    "edad": 0,
+    "etapa_vida": "adulto",
+    "genero": "",
+    "personalidad": [],
+    "gustos": [],
+    "profesion": "",
+    "estado_emocional": "neutral",
+
+    "familia": {
+      "padre": null,
+      "madre": null,
+      "pareja": null,
+      "hijos": []
+    },
+
+    "relaciones": [],
+
+    "memorias": [],
+
+    "estado": {
+      "hambre": 100,
+      "energia": 100,
+      "felicidad": 100
+    }
+  }
 }
