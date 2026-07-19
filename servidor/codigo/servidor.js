@@ -1,7 +1,7 @@
 // Sistema principal de Village Soul
 
 const cargarArchivo = require("./cargador_datos.js");
-const soulEngine = require("./soul_engine.js");
+const iniciarMotor = require("./soul_engine.js");
 
 function iniciarServidor() {
     console.log("=================================");
@@ -20,10 +20,13 @@ function iniciarServidor() {
     cargarDecisiones();
 
     console.log("Todos los módulos fueron cargados correctamente.");
+
+    console.log("Iniciando Soul Engine...");
+    iniciarMotor();
 }
 
 function cargarMundo() {
-    const mundo = cargarArchivo("mundo.json");
+    const mundo = cargarArchivo("../datos/mundo.json");
 
     if (mundo) {
         console.log("✓ Mundo cargado: " + mundo.nombre);
@@ -31,7 +34,7 @@ function cargarMundo() {
 }
 
 function cargarAlmas() {
-    const almas = cargarArchivo("almas.json");
+    const almas = cargarArchivo("../datos/almas.json");
 
     if (almas) {
         console.log("✓ Almas cargadas: " + almas.almas.length);
@@ -59,3 +62,5 @@ function cargarDecisiones() {
 }
 
 iniciarServidor();
+
+module.exports = iniciarServidor;
