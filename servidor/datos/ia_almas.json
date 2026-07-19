@@ -1,0 +1,62 @@
+{
+  "configuracion_ia": {
+
+    "memoria_activa": true,
+
+    "emociones_influyen": true,
+
+    "personalidad_influye": true,
+
+    "aprendizaje": true,
+
+    "nivel_autonomia": 2,
+
+    "toma_decisiones": true,
+
+
+    "sistemas_influencia": {
+
+      "relaciones": true,
+
+      "familia": true,
+
+      "hijos": true,
+
+      "legado": true,
+
+      "historia_mundo": true,
+
+      "profesiones": true,
+
+      "objetivos": true
+
+    },
+
+
+    "comportamiento_social": {
+
+      "crear_vinculos": true,
+
+      "resolver_conflictos": true,
+
+      "buscar_compañia": true,
+
+      "formar_familia": true,
+
+      "cuidar_descendientes": true
+
+    },
+
+
+    "aprendizaje_experiencia": {
+
+      "aprender_de_memorias": true,
+
+      "cambiar_personalidad": false,
+
+      "adaptarse_al_entorno": true
+
+    }
+
+  }
+}
