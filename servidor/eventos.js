@@ -1,39 +1,84 @@
 // Sistema de eventos de Village Soul
 
 const cargarArchivo = require("./cargador_datos.js");
+const crearMemoria = require("./memorias.js");
 
-function crearEvento(id) {
+
+function crearEvento(id, participantes = [], datosExtra = {}) {
+
     const sistemaEventos = cargarArchivo("./sistema_eventos.json");
+
 
     if (!sistemaEventos) {
         console.log("No se pudo cargar el sistema de eventos.");
         return null;
     }
 
+
     const eventoBase = sistemaEventos.eventos_disponibles.find(
         (evento) => evento.id === id
     );
+
 
     if (!eventoBase) {
         console.log("Evento no encontrado.");
         return null;
     }
 
+
     const evento = {
+
+        id: id,
+
         nombre: eventoBase.nombre,
+
         descripcion: eventoBase.descripcion,
+
         tipo: eventoBase.tipo,
-        fecha: new Date().toISOString()
+
+        fecha: new Date().toISOString(),
+
+        participantes: participantes,
+
+        datos: datosExtra,
+
+        importancia: "media"
+
     };
+
 
     console.log("Nuevo evento creado:");
     console.log(evento);
 
+
+
+    participantes.forEach((habitante) => {
+
+        crearMemoria(
+            habitante,
+            "evento",
+            evento.nombre,
+            evento.importancia
+        );
+
+    });
+
+
+
     return evento;
 }
 
+
+
 // Evento inicial de prueba
 
-crearEvento(1);
+crearEvento(
+    1,
+    [1],
+    {
+        inicio: "primera historia del mundo"
+    }
+);
+
 
 module.exports = crearEvento;
