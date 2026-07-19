@@ -1,0 +1,111 @@
+{
+  "eventos_disponibles": [
+    {
+      "id": 1,
+      "nombre": "Inicio del mundo",
+      "descripcion": "El mundo de Village Soul comienza su primera historia.",
+      "tipo": "fundacion",
+      "importancia": "alta",
+      "emocion": "esperanza"
+    },
+
+    {
+      "id": 2,
+      "nombre": "Primer encuentro",
+      "descripcion": "Dos habitantes se conocen por primera vez.",
+      "tipo": "social",
+      "importancia": "media",
+      "emocion": "curiosidad"
+    },
+
+    {
+      "id": 3,
+      "nombre": "Nacimiento",
+      "descripcion": "Un nuevo habitante llega al mundo.",
+      "tipo": "familia",
+      "importancia": "alta",
+      "emocion": "felicidad"
+    },
+
+    {
+      "id": 4,
+      "nombre": "Embarazo confirmado",
+      "descripcion": "Una habitante inicia una etapa de embarazo.",
+      "tipo": "familia",
+      "importancia": "alta",
+      "emocion": "alegria"
+    },
+
+    {
+      "id": 5,
+      "nombre": "Nacimiento múltiple",
+      "descripcion": "Nacen gemelos o más bebés en un mismo embarazo.",
+      "tipo": "familia",
+      "importancia": "muy_alta",
+      "emocion": "sorpresa"
+    },
+
+    {
+      "id": 6,
+      "nombre": "Boda",
+      "descripcion": "Dos habitantes unen sus vidas y forman una familia.",
+      "tipo": "relacion",
+      "importancia": "alta",
+      "emocion": "felicidad"
+    },
+
+    {
+      "id": 7,
+      "nombre": "Divorcio",
+      "descripcion": "Una relación matrimonial llega a su final.",
+      "tipo": "familia",
+      "importancia": "alta",
+      "emocion": "tristeza"
+    },
+
+    {
+      "id": 8,
+      "nombre": "Adopción",
+      "descripcion": "Un habitante crea un vínculo familiar mediante adopción.",
+      "tipo": "familia",
+      "importancia": "alta",
+      "emocion": "amor"
+    },
+
+    {
+      "id": 9,
+      "nombre": "Cumpleaños",
+      "descripcion": "Un habitante cumple un nuevo año de vida.",
+      "tipo": "vida",
+      "importancia": "media",
+      "emocion": "felicidad"
+    },
+
+    {
+      "id": 10,
+      "nombre": "Cambio de etapa de vida",
+      "descripcion": "Un habitante pasa a una nueva etapa de crecimiento.",
+      "tipo": "vida",
+      "importancia": "media",
+      "emocion": "orgullo"
+    },
+
+    {
+      "id": 11,
+      "nombre": "Fallecimiento",
+      "descripcion": "Un habitante deja este mundo y su legado continúa.",
+      "tipo": "vida",
+      "importancia": "muy_alta",
+      "emocion": "tristeza"
+    },
+
+    {
+      "id": 12,
+      "nombre": "Nuevo trabajo",
+      "descripcion": "Un habitante comienza una nueva profesión.",
+      "tipo": "profesion",
+      "importancia": "media",
+      "emocion": "motivacion"
+    }
+  ]
+}
