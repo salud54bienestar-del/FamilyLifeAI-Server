@@ -1,3 +1,89 @@
 {
-  "conversaciones": []
+  "conversaciones": [
+    {
+      "tipo": "saludo",
+      "descripcion": "Interacción básica para iniciar una conversación.",
+      "efecto": {
+        "confianza": 1,
+        "relacion": "mejora_leve"
+      },
+      "frases": [
+        "Hola, ¿cómo estás?",
+        "Me alegra verte."
+      ]
+    },
+
+    {
+      "tipo": "conocer_persona",
+      "descripcion": "Conversación para descubrir información sobre otro habitante.",
+      "efecto": {
+        "confianza": 2,
+        "memoria": "guarda_datos_personales"
+      },
+      "frases": [
+        "Cuéntame sobre ti.",
+        "¿Qué cosas te gustan?"
+      ]
+    },
+
+    {
+      "tipo": "amistad",
+      "descripcion": "Conversaciones que fortalecen un vínculo de amistad.",
+      "efecto": {
+        "amistad": "aumenta",
+        "confianza": 5
+      },
+      "frases": [
+        "Me gusta pasar tiempo contigo.",
+        "Eres una buena persona."
+      ]
+    },
+
+    {
+      "tipo": "romance",
+      "descripcion": "Conversaciones especiales entre personajes con suficiente confianza.",
+      "condiciones": [
+        "amistad_alta",
+        "compatibilidad"
+      ],
+      "efecto": {
+        "romance": "aumenta"
+      },
+      "frases": [
+        "Me siento feliz cuando estoy contigo.",
+        "Quiero conocerte más."
+      ]
+    },
+
+    {
+      "tipo": "familia",
+      "descripcion": "Conversaciones entre miembros de una familia.",
+      "condiciones": [
+        "parentesco"
+      ],
+      "efecto": {
+        "vinculo_familiar": "aumenta",
+        "memoria": "crea_recuerdo"
+      },
+      "frases": [
+        "Siempre estaré para ti.",
+        "Me alegra verte crecer."
+      ]
+    },
+
+    {
+      "tipo": "conflicto",
+      "descripcion": "Conversaciones para resolver problemas entre habitantes.",
+      "condiciones": [
+        "relacion_negativa"
+      ],
+      "efecto": {
+        "confianza": "puede_aumentar_o_disminuir"
+      },
+      "frases": [
+        "Tenemos que hablar.",
+        "Quiero solucionar esto."
+      ]
+    }
+  ]
 }
