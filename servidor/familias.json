@@ -1,3 +1,25 @@
 {
-  "familias": []
+  "familias": [
+    {
+      "id": 1,
+
+      "apellido": "",
+
+      "miembros": [],
+
+      "padres": [],
+
+      "hijos": [],
+
+      "generacion": 1,
+
+      "tipo_familia": "nuclear",
+
+      "estado": "activa",
+
+      "custodia": {},
+
+      "historial": []
+    }
+  ]
 }
