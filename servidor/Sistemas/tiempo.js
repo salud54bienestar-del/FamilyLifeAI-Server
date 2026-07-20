@@ -1,7 +1,7 @@
 // Sistema de tiempo de Village Soul
 
 const cargarArchivo = require("./cargador_datos.js");
-const pensarAlma = require("../ia/ia_almas.js");
+const pensarAlma = require("../IA/ia_almas.js");
 const ejecutarAccion = require("./acciones.js");
 const crearEvento = require("./eventos.js");
 
