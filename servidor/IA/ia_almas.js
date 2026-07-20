@@ -1,7 +1,7 @@
 // Inteligencia artificial de almas - Village Soul
 
-const cargarArchivo = require("../sistemas/cargador_datos.js");
-const procesarDecision = require("../sistemas/decisiones.js");
+const cargarArchivo = require("../Sistemas/cargador_datos.js");
+const procesarDecision = require("../Sistemas/decisiones.js");
 
 
 function pensarAlma(habitante_id) {
