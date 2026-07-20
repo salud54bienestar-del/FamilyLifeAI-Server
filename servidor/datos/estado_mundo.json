@@ -1,0 +1,35 @@
+{
+  "personajes_cargados": [
+    "luna"
+  ],
+
+  "memoria_global": [],
+
+  "version_servidor": "0.2",
+
+  "sistemas_activos": [
+    "almas",
+    "memorias",
+    "emociones",
+    "relaciones",
+    "familias",
+    "crecimiento",
+    "eventos",
+    "tiempo",
+    "habilidades"
+  ],
+
+  "configuracion_mundo": {
+    "generaciones_activas": true,
+    "crecimiento_habitantes": true,
+    "familias": true,
+    "relaciones_sociales": true
+  },
+
+  "estadisticas": {
+    "habitantes": 0,
+    "familias": 0,
+    "eventos": 0,
+    "generaciones": 0
+  }
+}
