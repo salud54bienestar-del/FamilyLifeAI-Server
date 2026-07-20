@@ -1,11 +1,11 @@
 // Sistema de comunicación de Village Soul
 
-const cargarArchivo = require("./cargador_datos.js");
+const cargarArchivo = require("./sistemas/cargador_datos.js");
 
 function hablarAlma(habitante_id, mensaje) {
 
-    const almas = cargarArchivo("../datos/almas.json");
-    const emociones = cargarArchivo("../datos/emociones.json");
+    const almas = cargarArchivo("./datos/almas.json");
+    const emociones = cargarArchivo("./datos/emociones.json");
 
     if (!almas || !emociones) {
         console.log("No se pudieron cargar los datos de comunicación.");
@@ -48,5 +48,6 @@ hablarAlma(
     1,
     "Me gustaría conocer más sobre este mundo."
 );
+
 
 module.exports = hablarAlma;
