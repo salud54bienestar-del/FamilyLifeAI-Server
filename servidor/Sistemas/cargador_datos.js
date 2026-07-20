@@ -8,12 +8,17 @@ function cargarArchivo(nombre) {
 
     try {
 
-        // Ruta base del proyecto (carpeta servidor)
+        // Carpeta raíz del proyecto: FamilyLifeAI-Server
         const rutaBase = path.resolve(__dirname, "..");
+
+
+        // Elimina ../ porque la carpeta datos está dentro de la raíz
+        const archivoLimpio = nombre.replace("../", "");
+
 
         const rutaCompleta = path.resolve(
             rutaBase,
-            nombre
+            archivoLimpio
         );
 
 
@@ -36,7 +41,16 @@ function cargarArchivo(nombre) {
 
         console.log("Archivo:", nombre);
 
-        console.log("Ruta buscada:", path.resolve(__dirname, "..", nombre));
+
+        console.log(
+            "Ruta buscada:",
+            path.resolve(
+                __dirname,
+                "..",
+                nombre.replace("../", "")
+            )
+        );
+
 
         console.log("Motivo:", error.message);
 
@@ -46,7 +60,6 @@ function cargarArchivo(nombre) {
     }
 
 }
-
 
 
 module.exports = cargarArchivo;
