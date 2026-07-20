@@ -8,29 +8,11 @@ function cargarArchivo(nombre) {
 
     try {
 
-        let rutaCompleta;
-
-
-        // Si ya viene con ../datos/
-        if (nombre.startsWith("../")) {
-
-            rutaCompleta = path.resolve(
-                __dirname,
-                "..",
-                nombre.substring(3)
-            );
-
-        } 
-        else {
-
-            rutaCompleta = path.resolve(
-                __dirname,
-                "..",
-                nombre
-            );
-
-        }
-
+        const rutaCompleta = path.resolve(
+            __dirname,
+            "..",
+            nombre.replace("../datos/", "")
+        );
 
 
         const datos = fs.readFileSync(
@@ -42,16 +24,21 @@ function cargarArchivo(nombre) {
         return JSON.parse(datos);
 
 
-    } catch(error) {
+    } catch (error) {
 
 
         console.log("===============================");
         console.log("ERROR CARGANDO ARCHIVO");
         console.log("===============================");
 
+
         console.log("Archivo:", nombre);
 
-        console.log("Ruta buscada:", error.path);
+        console.log("Ruta buscada:", path.resolve(
+            __dirname,
+            "..",
+            nombre.replace("../datos/", "")
+        ));
 
         console.log("Motivo:", error.message);
 
