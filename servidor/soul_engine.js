@@ -4,28 +4,38 @@ console.log("=================================");
 console.log("        SOUL ENGINE");
 console.log("=================================");
 
+
 const cargarArchivo = require("./sistemas/cargador_datos.js");
 const sistemas = require("./sistemas.js");
+
 
 const crearEvento = require("./sistemas/eventos.js");
 const pensarAlma = require("./ia/ia_almas.js");
 const avanzarTiempo = require("./sistemas/tiempo.js");
+
 
 const relaciones = require("./sistemas/relaciones.js");
 const memorias = require("./sistemas/memorias.js");
 const decisiones = require("./sistemas/decisiones.js");
 
 
+
 console.log("Sistemas activos:");
 
+
 sistemas.forEach((sistema) => {
+
   console.log("✓ " + sistema);
+
 });
+
 
 
 console.log("Cargando mundo...");
 
-const mundo = cargarArchivo("../datos/mundo.json");
+
+const mundo = cargarArchivo("./datos/mundo.json");
+
 
 
 if (mundo) {
@@ -37,17 +47,25 @@ if (mundo) {
 }
 
 
+
 crearEvento(
 
-  "Inicio del mundo",
+  1,
 
-  "El mundo de Village Soul comienza su primera historia."
+  [1],
+
+  {
+
+    inicio: "primera historia del mundo"
+
+  }
 
 );
 
 
 
 console.log("Inicializando habitantes...");
+
 
 
 const almaInicial = pensarAlma(1);
@@ -65,6 +83,7 @@ if (almaInicial) {
 console.log("Activando sistemas sociales...");
 
 
+
 relaciones();
 
 memorias();
@@ -74,11 +93,13 @@ memorias();
 console.log("Evaluando decisiones de habitantes...");
 
 
+
 decisiones();
 
 
 
 console.log("Iniciando ciclo de tiempo...");
+
 
 
 avanzarTiempo();
