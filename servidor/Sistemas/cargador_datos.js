@@ -8,18 +8,29 @@ function cargarArchivo(nombre) {
 
     try {
 
-        // Carpeta raíz del proyecto: FamilyLifeAI-Server
-        const rutaBase = path.resolve(__dirname, "..");
+        let rutaCompleta;
 
 
-        // Elimina ../ porque la carpeta datos está dentro de la raíz
-        const archivoLimpio = nombre.replace("../", "");
+        // Si ya viene con ../datos/
+        if (nombre.startsWith("../")) {
 
+            rutaCompleta = path.resolve(
+                __dirname,
+                "..",
+                nombre.substring(3)
+            );
 
-        const rutaCompleta = path.resolve(
-            rutaBase,
-            archivoLimpio
-        );
+        } 
+        else {
+
+            rutaCompleta = path.resolve(
+                __dirname,
+                "..",
+                nombre
+            );
+
+        }
+
 
 
         const datos = fs.readFileSync(
@@ -31,26 +42,16 @@ function cargarArchivo(nombre) {
         return JSON.parse(datos);
 
 
-    } catch (error) {
+    } catch(error) {
 
 
         console.log("===============================");
         console.log("ERROR CARGANDO ARCHIVO");
         console.log("===============================");
 
-
         console.log("Archivo:", nombre);
 
-
-        console.log(
-            "Ruta buscada:",
-            path.resolve(
-                __dirname,
-                "..",
-                nombre.replace("../", "")
-            )
-        );
-
+        console.log("Ruta buscada:", error.path);
 
         console.log("Motivo:", error.message);
 
