@@ -5,18 +5,18 @@ console.log("        SOUL ENGINE");
 console.log("=================================");
 
 
-const cargarArchivo = require("./sistemas/cargador_datos.js");
+const cargarArchivo = require("./Sistemas/cargador_datos.js");
 const sistemas = require("./sistemas.js");
 
 
-const crearEvento = require("./sistemas/eventos.js");
-const pensarAlma = require("./ia/ia_almas.js");
-const avanzarTiempo = require("./sistemas/tiempo.js");
+const crearEvento = require("./Sistemas/eventos.js");
+const pensarAlma = require("./IA/ia_almas.js");
+const avanzarTiempo = require("./Sistemas/tiempo.js");
 
 
-const relaciones = require("./sistemas/relaciones.js");
-const memorias = require("./sistemas/memorias.js");
-const decisiones = require("./sistemas/decisiones.js");
+const relaciones = require("./Sistemas/relaciones.js");
+const memorias = require("./Sistemas/memorias.js");
+const decisiones = require("./Sistemas/decisiones.js");
 
 
 
