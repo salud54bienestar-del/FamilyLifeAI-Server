@@ -8,7 +8,13 @@ function cargarArchivo(nombre) {
 
     try {
 
-        const rutaCompleta = path.resolve(__dirname, nombre);
+        // Ruta base del proyecto (carpeta servidor)
+        const rutaBase = path.resolve(__dirname, "..");
+
+        const rutaCompleta = path.resolve(
+            rutaBase,
+            nombre
+        );
 
 
         const datos = fs.readFileSync(
@@ -29,6 +35,8 @@ function cargarArchivo(nombre) {
 
 
         console.log("Archivo:", nombre);
+
+        console.log("Ruta buscada:", path.resolve(__dirname, "..", nombre));
 
         console.log("Motivo:", error.message);
 
