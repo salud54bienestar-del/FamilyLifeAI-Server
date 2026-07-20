@@ -8,10 +8,17 @@ function cargarArchivo(nombre) {
 
     try {
 
-        const rutaCompleta = path.resolve(
-            __dirname,
-            "..",
-            nombre.replace("../datos/", "")
+        // Carpeta servidor
+        const rutaBase = path.resolve(__dirname, "..");
+
+
+        // Convertir ../datos/archivo.json a datos/archivo.json
+        const archivo = nombre.replace("../", "");
+
+
+        const rutaCompleta = path.join(
+            rutaBase,
+            archivo
         );
 
 
@@ -34,10 +41,9 @@ function cargarArchivo(nombre) {
 
         console.log("Archivo:", nombre);
 
-        console.log("Ruta buscada:", path.resolve(
-            __dirname,
-            "..",
-            nombre.replace("../datos/", "")
+        console.log("Ruta buscada:", path.join(
+            path.resolve(__dirname, ".."),
+            nombre.replace("../", "")
         ));
 
         console.log("Motivo:", error.message);
