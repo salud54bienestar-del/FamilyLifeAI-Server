@@ -2,5 +2,5 @@
   "name": "village-soul-server",
   "version": "0.1.0",
   "description": "Servidor de almas, memorias e inteligencia artificial para Village Soul",
-  "main": "codigo/app.js"
+  "main": "soul_engine.js"
 }
