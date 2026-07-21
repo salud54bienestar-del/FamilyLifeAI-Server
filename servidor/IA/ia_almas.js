@@ -13,8 +13,8 @@ function pensarAlma(habitante_id) {
     const relaciones = cargarArchivo("../datos/relaciones.json");
     const familias = cargarArchivo("../datos/familias.json");
     const personalidades = cargarArchivo("../datos/personalidades.json");
-    const profesiones = cargarArchivo("../datos/profesiones.json");
-    const lugares = cargarArchivo("../datos/lugares_trabajo.json");
+    const lugaresTrabajo = cargarArchivo("../datos/lugares_trabajo.json");
+
 
 
     if (
@@ -24,14 +24,12 @@ function pensarAlma(habitante_id) {
         !relaciones ||
         !familias ||
         !personalidades ||
-        !profesiones ||
-        !lugares
+        !lugaresTrabajo
     ) {
 
         console.log("No se pudieron cargar los datos de la IA.");
 
         return null;
-
     }
 
 
@@ -39,6 +37,7 @@ function pensarAlma(habitante_id) {
     const alma = almas.almas.find(
         a => a.id === habitante_id
     );
+
 
 
     if (!alma) {
@@ -61,12 +60,19 @@ function pensarAlma(habitante_id) {
 
 
 
+
+
     // ==============================
-    // GUÍAS ESPECIALES
+    // ALMAS ESPECIALES (GUÍAS)
     // ==============================
 
 
     if (alma.tipo === "guia") {
+
+
+        console.log(
+            "Tipo de alma: guía"
+        );
 
 
         return {
@@ -87,8 +93,8 @@ function pensarAlma(habitante_id) {
 
         };
 
-
     }
+
 
 
 
@@ -102,6 +108,17 @@ function pensarAlma(habitante_id) {
     personalidades.personalidades.find(
         p => p.id === alma.personalidad_id
     );
+
+
+
+    if(personalidad){
+
+        console.log(
+            "Personalidad:",
+            personalidad.nombre
+        );
+
+    }
 
 
 
@@ -122,37 +139,68 @@ function pensarAlma(habitante_id) {
 
 
     // ==============================
-    // PROFESIÓN
+    // PROFESIÓN Y TRABAJO
     // ==============================
 
 
     const profesionActual =
-    profesiones.profesiones.find(
-        p => p.nombre === alma.profesion.nombre
-    );
+    alma.profesion || null;
 
-
-
-
-
-    // ==============================
-    // LUGAR DE TRABAJO
-    // ==============================
 
 
     let lugarTrabajo = null;
+
 
 
     if(profesionActual){
 
 
         lugarTrabajo =
-        lugares.lugares.find(
-            l => l.nombre === profesionActual.lugar_trabajo
+        lugaresTrabajo.lugares_trabajo.find(
+
+            lugar =>
+            lugar.profesiones.includes(
+                profesionActual.nombre
+            )
+
         );
 
+    }
+
+
+
+
+    if(lugarTrabajo){
+
+        console.log(
+            "Lugar de trabajo:",
+            lugarTrabajo.nombre
+        );
 
     }
+
+    else {
+
+        console.log(
+            "Sin lugar de trabajo asignado."
+        );
+
+    }
+
+
+
+
+
+
+    // ==============================
+    // OBJETIVO ACTUAL
+    // ==============================
+
+
+    const objetivoActual =
+    alma.objetivos?.[0]
+    ||
+    "explorar el mundo";
 
 
 
@@ -173,24 +221,9 @@ function pensarAlma(habitante_id) {
 
 
 
-    // ==============================
-    // OBJETIVO
-    // ==============================
-
-
-    const objetivoActual =
-    alma.objetivos?.[0]
-    ||
-    "explorar el mundo";
-
-
-
-
-
-
 
     // ==============================
-    // CONTEXTO DE VIDA
+    // CONTEXTO DE DECISIÓN
     // ==============================
 
 
@@ -216,27 +249,6 @@ function pensarAlma(habitante_id) {
 
 
 
-        hijos:
-        alma.familia?.hijos
-        ||
-        [],
-
-
-
-        profesion:
-        alma.profesion?.nombre
-        ||
-        "sin_profesion",
-
-
-
-        lugar_trabajo:
-        lugarTrabajo?.nombre
-        ||
-        "ninguno",
-
-
-
         objetivo:
         objetivoActual,
 
@@ -252,6 +264,37 @@ function pensarAlma(habitante_id) {
         rasgos:
         personalidad?.rasgos
         ||
+        [],
+
+
+
+        // NUEVO SISTEMA DE PROFESIONES
+
+
+        profesion:
+        profesionActual?.nombre
+        ||
+        "sin_profesion",
+
+
+
+        nivel_profesion:
+        profesionActual?.nivel
+        ||
+        1,
+
+
+
+        lugar_trabajo:
+        lugarTrabajo?.nombre
+        ||
+        "sin_lugar",
+
+
+
+        tareas_trabajo:
+        lugarTrabajo?.servicios
+        ||
         []
 
     };
@@ -263,7 +306,7 @@ function pensarAlma(habitante_id) {
 
 
     // ==============================
-    // DECISIÓN DE IA
+    // TOMAR DECISIÓN
     // ==============================
 
 
@@ -277,16 +320,28 @@ function pensarAlma(habitante_id) {
 
 
 
+
+
     return {
+
+
+        habitante_id:
 
 
         habitante_id,
 
+
+
         nombre:
+
+
         alma.nombre,
 
 
+
         tipo:
+
+
         alma.tipo
         ||
         "habitante",
@@ -294,8 +349,13 @@ function pensarAlma(habitante_id) {
 
 
         estado:
+
+
         "pensando",
 
+
+
+        personalidad:
 
 
         personalidad,
@@ -303,19 +363,32 @@ function pensarAlma(habitante_id) {
 
 
         profesion:
+
+
         profesionActual,
 
+
+
+        lugar_trabajo:
+
+
+        lugarTrabajo,
+
+
+
+        contexto:
 
 
         contexto,
 
 
 
+        decision:
+
+
         decision
 
-
     };
-
 
 }
 
