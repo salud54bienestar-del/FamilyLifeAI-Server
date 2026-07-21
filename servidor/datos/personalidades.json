@@ -7,7 +7,11 @@
         "ayuda a otros",
         "confía fácilmente",
         "evita conflictos"
-      ]
+      ],
+      "curiosidad": 50,
+      "valentia": 40,
+      "sociabilidad": 90,
+      "paciencia": 80
     },
     {
       "id": 2,
@@ -16,7 +20,11 @@
         "explora",
         "busca novedades",
         "acepta riesgos"
-      ]
+      ],
+      "curiosidad": 90,
+      "valentia": 85,
+      "sociabilidad": 60,
+      "paciencia": 40
     }
   ]
 }
