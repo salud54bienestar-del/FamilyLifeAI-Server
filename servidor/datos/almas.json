@@ -6,6 +6,8 @@
       "edad": 20,
       "personalidad_id": 1,
 
+      "tipo": "habitante",
+
       "emociones": {
         "felicidad": 70,
         "confianza": 20,
@@ -50,6 +52,8 @@
       "edad": 20,
       "personalidad_id": 2,
 
+      "tipo": "habitante",
+
       "emociones": {
         "felicidad": 70,
         "confianza": 15,
@@ -85,6 +89,22 @@
       "familia": [],
 
       "estado": "viviendo"
-    }
-  ]
-}
+    },
+
+
+    {
+      "id": 99,
+      "nombre": "Nova",
+      "edad": 0,
+      "personalidad_id": 3,
+
+      "tipo": "guia",
+
+      "rol": "guardiana_del_conocimiento",
+
+      "emociones": {
+        "felicidad": 80,
+        "confianza": 100,
+        "miedo": 0,
+        "tristeza": 0,
+        "
