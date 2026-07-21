@@ -1,7 +1,9 @@
 // Sistema de embarazo de Village Soul
 
 const cargarArchivo = require("./cargador_datos.js");
+
 const crearEvento = require("./eventos.js");
+
 const crearMemoria = require("./memorias.js");
 
 const {
@@ -62,19 +64,21 @@ function evaluarEmbarazo(
 
 
 
-
     const requisitos = {
 
 
         matrimonio:
+
         pareja.estado_pareja === "casados",
 
 
         romance:
+
         pareja.romance >= 80,
 
 
         confianza:
+
         pareja.confianza >= 80
 
 
@@ -84,22 +88,24 @@ function evaluarEmbarazo(
 
     return {
 
-
         madre_id,
 
         padre_id,
 
+        requisitos,
+
+
         aprobado:
 
         Object.values(requisitos)
-        .every(r=>r===true),
-
-
-        requisitos
+        .every(Boolean)
 
     };
 
+
 }
+
+
 
 
 
@@ -121,10 +127,14 @@ function iniciarEmbarazo(
     );
 
 
-    if(!evaluacion || !evaluacion.aprobado){
+
+    if(
+        !evaluacion ||
+        !evaluacion.aprobado
+    ){
 
         console.log(
-            "No puede iniciar embarazo."
+            "No cumple requisitos."
         );
 
         return null;
@@ -134,12 +144,21 @@ function iniciarEmbarazo(
 
 
 
+
     const datos =
     cargarArchivo("../datos/embarazos.json");
 
 
 
-    if(!datos){
+    const tiempo =
+    cargarArchivo("../datos/tiempo.json");
+
+
+
+    if(
+        !datos ||
+        !tiempo
+    ){
 
         return null;
 
@@ -149,7 +168,7 @@ function iniciarEmbarazo(
 
 
 
-    const activo =
+    const embarazoActivo =
     datos.embarazos.find(
 
         e =>
@@ -161,11 +180,7 @@ function iniciarEmbarazo(
 
 
 
-    if(activo){
-
-        console.log(
-            "Ya existe un embarazo."
-        );
+    if(embarazoActivo){
 
         return null;
 
@@ -193,19 +208,23 @@ function iniciarEmbarazo(
         padre_id,
 
 
-        dias:
+
+        dia_inicio:
+
+        tiempo.tiempo.dia,
+
+
+
+        dias_transcurridos:
 
         0,
 
 
-        meses:
 
-        0,
+        duracion:
 
+        90,
 
-        duracion_dias:
-
-        270,
 
 
         etapa:
@@ -230,16 +249,10 @@ function iniciarEmbarazo(
         100,
 
 
-        complicaciones:
-
-        [],
+        complicaciones:[],
 
 
-
-        bebe_id:
-
-        null
-
+        bebe_id:null
 
 
     };
@@ -261,18 +274,13 @@ function iniciarEmbarazo(
         9,
 
         [
-
             madre_id,
-
             padre_id
-
         ],
 
         {
-
             tipo:
             "embarazo_iniciado"
-
         }
 
     );
@@ -295,9 +303,8 @@ function iniciarEmbarazo(
 
 
 
-
-
     return embarazo;
+
 
 }
 
@@ -308,23 +315,31 @@ function iniciarEmbarazo(
 
 
 // =================================
-// AVANZAR UN DÍA VILLAGE SOUL
+// ACTUALIZAR CON DÍA MINECRAFT
 // =================================
 
-function avanzarEmbarazos(
-    familia_id
-){
+function actualizarEmbarazos(){
 
 
     const datos =
     cargarArchivo("../datos/embarazos.json");
 
 
-    if(!datos){
+    const tiempo =
+    cargarArchivo("../datos/tiempo.json");
+
+
+
+    if(
+        !datos ||
+        !tiempo
+    ){
 
         return null;
 
     }
+
+
 
 
 
@@ -344,40 +359,31 @@ function avanzarEmbarazos(
 
 
 
-
-            embarazo.dias++;
-
-
-
-
-            // Cada 30 días = 1 mes
-
-            embarazo.meses =
-            Math.floor(
-                embarazo.dias / 30
-            );
+            embarazo.dias_transcurridos++;
 
 
 
 
 
-            if(embarazo.meses <= 3){
+            if(
+                embarazo.dias_transcurridos <=30
+            ){
 
                 embarazo.etapa =
                 "primer_trimestre";
 
             }
 
-
-            else if(embarazo.meses <= 6){
+            else if(
+                embarazo.dias_transcurridos <=60
+            ){
 
                 embarazo.etapa =
                 "segundo_trimestre";
 
             }
 
-
-            else {
+            else{
 
                 embarazo.etapa =
                 "tercer_trimestre";
@@ -388,11 +394,9 @@ function avanzarEmbarazos(
 
 
 
-
-
             if(
-                embarazo.dias >=
-                embarazo.duracion_dias
+                embarazo.dias_transcurridos >=
+                embarazo.duracion
             ){
 
 
@@ -400,10 +404,9 @@ function avanzarEmbarazos(
 
                     embarazo.id,
 
-                    familia_id,
+                    null,
 
                     {
-
                         nombre:
                         "Nuevo habitante"
 
@@ -412,13 +415,7 @@ function avanzarEmbarazos(
                 );
 
 
-
-                embarazo.estado =
-                "finalizado";
-
-
             }
-
 
 
         }
@@ -435,15 +432,14 @@ function avanzarEmbarazos(
 
 
 
-
-module.exports = {
+module.exports={
 
 
     evaluarEmbarazo,
 
     iniciarEmbarazo,
 
-    avanzarEmbarazos
+    actualizarEmbarazos
 
 
 };
