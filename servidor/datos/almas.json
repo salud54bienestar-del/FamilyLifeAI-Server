@@ -34,6 +34,20 @@
 
       "profesion": {
         "nombre": "aprendiz",
+        "categoria": "aprendizaje",
+        "lugar_trabajo": null,
+        "edificio_requerido": null,
+        "habilidades": [
+          "aprender",
+          "explorar"
+        ],
+        "tareas": [
+          "conocer_el_mundo",
+          "mejorar_habilidades"
+        ],
+        "interacciones": [
+          "aprender_profesion"
+        ],
         "nivel": 1,
         "experiencia": 0,
         "estado": "activa"
@@ -79,6 +93,23 @@
 
       "profesion": {
         "nombre": "exploradora",
+        "categoria": "aventura",
+        "lugar_trabajo": "mundo_abierto",
+        "edificio_requerido": null,
+        "habilidades": [
+          "exploracion",
+          "orientacion",
+          "cartografia"
+        ],
+        "tareas": [
+          "descubrir_lugares",
+          "crear_mapas",
+          "encontrar_recursos"
+        ],
+        "interacciones": [
+          "compartir_descubrimientos",
+          "guiar_expediciones"
+        ],
         "nivel": 1,
         "experiencia": 0,
         "estado": "activa"
@@ -132,6 +163,24 @@
 
       "profesion": {
         "nombre": "guia_del_mundo",
+        "categoria": "conocimiento",
+        "lugar_trabajo": "aldea",
+        "edificio_requerido": null,
+        "habilidades": [
+          "comunicacion",
+          "enseñanza",
+          "memoria"
+        ],
+        "tareas": [
+          "explicar_funciones",
+          "ayudar_jugadores",
+          "proteger_conocimiento"
+        ],
+        "interacciones": [
+          "tutorial_nuevos_jugadores",
+          "informar_sistemas",
+          "contar_historia"
+        ],
         "nivel": 1,
         "experiencia": 0,
         "estado": "activa"
