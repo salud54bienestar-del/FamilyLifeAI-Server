@@ -1,5 +1,6 @@
 {
   "eventos_disponibles": [
+
     {
       "id": 1,
       "nombre": "primer_encuentro",
@@ -13,6 +14,8 @@
         "curiosidad": 5
       }
     },
+
+
     {
       "id": 2,
       "nombre": "nuevo_dia",
@@ -25,19 +28,23 @@
         "estres": -1
       }
     },
+
+
     {
       "id": 3,
       "nombre": "embarazo_confirmado",
-      "descripcion": "Una habitante inicia una etapa de embarazo.",
+      "descripcion": "Una nueva vida comienza a formarse.",
       "tipo": "familia",
       "importancia": "alta",
-      "emocion": "alegria",
+      "emocion": "esperanza",
       "efectos": {
         "felicidad": 10,
         "esperanza": 10,
         "amor": 5
       }
     },
+
+
     {
       "id": 4,
       "nombre": "nacimiento",
@@ -51,24 +58,43 @@
         "orgullo": 5
       }
     },
+
+
     {
       "id": 5,
-      "nombre": "nacimiento_multiple",
-      "descripcion": "Nacen gemelos o más bebés en un mismo embarazo.",
-      "tipo": "familia",
-      "importancia": "muy_alta",
-      "emocion": "sorpresa",
+      "nombre": "amistad",
+      "descripcion": "Dos habitantes crean un vínculo de amistad.",
+      "tipo": "relacion",
+      "importancia": "media",
+      "emocion": "felicidad",
       "efectos": {
-        "felicidad": 20,
-        "sorpresa": 10,
-        "estres": 2
+        "felicidad": 10,
+        "confianza": 10,
+        "soledad": -10
       }
     },
+
+
     {
       "id": 6,
+      "nombre": "conflicto",
+      "descripcion": "Dos habitantes tienen una diferencia que deben resolver.",
+      "tipo": "relacion",
+      "importancia": "media",
+      "emocion": "tension",
+      "efectos": {
+        "ira": 5,
+        "estres": 10,
+        "confianza": -5
+      }
+    },
+
+
+    {
+      "id": 7,
       "nombre": "boda",
       "descripcion": "Dos habitantes unen sus vidas y forman una familia.",
-      "tipo": "relacion",
+      "tipo": "familia",
       "importancia": "alta",
       "emocion": "felicidad",
       "efectos": {
@@ -77,19 +103,8 @@
         "confianza": 10
       }
     },
-    {
-      "id": 7,
-      "nombre": "divorcio",
-      "descripcion": "Una relación matrimonial termina.",
-      "tipo": "familia",
-      "importancia": "alta",
-      "emocion": "tristeza",
-      "efectos": {
-        "tristeza": 15,
-        "confianza": -10,
-        "estres": 10
-      }
-    },
+
+
     {
       "id": 8,
       "nombre": "adopcion",
@@ -103,6 +118,8 @@
         "confianza": 5
       }
     },
+
+
     {
       "id": 9,
       "nombre": "cumpleaños",
@@ -115,22 +132,26 @@
         "orgullo": 3
       }
     },
+
+
     {
       "id": 10,
       "nombre": "cambio_etapa_vida",
-      "descripcion": "Un habitante pasa a una nueva etapa de crecimiento.",
+      "descripcion": "Un habitante alcanza una nueva etapa de crecimiento.",
       "tipo": "vida",
-      "importancia": "media",
+      "importancia": "alta",
       "emocion": "orgullo",
       "efectos": {
         "orgullo": 10,
         "confianza": 5
       }
     },
+
+
     {
       "id": 11,
       "nombre": "fallecimiento",
-      "descripcion": "Un habitante deja este mundo y su legado continúa.",
+      "descripcion": "Un habitante deja su legado en el mundo.",
       "tipo": "vida",
       "importancia": "muy_alta",
       "emocion": "tristeza",
@@ -140,6 +161,8 @@
         "estres": 5
       }
     },
+
+
     {
       "id": 12,
       "nombre": "nuevo_trabajo",
@@ -152,6 +175,22 @@
         "orgullo": 5,
         "esperanza": 5
       }
+    },
+
+
+    {
+      "id": 13,
+      "nombre": "descubrimiento",
+      "descripcion": "Un habitante descubre un nuevo lugar o conocimiento.",
+      "tipo": "aventura",
+      "importancia": "media",
+      "emocion": "curiosidad",
+      "efectos": {
+        "felicidad": 8,
+        "curiosidad": 10,
+        "confianza": 3
+      }
     }
+
   ]
-    }
+}
