@@ -31,13 +31,30 @@ function ejecutarAccion(habitante_id, accion) {
 
 
 
+    // Obtener nombre real de la acción
+
+    let nombreAccion;
+
+
+    if (typeof accion === "object") {
+
+        nombreAccion = accion.eleccion;
+
+    } else {
+
+        nombreAccion = accion;
+
+    }
+
+
+
     crearMemoria(
 
         habitante_id,
 
         "accion",
 
-        "El habitante realizó: " + accion,
+        "El habitante realizó: " + nombreAccion,
 
         "media"
 
@@ -51,10 +68,19 @@ function ejecutarAccion(habitante_id, accion) {
 
 
 
-    switch (accion) {
+    switch (nombreAccion) {
+
 
 
         case "explorar el mundo":
+        case "explorar_el_mundo":
+
+
+            if (!mundo.lugares) {
+
+                mundo.lugares = [];
+
+            }
 
 
             mundo.lugares.push({
@@ -71,7 +97,7 @@ function ejecutarAccion(habitante_id, accion) {
 
 
             resultadoAccion =
-            "Descubrió un nuevo lugar.";
+            "Descubrió un nuevo lugar y ganó experiencia.";
 
 
             evento = 1;
@@ -82,6 +108,7 @@ function ejecutarAccion(habitante_id, accion) {
 
 
         case "buscar compañía":
+        case "buscar_compania":
 
 
             resultadoAccion =
@@ -96,13 +123,40 @@ function ejecutarAccion(habitante_id, accion) {
 
 
         case "cuidar familia":
+        case "cuidar_familia":
+        case "proteger_familia":
 
 
             resultadoAccion =
-            "El habitante dedicó tiempo a su familia.";
+            "El habitante protegió y cuidó a su familia.";
 
 
             evento = 2;
+
+
+            break;
+
+
+
+        case "crear_vinculos":
+
+
+            resultadoAccion =
+            "El habitante intenta crear una nueva amistad.";
+
+
+            evento = 2;
+
+
+            break;
+
+
+
+        case "resolver_conflicto":
+
+
+            resultadoAccion =
+            "El habitante intenta solucionar un problema.";
 
 
             break;
@@ -114,6 +168,17 @@ function ejecutarAccion(habitante_id, accion) {
 
             resultadoAccion =
             "El habitante avanzó hacia su meta.";
+
+
+            break;
+
+
+
+        case "descansar":
+
+
+            resultadoAccion =
+            "El habitante recuperó energía.";
 
 
             break;
@@ -148,22 +213,11 @@ function ejecutarAccion(habitante_id, accion) {
 
 
 
-        case "descansar":
-
-
-            resultadoAccion =
-            "El habitante recuperó energía.";
-
-
-            break;
-
-
-
         default:
 
 
             resultadoAccion =
-            "Realizó una acción desconocida.";
+            "El habitante realizó una acción nueva sin consecuencias definidas.";
 
 
             break;
@@ -191,12 +245,9 @@ function ejecutarAccion(habitante_id, accion) {
 
         habitante_id: habitante_id,
 
-
-        accion: accion,
-
+        accion: nombreAccion,
 
         resultado: resultadoAccion,
-
 
         estado: "completada"
 
