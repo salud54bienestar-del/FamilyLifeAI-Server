@@ -11,7 +11,16 @@ const {
 
 
 // =================================
-// AVANZAR EDAD DE HABITANTES
+// CONFIGURACIÓN DE TIEMPO
+// =================================
+
+const DIAS_MINECRAFT_POR_AÑO = 20;
+
+
+
+
+// =================================
+// ACTUALIZAR CRECIMIENTO
 // =================================
 
 function actualizarCrecimiento(){
@@ -21,12 +30,15 @@ function actualizarCrecimiento(){
     cargarArchivo("../datos/almas.json");
 
 
-    const tiempo =
+    const tiempoDatos =
     cargarArchivo("../datos/tiempo.json");
 
 
 
-    if(!almas || !tiempo){
+    if(
+        !almas ||
+        !tiempoDatos
+    ){
 
         console.log(
             "No se pudieron cargar datos de crecimiento."
@@ -38,10 +50,14 @@ function actualizarCrecimiento(){
 
 
 
-    // Si el crecimiento está desactivado
+    const ciclo =
+    tiempoDatos.tiempo.ciclo_vida;
+
+
+
 
     if(
-        !tiempo.tiempo.ciclo_vida.crecimiento_habitantes
+        !ciclo.crecimiento_habitantes
     ){
 
         return null;
@@ -51,114 +67,144 @@ function actualizarCrecimiento(){
 
 
 
-    almas.almas.forEach(habitante => {
+
+    almas.almas.forEach(
+
+        habitante=>{
 
 
 
-        if(
-            habitante.estado !== "viviendo"
-        ){
+            if(
+                habitante.estado !== "viviendo"
+            ){
 
-            return;
+                return;
+
+            }
+
+
+
+
+
+
+            if(
+                habitante.contador_vida === undefined
+            ){
+
+                habitante.contador_vida = 0;
+
+            }
+
+
+
+
+
+
+
+            habitante.contador_vida++;
+
+
+
+
+
+
+
+
+            if(
+                habitante.contador_vida >=
+                DIAS_MINECRAFT_POR_AÑO
+            ){
+
+
+
+                habitante.edad++;
+
+                habitante.contador_vida=0;
+
+
+
+
+
+
+                crearEvento(
+
+                    "cumpleaños",
+
+                    [
+                        habitante.id
+                    ],
+
+                    {
+
+                        edad:
+                        habitante.edad,
+
+                        nombre:
+                        habitante.nombre
+
+                    }
+
+                );
+
+
+
+
+
+
+
+
+                crearMemoria(
+
+                    habitante.id,
+
+                    "crecimiento",
+
+                    "Ahora tiene " +
+                    habitante.edad +
+                    " años.",
+
+                    "media"
+
+                );
+
+
+
+
+
+
+
+                actualizarEtapa(
+                    habitante
+                );
+
+
+
+
+
+
+
+                console.log(
+
+                    habitante.nombre +
+                    " cumplió " +
+                    habitante.edad +
+                    " años."
+
+                );
+
+
+
+            }
+
+
+
+
 
         }
 
+    );
 
 
-
-        if(
-            !habitante.contador_vida
-        ){
-
-            habitante.contador_vida = 0;
-
-        }
-
-
-
-
-        habitante.contador_vida++;
-
-
-
-
-        // 30 días Minecraft = 1 año Village Soul
-
-        if(
-            habitante.contador_vida >= 30
-        ){
-
-
-            habitante.edad++;
-
-            habitante.contador_vida = 0;
-
-
-
-
-            crearEvento(
-
-                "cumpleaños",
-
-                [
-                    habitante.id
-                ],
-
-                {
-
-                    nombre:
-                    habitante.nombre,
-
-                    edad:
-                    habitante.edad
-
-                }
-
-            );
-
-
-
-
-
-            crearMemoria(
-
-                habitante.id,
-
-                "cumpleaños",
-
-                "Cumplió " +
-                habitante.edad +
-                " años.",
-
-                "alta"
-
-            );
-
-
-
-
-
-            actualizarEtapa(
-                habitante
-            );
-
-
-
-            console.log(
-
-                habitante.nombre +
-                " ahora tiene " +
-                habitante.edad +
-                " años."
-
-            );
-
-
-        }
-
-
-
-    });
 
 
 
@@ -171,10 +217,8 @@ function actualizarCrecimiento(){
 
 
 
-module.exports = {
-
+module.exports={
 
     actualizarCrecimiento
-
 
 };
