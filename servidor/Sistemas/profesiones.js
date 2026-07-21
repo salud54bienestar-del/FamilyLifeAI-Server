@@ -1,8 +1,17 @@
 // Sistema avanzado de profesiones - Village Soul
 
-const cargarArchivo = require("./cargador_datos.js");
-const crearEvento = require("./eventos.js");
-const crearMemoria = require("./memorias.js");
+
+const cargarArchivo =
+require("./cargador_datos.js");
+
+
+const crearEvento =
+require("./eventos.js");
+
+
+const crearMemoria =
+require("./memorias.js");
+
 
 
 
@@ -11,14 +20,15 @@ const crearMemoria = require("./memorias.js");
 // BUSCAR PROFESIÓN
 // =================================
 
-function buscarProfesion(nombreProfesion) {
+function buscarProfesion(nombreProfesion){
 
 
-    const catalogo =
+    const datos =
     cargarArchivo("../datos/profesiones.json");
 
 
-    if(!catalogo){
+
+    if(!datos){
 
         return null;
 
@@ -26,16 +36,17 @@ function buscarProfesion(nombreProfesion) {
 
 
 
-    return catalogo.profesiones.find(
+    return datos.profesiones.find(
 
         p =>
-
         p.nombre === nombreProfesion.toLowerCase()
 
     );
 
 
 }
+
+
 
 
 
@@ -56,17 +67,15 @@ function asignarProfesion(
     cargarArchivo("../datos/almas.json");
 
 
-
     const profesion =
     buscarProfesion(nombreProfesion);
 
 
 
-    if(!almas || !profesion){
-
-        console.log(
-            "No se pudieron cargar los datos."
-        );
+    if(
+        !almas ||
+        !profesion
+    ){
 
         return null;
 
@@ -87,10 +96,6 @@ function asignarProfesion(
 
     if(!habitante){
 
-        console.log(
-            "Habitante no encontrado."
-        );
-
         return null;
 
     }
@@ -99,65 +104,9 @@ function asignarProfesion(
 
 
 
-    habitante.profesion = {
-
-
-        nombre:
-        profesion.nombre,
-
-
-        categoria:
-        profesion.categoria ||
-        "general",
-
-
-
-        lugar_trabajo:
-        profesion.lugar_trabajo ||
-        null,
-
-
-
-        edificio_requerido:
-        profesion.edificio_requerido ||
-        null,
-
-
-
-        habilidades:
-        profesion.habilidades_requeridas ||
-        [],
-
-
-
-        tareas:
-        profesion.tareas ||
-        [],
-
-
-
-        interacciones:
-        profesion.interacciones ||
-        [],
-
-
-
-        nivel:
-        1,
-
-
-
-        experiencia:
-        0,
-
-
-
-        estado:
-        "activa"
-
-
-    };
-
+    habitante.profesion = crearDatosProfesion(
+        profesion
+    );
 
 
 
@@ -168,21 +117,15 @@ function asignarProfesion(
         "nueva_profesion",
 
         [
-
             habitante_id
-
         ],
 
         {
-
             profesion:
             profesion.nombre
-
         }
 
     );
-
-
 
 
 
@@ -194,18 +137,12 @@ function asignarProfesion(
 
         "profesion",
 
-        "Comenzó a trabajar como " +
+        "Comenzó como " +
         profesion.nombre,
 
-        "media",
-
-        [],
-
-        "motivacion"
+        "media"
 
     );
-
-
 
 
 
@@ -213,6 +150,73 @@ function asignarProfesion(
 
 
 }
+
+
+
+
+
+
+
+
+// =================================
+// CREAR DATOS PROFESIÓN
+// =================================
+
+function crearDatosProfesion(profesion){
+
+
+    return {
+
+
+        nombre:
+        profesion.nombre,
+
+
+        categoria:
+        profesion.categoria || "general",
+
+
+
+        lugar_trabajo:
+        profesion.lugar_trabajo || null,
+
+
+
+        edificio_requerido:
+        profesion.edificio_requerido || null,
+
+
+
+        habilidades:
+        profesion.habilidades_requeridas || [],
+
+
+
+        tareas:
+        profesion.tareas || [],
+
+
+
+        interacciones:
+        profesion.interacciones || [],
+
+
+
+        nivel:1,
+
+
+        experiencia:0,
+
+
+        estado:"activa"
+
+
+
+    };
+
+
+}
+
 
 
 
@@ -230,9 +234,31 @@ function cambiarProfesion(
 ){
 
 
-    const profesion =
-    buscarProfesion(nuevaProfesion);
+    return asignarProfesion(
 
+        habitante_id,
+
+        nuevaProfesion
+
+    );
+
+
+}
+
+
+
+
+
+
+
+
+// =================================
+// OBTENER PROFESIÓN
+// =================================
+
+function obtenerProfesion(
+    habitante_id
+){
 
 
     const almas =
@@ -240,7 +266,7 @@ function cambiarProfesion(
 
 
 
-    if(!almas || !profesion){
+    if(!almas){
 
         return null;
 
@@ -257,7 +283,34 @@ function cambiarProfesion(
 
 
 
-    if(!habitante){
+    return habitante?.profesion || null;
+
+
+}
+
+
+
+
+
+
+
+
+// =================================
+// TRABAJAR HABITANTE
+// =================================
+
+function trabajarHabitante(
+    habitante_id,
+    hora
+){
+
+
+    const almas =
+    cargarArchivo("../datos/almas.json");
+
+
+
+    if(!almas){
 
         return null;
 
@@ -267,58 +320,61 @@ function cambiarProfesion(
 
 
 
-    habitante.profesion = {
+    const habitante =
+    almas.almas.find(
 
+        a=>a.id===habitante_id
 
-        nombre:
-        profesion.nombre,
-
-
-        categoria:
-        profesion.categoria ||
-        "general",
+    );
 
 
 
-        lugar_trabajo:
-        profesion.lugar_trabajo ||
-        null,
+    if(
+        !habitante ||
+        !habitante.profesion
+    ){
+
+        return null;
+
+    }
 
 
 
-        habilidades:
-        profesion.habilidades_requeridas ||
-        [],
+
+
+    const profesion =
+    habitante.profesion;
 
 
 
-        tareas:
-        profesion.tareas ||
-        [],
+
+
+    // Horario por defecto
+
+    const inicio = 6;
+
+    const fin = 18;
 
 
 
-        interacciones:
-        profesion.interacciones ||
-        [],
+
+
+    if(
+        hora < inicio ||
+        hora >= fin
+    ){
+
+        return false;
+
+    }
 
 
 
-        nivel:
-        1,
 
 
 
-        experiencia:
-        0,
 
-
-
-        estado:
-        "activa"
-
-
-    };
+    profesion.experiencia += 1;
 
 
 
@@ -330,7 +386,131 @@ function cambiarProfesion(
 
         habitante_id,
 
-        "profesion",
+        "trabajo",
 
-        "Cambió de profesión a " +
+        "Trabajó como " +
         profesion.nombre,
+
+        "baja"
+
+    );
+
+
+
+
+
+
+
+
+    if(
+        profesion.experiencia >= 100
+    ){
+
+        subirNivel(
+            habitante_id
+        );
+
+    }
+
+
+
+
+
+    return profesion;
+
+
+}
+
+
+
+
+
+
+
+
+// =================================
+// SUBIR NIVEL
+// =================================
+
+function subirNivel(
+    habitante_id
+){
+
+
+    const profesion =
+    obtenerProfesion(
+        habitante_id
+    );
+
+
+
+    if(!profesion){
+
+        return null;
+
+    }
+
+
+
+
+    profesion.nivel++;
+
+    profesion.experiencia=0;
+
+
+
+
+
+    crearEvento(
+
+        "subida_nivel_profesion",
+
+        [
+            habitante_id
+        ],
+
+        {
+
+            profesion:
+            profesion.nombre,
+
+            nivel:
+            profesion.nivel
+
+        }
+
+    );
+
+
+
+
+
+    return profesion;
+
+
+}
+
+
+
+
+
+
+
+
+module.exports = {
+
+
+    buscarProfesion,
+
+    asignarProfesion,
+
+    cambiarProfesion,
+
+    obtenerProfesion,
+
+    trabajarHabitante,
+
+    subirNivel
+
+
+};
