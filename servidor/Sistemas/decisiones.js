@@ -77,6 +77,7 @@ function procesarDecision(id, contexto = {}) {
     const emociones = contexto.emociones_secundarias || {};
 
 
+
     if(emociones.soledad > 60){
 
         eleccion = "buscar_compañia";
@@ -99,6 +100,8 @@ function procesarDecision(id, contexto = {}) {
 
 
 
+
+
     // ==============================
     // PERSONALIDAD
     // ==============================
@@ -112,20 +115,19 @@ function procesarDecision(id, contexto = {}) {
             contexto.familia
         ){
 
-            eleccion = "ayudar_familia";
+            eleccion = "proteger_familia";
 
         }
 
 
 
-        if(
+        else if(
             contexto.personalidad === "aventurero"
         ){
 
             eleccion = "explorar_el_mundo";
 
         }
-
 
     }
 
@@ -158,10 +160,9 @@ function procesarDecision(id, contexto = {}) {
 
     if(objetivo === "crear una amistad"){
 
-        eleccion = "crear_vinculos";
+        eleccion = "buscar_compañia";
 
     }
-
 
 
     else if(objetivo === "conocer el mundo"){
@@ -171,12 +172,36 @@ function procesarDecision(id, contexto = {}) {
     }
 
 
-
     else if(objetivo === "crear_una_familia"){
 
-        eleccion = "crear_familia";
+        eleccion = "proteger_familia";
 
     }
+
+
+
+
+
+    // ==============================
+    // BUSCAR RESULTADO
+    // ==============================
+
+
+    let resultadoTexto =
+    "La decisión no tiene un resultado definido todavía.";
+
+
+
+    if(decision.resultados){
+
+        if(decision.resultados[eleccion]){
+
+            resultadoTexto = decision.resultados[eleccion];
+
+        }
+
+    }
+
 
 
 
@@ -190,12 +215,13 @@ function procesarDecision(id, contexto = {}) {
 
         eleccion: eleccion,
 
-        resultado: decision.resultado,
+        resultado: resultadoTexto,
 
         contexto: contexto
 
 
     };
+
 
 
 
@@ -208,7 +234,6 @@ function procesarDecision(id, contexto = {}) {
     console.log("Habitante:", decision.habitante_id);
 
     console.log("Elección:", eleccion);
-
 
     console.log("Resultado:");
 
