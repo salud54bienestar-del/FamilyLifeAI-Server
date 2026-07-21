@@ -1,8 +1,13 @@
 // Sistema de tiempo del mundo - Village Soul
 
-const cargarArchivo = require("./cargador_datos.js");
 
-const crearEvento = require("./eventos.js");
+const cargarArchivo =
+require("./cargador_datos.js");
+
+
+const crearEvento =
+require("./eventos.js");
+
 
 
 
@@ -14,13 +19,21 @@ const crearEvento = require("./eventos.js");
 // Minecraft:
 // 20 minutos reales = 1 día Minecraft
 
-const MINUTOS_POR_DIA = 20;
+const MINUTOS_REALES_POR_DIA =
+20;
 
-const HORAS_POR_DIA = 24;
 
-const DIAS_POR_MES = 30;
+const HORAS_POR_DIA =
+24;
 
-const MESES_POR_AÑO = 12;
+
+const DIAS_POR_MES =
+30;
+
+
+const MESES_POR_AÑO =
+12;
+
 
 
 
@@ -37,15 +50,17 @@ function obtenerTiempo(){
     cargarArchivo("../datos/tiempo.json");
 
 
+
     if(!datos){
 
         console.log(
-            "No se pudo cargar el tiempo."
+            "No se pudo cargar tiempo."
         );
 
         return null;
 
     }
+
 
 
     return datos.tiempo;
@@ -56,11 +71,15 @@ function obtenerTiempo(){
 
 
 
+
+
 // =================================
 // AVANZAR TIEMPO
 // =================================
 
-function avanzarTiempo(minutos = 1){
+function avanzarTiempo(
+    minutosReales = 1
+){
 
 
 
@@ -82,27 +101,48 @@ function avanzarTiempo(minutos = 1){
 
 
 
-    let nuevoDia = false;
-
-
-
-
-
-    tiempo.minuto += minutos;
-
-
-
-
-
-    // Cambio de hora
-
-    while(
-        tiempo.minuto >= 60
+    if(
+        !tiempo.contador_minecraft
     ){
 
-        tiempo.minuto -= 60;
+        tiempo.contador_minecraft = 0;
 
-        tiempo.hora++;
+    }
+
+
+
+
+    let nuevoDiaMinecraft = false;
+
+
+
+
+
+    // Acumular tiempo real
+
+    tiempo.contador_minecraft += minutosReales;
+
+
+
+
+
+    // Cada 20 minutos reales
+    // pasa un día Minecraft
+
+    if(
+        tiempo.contador_minecraft >=
+        MINUTOS_REALES_POR_DIA
+    ){
+
+
+        tiempo.contador_minecraft = 0;
+
+
+        tiempo.dia++;
+
+
+        nuevoDiaMinecraft = true;
+
 
     }
 
@@ -110,7 +150,14 @@ function avanzarTiempo(minutos = 1){
 
 
 
-    // Cambio de día
+
+
+    // Avanza hora Minecraft
+
+
+    tiempo.hora += 24 / 20;
+
+
 
     if(
         tiempo.hora >= 24
@@ -118,25 +165,44 @@ function avanzarTiempo(minutos = 1){
 
         tiempo.hora = 0;
 
-        tiempo.dia++;
-
-        nuevoDia = true;
-
     }
 
 
 
 
 
-    // Cambio de mes
+    // Convertir decimales a horas y minutos
+
+
+    tiempo.hora =
+    Math.floor(
+        tiempo.hora
+    );
+
+
+
+    tiempo.minuto =
+    Math.floor(
+        (24 / 20 % 1) * 60
+    );
+
+
+
+
+
+
+    // Mes
+
 
     if(
         tiempo.dia > DIAS_POR_MES
     ){
 
+
         tiempo.dia = 1;
 
         tiempo.mes++;
+
 
     }
 
@@ -144,15 +210,18 @@ function avanzarTiempo(minutos = 1){
 
 
 
-    // Cambio de año
+    // Año
+
 
     if(
         tiempo.mes > MESES_POR_AÑO
     ){
 
+
         tiempo.mes = 1;
 
         tiempo.año++;
+
 
     }
 
@@ -160,14 +229,20 @@ function avanzarTiempo(minutos = 1){
 
 
 
-
-    actualizarEstacion(tiempo);
-
-
-
+    actualizarEstacion(
+        tiempo
+    );
 
 
-    if(nuevoDia){
+
+
+
+
+
+    if(
+        nuevoDiaMinecraft
+    ){
+
 
         crearEvento(
 
@@ -186,9 +261,11 @@ function avanzarTiempo(minutos = 1){
                 año:
                 tiempo.año
 
+
             }
 
         );
+
 
     }
 
@@ -206,50 +283,58 @@ function avanzarTiempo(minutos = 1){
 
 
 
+
+
 // =================================
 // ESTACIONES
 // =================================
 
-function actualizarEstacion(tiempo){
+function actualizarEstacion(
+    tiempo
+){
 
 
 
     if(
-        tiempo.mes >= 3 &&
-        tiempo.mes <= 5
+        tiempo.mes >=3 &&
+        tiempo.mes <=5
     ){
 
-        tiempo.estacion="primavera";
+        tiempo.estacion =
+        "primavera";
 
     }
 
     else if(
-        tiempo.mes >= 6 &&
-        tiempo.mes <= 8
+        tiempo.mes >=6 &&
+        tiempo.mes <=8
     ){
 
-        tiempo.estacion="verano";
+        tiempo.estacion =
+        "verano";
 
     }
 
     else if(
-        tiempo.mes >= 9 &&
-        tiempo.mes <= 11
+        tiempo.mes >=9 &&
+        tiempo.mes <=11
     ){
 
-        tiempo.estacion="otoño";
+        tiempo.estacion =
+        "otoño";
 
     }
 
     else{
 
-        tiempo.estacion="invierno";
+        tiempo.estacion =
+        "invierno";
 
     }
 
 
-
     return tiempo.estacion;
+
 
 }
 
@@ -258,11 +343,14 @@ function actualizarEstacion(tiempo){
 
 
 
+
+
 // =================================
-// OBTENER PERIODO DEL DÍA
+// PERIODO DEL DÍA
 // =================================
 
 function obtenerPeriodo(){
+
 
 
     const tiempo =
@@ -279,8 +367,8 @@ function obtenerPeriodo(){
 
 
     if(
-        tiempo.hora >= 6 &&
-        tiempo.hora < 12
+        tiempo.hora >=6 &&
+        tiempo.hora <12
     ){
 
         return "mañana";
@@ -289,8 +377,8 @@ function obtenerPeriodo(){
 
 
     if(
-        tiempo.hora >= 12 &&
-        tiempo.hora < 18
+        tiempo.hora >=12 &&
+        tiempo.hora <18
     ){
 
         return "dia";
@@ -308,11 +396,11 @@ function obtenerPeriodo(){
     }
 
 
+
     return "noche";
 
 
 }
-
 
 
 
