@@ -6,18 +6,17 @@ const procesarDecision = require("../Sistemas/decisiones.js");
 
 function pensarAlma(habitante_id) {
 
-    const almas = cargarArchivo("datos/almas.json");
-    const emociones = cargarArchivo("datos/emociones.json");
-    const memorias = cargarArchivo("datos/memorias.json");
-    const objetivos = cargarArchivo("datos/objetivos.json");
-    const relaciones = cargarArchivo("datos/relaciones.json");
-    const familias = cargarArchivo("datos/familias.json");
+
+    const almas = cargarArchivo("../datos/almas.json");
+    const emociones = cargarArchivo("../datos/emociones.json");
+    const objetivos = cargarArchivo("../datos/objetivos.json");
+    const relaciones = cargarArchivo("../datos/relaciones.json");
+    const familias = cargarArchivo("../datos/familias.json");
 
 
     if (
         !almas ||
         !emociones ||
-        !memorias ||
         !objetivos ||
         !relaciones ||
         !familias
@@ -27,6 +26,7 @@ function pensarAlma(habitante_id) {
 
         return null;
     }
+
 
 
     const alma = almas.almas.find(
@@ -42,16 +42,69 @@ function pensarAlma(habitante_id) {
     }
 
 
+
     console.log("Pensando alma:", alma.nombre);
 
 
+
+    const emocionActual = emociones.emociones.find(
+        e => e.habitante_id === habitante_id
+    );
+
+
+
+    const objetivoActual = alma.objetivos[0] || "explorar el mundo";
+
+
+
+    const tieneFamilia = alma.familia && alma.familia.length > 0;
+
+
+
+    const contexto = {
+
+        emocion:
+            emocionActual?.estado_actual || "neutral",
+
+
+        emociones_secundarias:
+            emocionActual?.emociones_secundarias || {},
+
+
+        familia:
+            tieneFamilia,
+
+
+        objetivo:
+            objetivoActual
+
+    };
+
+
+
+    const decision = procesarDecision(
+        1,
+        contexto
+    );
+
+
+
     return {
+
         habitante_id: habitante_id,
+
+        nombre: alma.nombre,
+
         estado: "pensando",
-        decision: "explorar el mundo"
+
+        contexto: contexto,
+
+        decision: decision
+
     };
 
 }
+
 
 
 module.exports = {
