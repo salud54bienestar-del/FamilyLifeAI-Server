@@ -27,9 +27,12 @@ function pensarAlma(habitante_id) {
         !lugaresTrabajo
     ) {
 
-        console.log("No se pudieron cargar los datos de la IA.");
+        console.log(
+            "No se pudieron cargar los datos de la IA."
+        );
 
         return null;
+
     }
 
 
@@ -60,19 +63,12 @@ function pensarAlma(habitante_id) {
 
 
 
-
-
     // ==============================
-    // ALMAS ESPECIALES (GUÍAS)
+    // ALMAS ESPECIALES
     // ==============================
 
 
     if (alma.tipo === "guia") {
-
-
-        console.log(
-            "Tipo de alma: guía"
-        );
 
 
         return {
@@ -106,19 +102,10 @@ function pensarAlma(habitante_id) {
 
     const personalidad =
     personalidades.personalidades.find(
+
         p => p.id === alma.personalidad_id
+
     );
-
-
-
-    if(personalidad){
-
-        console.log(
-            "Personalidad:",
-            personalidad.nombre
-        );
-
-    }
 
 
 
@@ -131,7 +118,9 @@ function pensarAlma(habitante_id) {
 
     const emocionActual =
     emociones.emociones.find(
+
         e => e.habitante_id === habitante_id
+
     );
 
 
@@ -159,6 +148,7 @@ function pensarAlma(habitante_id) {
         lugaresTrabajo.lugares_trabajo.find(
 
             lugar =>
+
             lugar.profesiones.includes(
                 profesionActual.nombre
             )
@@ -170,20 +160,85 @@ function pensarAlma(habitante_id) {
 
 
 
-    if(lugarTrabajo){
 
-        console.log(
-            "Lugar de trabajo:",
-            lugarTrabajo.nombre
-        );
+    // ==============================
+    // SISTEMA FAMILIAR
+    // ==============================
 
-    }
 
-    else {
+    const familiaActual =
+    familias.familias.find(
 
-        console.log(
-            "Sin lugar de trabajo asignado."
-        );
+        familia =>
+
+        familia.miembros.includes(
+            habitante_id
+        )
+
+    );
+
+
+
+    const tieneFamilia =
+    familiaActual ? true : false;
+
+
+
+    const tieneHijos =
+    familiaActual &&
+    familiaActual.hijos &&
+    familiaActual.hijos.length > 0;
+
+
+
+    let pareja = null;
+
+
+
+    const relacionPareja =
+    relaciones.relaciones.find(
+
+        r =>
+
+        (
+
+            r.habitante_a === habitante_id ||
+
+            r.habitante_b === habitante_id
+
+        )
+
+        &&
+
+        (
+
+            r.estado_pareja === "casado"
+
+            ||
+
+            r.tipo === "pareja"
+
+        )
+
+    );
+
+
+
+    if(relacionPareja){
+
+
+        pareja =
+
+        relacionPareja.habitante_a === habitante_id
+
+        ?
+
+        relacionPareja.habitante_b
+
+        :
+
+        relacionPareja.habitante_a;
+
 
     }
 
@@ -198,23 +253,12 @@ function pensarAlma(habitante_id) {
 
 
     const objetivoActual =
+
     alma.objetivos?.[0]
+
     ||
+
     "explorar el mundo";
-
-
-
-
-
-
-    // ==============================
-    // FAMILIA
-    // ==============================
-
-
-    const tieneFamilia =
-    alma.familia &&
-    alma.familia.length > 0;
 
 
 
@@ -231,71 +275,157 @@ function pensarAlma(habitante_id) {
 
 
         emocion:
+
         emocionActual?.estado_actual
+
         ||
+
         "neutral",
 
 
 
         emociones_secundarias:
+
         emocionActual?.emociones_secundarias
+
         ||
+
         {},
 
 
 
+        estabilidad_emocional:
+
+        emocionActual?.estabilidad_emocional
+
+        ||
+
+        50,
+
+
+
         familia:
+
         tieneFamilia,
 
 
 
+        estado_pareja:
+
+        pareja ? "casado" : "soltero",
+
+
+
+        pareja:
+
+        pareja,
+
+
+
+        tiene_hijos:
+
+        tieneHijos,
+
+
+
+        cantidad_hijos:
+
+        familiaActual?.hijos?.length || 0,
+
+
+
+        vivienda:
+
+        familiaActual?.hogar ? true : false,
+
+
+
         objetivo:
+
         objetivoActual,
 
 
 
         personalidad:
+
         personalidad?.nombre
+
         ||
+
         "desconocida",
 
 
 
         rasgos:
+
         personalidad?.rasgos
+
         ||
+
         [],
 
 
 
-        // NUEVO SISTEMA DE PROFESIONES
+
+        // PROFESIONES
 
 
         profesion:
+
         profesionActual?.nombre
+
         ||
+
         "sin_profesion",
 
 
 
         nivel_profesion:
+
         profesionActual?.nivel
+
         ||
+
         1,
 
 
 
         lugar_trabajo:
+
         lugarTrabajo?.nombre
+
         ||
+
         "sin_lugar",
 
 
 
         tareas_trabajo:
+
         lugarTrabajo?.servicios
+
         ||
-        []
+
+        [],
+
+
+
+        puede_iniciar_adopcion:
+
+        (
+
+            pareja &&
+
+            familiaActual?.hogar &&
+
+            emocionActual?.estabilidad_emocional >= 70
+
+        )
+
+        ? true
+
+        : false
+
 
     };
 
@@ -304,16 +434,19 @@ function pensarAlma(habitante_id) {
 
 
 
-
     // ==============================
-    // TOMAR DECISIÓN
+    // DECISIÓN DE IA
     // ==============================
 
 
     const decision =
+
     procesarDecision(
+
         habitante_id,
+
         contexto
+
     );
 
 
@@ -342,8 +475,8 @@ function pensarAlma(habitante_id) {
         tipo:
 
 
-        alma.tipo
-        ||
+        alma.tipo ||
+
         "habitante",
 
 
@@ -376,6 +509,13 @@ function pensarAlma(habitante_id) {
 
 
 
+        familia:
+
+
+        familiaActual,
+
+
+
         contexto:
 
 
@@ -388,9 +528,12 @@ function pensarAlma(habitante_id) {
 
         decision
 
+
     };
 
+
 }
+
 
 
 
