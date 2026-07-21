@@ -5,11 +5,22 @@
       "habitante_id": 1,
       "situacion": "Luna encuentra un camino desconocido durante una exploración.",
       "opciones": [
-        "seguir el camino",
-        "regresar a la aldea"
+        "seguir_el_camino",
+        "regresar_a_la_aldea",
+        "explorar_el_mundo",
+        "buscar_compañia",
+        "proteger_familia",
+        "descansar"
       ],
-      "eleccion": "seguir el camino",
-      "resultado": "Luna descubre una nueva zona del mundo y gana experiencia."
+      "eleccion": "seguir_el_camino",
+      "resultados": {
+        "seguir_el_camino": "Luna continúa explorando y descubre una nueva zona del mundo.",
+        "regresar_a_la_aldea": "Luna decide volver a la aldea para estar segura.",
+        "explorar_el_mundo": "Luna descubre un nuevo lugar y gana experiencia.",
+        "buscar_compañia": "Luna busca a otro habitante para compartir la aventura.",
+        "proteger_familia": "Luna piensa en la seguridad de su familia y sus seres queridos.",
+        "descansar": "Luna toma un descanso para recuperar energía."
+      }
     }
   ]
 }
