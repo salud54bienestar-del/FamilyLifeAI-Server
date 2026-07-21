@@ -1,28 +1,41 @@
-// Sistema emocional avanzado de Village Soul
+// Sistema avanzado de necesidades - Village Soul
 
-const cargarArchivo = require("./cargador_datos.js");
-const crearMemoria = require("./memorias.js");
+
+const cargarArchivo =
+require("./cargador_datos.js");
+
+
+const crearMemoria =
+require("./memorias.js");
+
+
+
+const {
+    actualizarEmocionesPorNecesidades
+}
+=
+require("./emociones.js");
+
+
 
 
 
 
 // =================================
-// OBTENER EMOCIONES
+// OBTENER NECESIDADES
 // =================================
 
-function obtenerEmocion(habitante_id){
+function obtenerNecesidades(
+    habitante_id
+){
 
 
     const datos =
-    cargarArchivo("../datos/emociones.json");
+    cargarArchivo("../datos/necesidades.json");
 
 
 
     if(!datos){
-
-        console.log(
-            "No se pudieron cargar las emociones."
-        );
 
         return null;
 
@@ -30,9 +43,10 @@ function obtenerEmocion(habitante_id){
 
 
 
-    return datos.emociones.find(
+    return datos.necesidades.find(
 
-        e => e.habitante_id === habitante_id
+        n =>
+        n.habitante_id === habitante_id
 
     ) || null;
 
@@ -44,30 +58,23 @@ function obtenerEmocion(habitante_id){
 
 
 
+
 // =================================
-// CAMBIAR EMOCIÓN
+// CREAR NECESIDADES
 // =================================
 
-function cambiarEmocion(
+function crearNecesidades(
     habitante_id,
-    emocion,
-    cantidad,
-    motivo="evento"
+    etapa="bebe"
 ){
 
 
-    const estado =
-    obtenerEmocion(
-        habitante_id
-    );
+    const datos =
+    cargarArchivo("../datos/necesidades.json");
 
 
 
-    if(!estado){
-
-        console.log(
-            "Estado emocional no encontrado."
-        );
+    if(!datos){
 
         return null;
 
@@ -76,97 +83,334 @@ function cambiarEmocion(
 
 
 
-    // Emociones principales
+    const existe =
+    obtenerNecesidades(
+        habitante_id
+    );
+
+
+
+    if(existe){
+
+        return existe;
+
+    }
+
+
+
+
+
+    let necesidades;
+
+
+
+
+
+    // =========================
+    // BEBÉ
+    // =========================
+
+    if(etapa==="bebe"){
+
+
+        necesidades={
+
+
+            habitante_id,
+
+
+            etapa,
+
+
+            hambre:100,
+
+
+            energia:100,
+
+
+            higiene:100,
+
+
+            diversion:50,
+
+
+            cariño:100,
+
+
+            sueño:100,
+
+
+            estado:
+            "dependiente"
+
+
+        };
+
+
+    }
+
+
+
+
+
+
+
+    // =========================
+    // NIÑO
+    // =========================
+
+    else if(etapa==="niño"){
+
+
+        necesidades={
+
+
+            habitante_id,
+
+
+            etapa,
+
+
+            hambre:100,
+
+
+            energia:100,
+
+
+            higiene:90,
+
+
+            diversion:100,
+
+
+            cariño:80,
+
+
+            sueño:90,
+
+
+            estado:
+            "estable"
+
+
+        };
+
+
+    }
+
+
+
+
+
+
+
+    // =========================
+    // ADOLESCENTE
+    // =========================
+
+    else if(etapa==="adolescente"){
+
+
+        necesidades={
+
+
+            habitante_id,
+
+
+            etapa,
+
+
+            hambre:100,
+
+
+            energia:100,
+
+
+            higiene:100,
+
+
+            diversion:90,
+
+
+            cariño:60,
+
+
+            sueño:80,
+
+
+            estado:
+            "estable"
+
+
+        };
+
+
+    }
+
+
+
+
+
+
+
+    // =========================
+    // ADULTO
+    // =========================
+
+    else{
+
+
+        necesidades={
+
+
+            habitante_id,
+
+
+            etapa:"adulto",
+
+
+            hambre:100,
+
+
+            energia:100,
+
+
+            higiene:100,
+
+
+            diversion:80,
+
+
+            cariño:60,
+
+
+            sueño:80,
+
+
+            estado:
+            "estable"
+
+
+        };
+
+
+    }
+
+
+
+
+
+
+
+    datos.necesidades.push(
+        necesidades
+    );
+
+
+
+    return necesidades;
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// ACTUALIZAR NECESIDADES
+// =================================
+
+function actualizarNecesidades(
+    habitante_id
+){
+
+
+
+    const necesidad =
+    obtenerNecesidades(
+        habitante_id
+    );
+
+
+
+    if(!necesidad){
+
+        return null;
+
+    }
+
+
+
+
+
+
+    // Consumo diario
+
+
+    necesidad.hambre -= 5;
+
+
+    necesidad.energia -= 4;
+
+
+    necesidad.higiene -= 2;
+
+
+    necesidad.diversion -= 3;
+
+
+
+
+
 
     if(
-        estado[emocion] !== undefined
+        necesidad.etapa==="bebe"
     ){
 
-        estado[emocion] += cantidad;
-
-    }
-
-
-
-    // Emociones secundarias
-
-    else {
-
-
-        if(
-            !estado.emociones_secundarias
-        ){
-
-            estado.emociones_secundarias = {};
-
-        }
-
-
-
-        if(
-            estado.emociones_secundarias[emocion] === undefined
-        ){
-
-            estado.emociones_secundarias[emocion] = 0;
-
-        }
-
-
-
-        estado.emociones_secundarias[emocion] += cantidad;
-
+        necesidad.cariño -= 1;
 
     }
 
 
 
 
-    limitarValores(
-        estado
+
+
+
+    limitarNecesidades(
+        necesidad
     );
 
 
 
-    estado.ultima_emocion_importante = {
 
 
-        evento:
-        motivo,
-
-
-        fecha:
-        new Date().toISOString()
-
-
-    };
-
-
-
-    actualizarEstadoActual(
-        estado
+    actualizarEstado(
+        necesidad
     );
 
 
 
-    crearMemoria(
+
+
+    actualizarEmocionesPorNecesidades(
 
         habitante_id,
 
-        "emocion",
-
-        "Cambió su estado emocional por: " + motivo,
-
-        "media",
-
-        [],
-
-        emocion
+        necesidad
 
     );
 
 
 
-    return estado;
+
+
+    return necesidad;
 
 
 }
@@ -181,54 +425,40 @@ function cambiarEmocion(
 // LIMITAR VALORES
 // =================================
 
-function limitarValores(estado){
+function limitarNecesidades(
+    necesidad
+){
 
 
 
-    const emocionesPrincipales = [
+    Object.keys(necesidad)
+    .forEach(
 
-        "felicidad",
-
-        "confianza",
-
-        "miedo",
-
-        "tristeza",
-
-        "ira",
-
-        "calma"
-
-    ];
-
-
-
-
-    emocionesPrincipales.forEach(
-
-        emocion => {
+        clave=>{
 
 
             if(
-                estado[emocion] !== undefined
+                typeof necesidad[clave]
+                ===
+                "number"
             ){
 
 
                 if(
-                    estado[emocion] > 100
+                    necesidad[clave] < 0
                 ){
 
-                    estado[emocion] = 100;
+                    necesidad[clave]=0;
 
                 }
 
 
 
                 if(
-                    estado[emocion] < 0
+                    necesidad[clave] > 100
                 ){
 
-                    estado[emocion] = 0;
+                    necesidad[clave]=100;
 
                 }
 
@@ -241,51 +471,6 @@ function limitarValores(estado){
     );
 
 
-
-
-
-
-    if(
-        estado.emociones_secundarias
-    ){
-
-
-        Object.keys(
-            estado.emociones_secundarias
-        )
-        .forEach(
-
-            emocion => {
-
-
-                if(
-                    estado.emociones_secundarias[emocion] > 100
-                ){
-
-                    estado.emociones_secundarias[emocion] = 100;
-
-                }
-
-
-
-                if(
-                    estado.emociones_secundarias[emocion] < 0
-                ){
-
-                    estado.emociones_secundarias[emocion] = 0;
-
-                }
-
-
-            }
-
-        );
-
-
-    }
-
-
-
 }
 
 
@@ -294,97 +479,61 @@ function limitarValores(estado){
 
 
 
-
 // =================================
-// ACTUALIZAR ESTADO GENERAL
+// ESTADO GENERAL
 // =================================
 
-function actualizarEstadoActual(
-    estado
+function actualizarEstado(
+    necesidad
 ){
 
 
+    const promedio =
 
-    const secundarias =
-    estado.emociones_secundarias || {};
+    (
 
+        necesidad.hambre +
 
+        necesidad.energia +
 
+        necesidad.higiene +
 
+        necesidad.diversion
 
-    if(
-        estado.tristeza > 60
-    ){
-
-        estado.estado_actual =
-        "triste";
-
-    }
+    ) / 4;
 
 
 
-    else if(
-        estado.miedo > 60
-    ){
 
-        estado.estado_actual =
-        "asustado";
+
+
+    if(promedio>=80){
+
+        necesidad.estado="feliz";
 
     }
 
+    else if(promedio>=50){
 
-
-    else if(
-        estado.ira > 60
-    ){
-
-        estado.estado_actual =
-        "enojado";
+        necesidad.estado="normal";
 
     }
 
+    else if(promedio>=25){
 
-
-    else if(
-        secundarias.soledad > 60
-    ){
-
-        estado.estado_actual =
-        "solo";
+        necesidad.estado="preocupado";
 
     }
-
-
-
-    else if(
-        estado.felicidad > 70
-    ){
-
-        estado.estado_actual =
-        "feliz";
-
-    }
-
-
-
-    else if(
-        estado.calma > 70
-    ){
-
-        estado.estado_actual =
-        "tranquilo";
-
-    }
-
-
 
     else{
 
-        estado.estado_actual =
-        "neutral";
+        necesidad.estado="critico";
 
     }
 
+
+
+    return necesidad;
 
 
 }
@@ -397,192 +546,23 @@ function actualizarEstadoActual(
 
 
 // =================================
-// NECESIDADES → EMOCIONES
+// SATISFACER NECESIDAD
 // =================================
 
-function actualizarEmocionesPorNecesidades(
+function satisfacerNecesidad(
     habitante_id,
-    necesidades
+    tipo
 ){
 
 
+    const necesidad =
+    obtenerNecesidades(
+        habitante_id
+    );
 
-    if(!necesidades){
 
-        return null;
 
-    }
-
-
-
-
-    if(
-        necesidades.hambre < 30
-    ){
-
-        cambiarEmocion(
-
-            habitante_id,
-
-            "tristeza",
-
-            5,
-
-            "hambre"
-
-        );
-
-    }
-
-
-
-
-
-    if(
-        necesidades.energia < 30
-    ){
-
-        cambiarEmocion(
-
-            habitante_id,
-
-            "estres",
-
-            5,
-
-            "cansancio"
-
-        );
-
-    }
-
-
-
-
-
-    if(
-        necesidades.diversion < 30
-    ){
-
-        cambiarEmocion(
-
-            habitante_id,
-
-            "aburrimiento",
-
-            5,
-
-            "falta de diversión"
-
-        );
-
-    }
-
-
-
-}
-
-
-
-
-
-
-
-
-// =================================
-// EVENTOS IMPORTANTES
-// =================================
-
-function aplicarEventoEmocional(
-    habitante_id,
-    evento
-){
-
-
-
-    const eventos = {
-
-
-        primer_encuentro: [
-
-            ["felicidad",5],
-
-            ["confianza",5]
-
-        ],
-
-
-
-        amistad:[
-
-            ["felicidad",10],
-
-            ["confianza",10]
-
-        ],
-
-
-
-        nacimiento:[
-
-            ["felicidad",20],
-
-            ["amor",20],
-
-            ["orgullo",10]
-
-        ],
-
-
-
-        boda:[
-
-            ["felicidad",20],
-
-            ["amor",20]
-
-        ],
-
-
-
-        divorcio:[
-
-            ["tristeza",20],
-
-            ["soledad",10]
-
-        ],
-
-
-
-        conflicto:[
-
-            ["tristeza",15],
-
-            ["ira",10]
-
-        ],
-
-
-
-        familia:[
-
-            ["confianza",15]
-
-        ]
-
-    };
-
-
-
-
-
-    const cambios =
-    eventos[evento];
-
-
-
-    if(!cambios){
+    if(!necesidad){
 
         return null;
 
@@ -592,30 +572,84 @@ function aplicarEventoEmocional(
 
 
 
-    cambios.forEach(
 
-        cambio => {
-
-
-            cambiarEmocion(
-
-                habitante_id,
-
-                cambio[0],
-
-                cambio[1],
-
-                evento
-
-            );
+    switch(tipo){
 
 
-        }
+        case "comida":
+
+            necesidad.hambre=100;
+
+        break;
+
+
+
+        case "dormir":
+
+            necesidad.energia=100;
+
+        break;
+
+
+
+        case "baño":
+
+            necesidad.higiene=100;
+
+        break;
+
+
+
+        case "jugar":
+
+            necesidad.diversion=100;
+
+        break;
+
+
+
+        case "cariño":
+
+            necesidad.cariño=100;
+
+        break;
+
+
+
+    }
+
+
+
+
+
+
+
+    crearMemoria(
+
+        habitante_id,
+
+        "necesidad",
+
+        "Satisfizo la necesidad: "+tipo,
+
+        "baja"
 
     );
 
 
 
+
+
+
+    actualizarEstado(
+        necesidad
+    );
+
+
+
+    return necesidad;
+
+
 }
 
 
@@ -624,17 +658,16 @@ function aplicarEventoEmocional(
 
 
 
+module.exports={
 
-module.exports = {
 
+    obtenerNecesidades,
 
-    obtenerEmocion,
+    crearNecesidades,
 
-    cambiarEmocion,
+    actualizarNecesidades,
 
-    actualizarEmocionesPorNecesidades,
-
-    aplicarEventoEmocional
+    satisfacerNecesidad
 
 
 };
