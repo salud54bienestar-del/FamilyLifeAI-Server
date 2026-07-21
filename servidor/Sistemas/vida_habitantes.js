@@ -15,14 +15,6 @@ require("./memorias.js");
 
 
 const {
-    actualizarCrecimiento
-}
-=
-require("./crecimiento.js");
-
-
-
-const {
     actualizarNecesidades
 }
 =
@@ -35,15 +27,6 @@ const {
 }
 =
 require("./etapas.js");
-
-
-
-const {
-    avanzarEmbarazos
-}
-=
-require("./embarazo.js");
-
 
 
 
@@ -60,19 +43,15 @@ function actualizarVidaHabitantes(){
     cargarArchivo("../datos/almas.json");
 
 
-
     const tiempoDatos =
     cargarArchivo("../datos/tiempo.json");
 
 
 
-    if(
-        !almas ||
-        !tiempoDatos
-    ){
+    if(!almas || !tiempoDatos){
 
         console.log(
-            "No se pudieron cargar datos de vida."
+            "Error cargando datos de vida."
         );
 
         return null;
@@ -81,12 +60,8 @@ function actualizarVidaHabitantes(){
 
 
 
-
-
     const tiempo =
     tiempoDatos.tiempo;
-
-
 
 
 
@@ -94,41 +69,29 @@ function actualizarVidaHabitantes(){
 
 
 
-    if(
-        tiempo.hora >= 6 &&
-        tiempo.hora < 12
-    ){
+    if(tiempo.hora >= 6 && tiempo.hora < 12){
 
-        periodo="mañana";
+        periodo = "mañana";
 
     }
 
-    else if(
-        tiempo.hora >=12 &&
-        tiempo.hora <18
-    ){
+    else if(tiempo.hora >= 12 && tiempo.hora < 18){
 
-        periodo="dia";
+        periodo = "dia";
 
     }
 
-    else if(
-        tiempo.hora >=18 &&
-        tiempo.hora <22
-    ){
+    else if(tiempo.hora >= 18 && tiempo.hora < 22){
 
-        periodo="tarde";
+        periodo = "tarde";
 
     }
 
     else{
 
-        periodo="noche";
+        periodo = "noche";
 
     }
-
-
-
 
 
 
@@ -136,8 +99,6 @@ function actualizarVidaHabitantes(){
         "Periodo actual:",
         periodo
     );
-
-
 
 
 
@@ -161,18 +122,9 @@ function actualizarVidaHabitantes(){
 
 
 
-            console.log(
-                "Actualizando habitante:",
-                habitante.nombre
-            );
-
-
-
-
-
-            // =========================
+            // =====================
             // ETAPA DE VIDA
-            // =========================
+            // =====================
 
 
             actualizarEtapa(
@@ -183,18 +135,13 @@ function actualizarVidaHabitantes(){
 
 
 
-
-
-
-            // =========================
+            // =====================
             // NECESIDADES
-            // =========================
+            // =====================
 
 
             actualizarNecesidades(
-
                 habitante.id
-
             );
 
 
@@ -202,12 +149,9 @@ function actualizarVidaHabitantes(){
 
 
 
-
-
-
-            // =========================
+            // =====================
             // DESCANSO
-            // =========================
+            // =====================
 
 
             if(
@@ -217,11 +161,8 @@ function actualizarVidaHabitantes(){
 
 
                 if(
-                    habitante.ultimo_descanso
-                    !==
-                    tiempo.dia
+                    habitante.ultimo_descanso !== tiempo.dia
                 ){
-
 
 
                     crearMemoria(
@@ -243,7 +184,6 @@ function actualizarVidaHabitantes(){
                     tiempo.dia;
 
 
-
                 }
 
 
@@ -254,11 +194,9 @@ function actualizarVidaHabitantes(){
 
 
 
-
-
-            // =========================
+            // =====================
             // ACTIVIDAD DIARIA
-            // =========================
+            // =====================
 
 
             if(
@@ -267,26 +205,36 @@ function actualizarVidaHabitantes(){
 
 
 
-                crearEvento(
-
-                    "actividad_diaria",
-
-                    [
-                        habitante.id
-                    ],
-
-                    {
-
-                        habitante:
-                        habitante.nombre,
+                if(
+                    habitante.ultima_actividad !== tiempo.dia
+                ){
 
 
-                        actividad:
-                        "rutina diaria"
+                    crearEvento(
 
-                    }
+                        "actividad_diaria",
 
-                );
+                        [
+                            habitante.id
+                        ],
+
+                        {
+
+                            actividad:
+                            "rutina diaria"
+
+                        }
+
+                    );
+
+
+
+                    habitante.ultima_actividad =
+                    tiempo.dia;
+
+
+                }
+
 
 
             }
@@ -303,46 +251,18 @@ function actualizarVidaHabitantes(){
 
 
 
-
-
-    // =========================
-    // CRECIMIENTO
-    // =========================
-
-
-    actualizarCrecimiento();
-
-
-
-
-
-
-
-    // =========================
-    // EMBARAZOS
-    // =========================
-
-
-    avanzarEmbarazos();
-
-
-
-
-
-
-
     console.log(
-        "Vida de habitantes actualizada correctamente."
+        "Vida de habitantes actualizada."
     );
-
 
 
 
     return almas.almas;
 
 
-
 }
+
+
 
 
 
