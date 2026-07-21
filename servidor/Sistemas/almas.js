@@ -33,7 +33,7 @@ function obtenerAlma(id){
 
         alma => alma.id === id
 
-    );
+    ) || null;
 
 
 }
@@ -44,7 +44,7 @@ function obtenerAlma(id){
 
 
 // =================================
-// CREAR NUEVA ALMA
+// CREAR ALMA
 // =================================
 
 function crearAlma(nuevaAlma){
@@ -60,7 +60,6 @@ function crearAlma(nuevaAlma){
         return null;
 
     }
-
 
 
 
@@ -85,53 +84,60 @@ function crearAlma(nuevaAlma){
 
 
 
+    const edad =
+    nuevaAlma.edad || 0;
+
+
+
+
+
     const nueva = {
 
 
-        id:
-        nuevoId,
+        id:nuevoId,
 
 
 
         nombre:
 
-        nuevaAlma.nombre
-        ||
+        nuevaAlma.nombre ||
         "Sin nombre",
 
 
 
-        edad:
 
-        nuevaAlma.edad
-        ||
-        0,
+        edad,
 
 
 
         etapa_vida:
 
         determinarEtapaVida(
-            nuevaAlma.edad || 0
+            edad
         ),
 
 
 
 
+        personalidad:
+
+        nuevaAlma.personalidad || null,
+
+
+
         personalidad_id:
 
-        nuevaAlma.personalidad_id
-        ||
-        null,
+        nuevaAlma.personalidad_id || null,
+
 
 
 
 
         tipo:
 
-        nuevaAlma.tipo
-        ||
+        nuevaAlma.tipo ||
         "habitante",
+
 
 
 
@@ -139,9 +145,9 @@ function crearAlma(nuevaAlma){
 
         emociones:
 
-        nuevaAlma.emociones
-        ||
-        {
+
+        nuevaAlma.emociones || {
+
 
             felicidad:50,
 
@@ -153,9 +159,28 @@ function crearAlma(nuevaAlma){
 
             ira:0,
 
-            calma:50
+            calma:50,
+
+
+            emociones_secundarias:{
+
+
+                amor:0,
+
+                soledad:0,
+
+                orgullo:0,
+
+                estres:0,
+
+                aburrimiento:0
+
+
+            }
+
 
         },
+
 
 
 
@@ -172,19 +197,14 @@ function crearAlma(nuevaAlma){
 
         objetivos:
 
-        nuevaAlma.objetivos
-        ||
-        [
+
+        nuevaAlma.objetivos ||
+
+        obtenerObjetivosIniciales(
+            edad
+        ),
 
 
-            "crecer",
-
-            "aprender",
-
-            "formar vínculos"
-
-
-        ],
 
 
 
@@ -192,20 +212,17 @@ function crearAlma(nuevaAlma){
 
         profesion:
 
-        nuevaAlma.profesion
 
-        ||
-
-        {
+        nuevaAlma.profesion || {
 
 
             nombre:"ninguna",
 
-            nivel:1,
+            nivel:0,
 
             experiencia:0,
 
-            estado:"activa"
+            estado:"inactivo"
 
 
         },
@@ -215,18 +232,22 @@ function crearAlma(nuevaAlma){
 
 
 
-        familia:[],
+        familia:
+
+        nuevaAlma.familia || [],
+
+
 
 
 
 
         origen:
 
-        nuevaAlma.origen
 
-        ||
+        nuevaAlma.origen ||
 
         "nacido_en_el_mundo",
+
 
 
 
@@ -237,14 +258,17 @@ function crearAlma(nuevaAlma){
         "viviendo"
 
 
+
     };
 
 
 
 
 
-    datos.almas.push(nueva);
 
+    datos.almas.push(
+        nueva
+    );
 
 
 
@@ -268,17 +292,6 @@ function crearAlma(nuevaAlma){
 
 
 
-    console.log(
-        "Nueva alma creada:"
-    );
-
-
-    console.log(nueva);
-
-
-
-
-
     return nueva;
 
 
@@ -292,35 +305,67 @@ function crearAlma(nuevaAlma){
 
 
 // =================================
-// ETAPAS DE VIDA
+// OBJETIVOS SEGÚN EDAD
 // =================================
 
-
-function determinarEtapaVida(edad){
+function obtenerObjetivosIniciales(
+    edad
+){
 
 
     if(edad < 1){
 
-        return "bebe";
+        return [
+
+            "crecer",
+
+            "descubrir_el_mundo"
+
+        ];
 
     }
+
 
 
     if(edad < 12){
 
-        return "niño";
+        return [
+
+            "aprender",
+
+            "jugar",
+
+            "crear_amigos"
+
+        ];
 
     }
+
 
 
     if(edad < 18){
 
-        return "adolescente";
+        return [
+
+            "desarrollar_habilidades",
+
+            "encontrar_identidad"
+
+        ];
 
     }
 
 
-    return "adulto";
+
+    return [
+
+        "trabajar",
+
+        "crear_vínculos",
+
+        "alcanzar_metass"
+
+    ];
 
 
 }
@@ -331,7 +376,68 @@ function determinarEtapaVida(edad){
 
 
 
-function obtenerMensajeOrigen(alma){
+// =================================
+// ETAPA DE VIDA
+// =================================
+
+function determinarEtapaVida(
+    edad
+){
+
+
+
+    if(edad < 1){
+
+        return "bebe";
+
+    }
+
+
+
+    if(edad < 12){
+
+        return "niño";
+
+    }
+
+
+
+    if(edad < 18){
+
+        return "adolescente";
+
+    }
+
+
+
+    if(edad < 60){
+
+        return "adulto";
+
+    }
+
+
+
+    return "anciano";
+
+
+}
+
+
+
+
+
+
+
+
+// =================================
+// MENSAJE DE ORIGEN
+// =================================
+
+function obtenerMensajeOrigen(
+    alma
+){
+
 
 
     switch(alma.origen){
@@ -339,13 +445,13 @@ function obtenerMensajeOrigen(alma){
 
         case "adopcion":
 
-            return "Llegó a una nueva familia mediante adopción.";
+            return "Llegó a una familia mediante adopción.";
 
 
 
         case "nacimiento":
 
-            return "Nació dentro de una familia de Village Soul.";
+            return "Nació dentro del mundo de Village Soul.";
 
 
 
@@ -369,7 +475,11 @@ function obtenerMensajeOrigen(alma){
 // ACTUALIZAR ALMA
 // =================================
 
-function actualizarAlma(id,cambios){
+function actualizarAlma(
+    id,
+    cambios
+){
+
 
 
     const alma =
@@ -409,9 +519,44 @@ function actualizarAlma(id,cambios){
 
 
 // =================================
-// LISTAR ALMAS
+// CAMBIAR ETAPA
 // =================================
 
+function actualizarEtapaAlma(
+    alma
+){
+
+
+    if(!alma){
+
+        return null;
+
+    }
+
+
+
+    alma.etapa_vida =
+    determinarEtapaVida(
+        alma.edad
+    );
+
+
+
+    return alma;
+
+
+}
+
+
+
+
+
+
+
+
+// =================================
+// LISTAR ALMAS
+// =================================
 
 function listarAlmas(){
 
@@ -448,6 +593,8 @@ module.exports={
     crearAlma,
 
     actualizarAlma,
+
+    actualizarEtapaAlma,
 
     listarAlmas
 
