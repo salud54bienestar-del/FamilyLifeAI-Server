@@ -1,24 +1,47 @@
 // Sistema de vida diaria de habitantes - Village Soul
 
+
 const cargarArchivo = require("./cargador_datos.js");
+
 const crearEvento = require("./eventos.js");
+
 const crearMemoria = require("./memorias.js");
+
 
 const {
     actualizarCrecimiento
 } = require("./crecimiento.js");
 
 
+const {
+    actualizarNecesidades
+} = require("./necesidades.js");
+
+
+const {
+    actualizarEtapa
+} = require("./etapas.js");
+
+
+const {
+    avanzarEmbarazos
+} = require("./embarazo.js");
+
+
+
+
 
 // =================================
-// ACTUALIZAR VIDA DIARIA
+// ACTUALIZAR VIDA HABITANTES
 // =================================
 
 function actualizarVidaHabitantes(){
 
 
+
     const almas =
     cargarArchivo("../datos/almas.json");
+
 
 
     const tiempoDatos =
@@ -26,7 +49,11 @@ function actualizarVidaHabitantes(){
 
 
 
-    if(!almas || !tiempoDatos){
+
+    if(
+        !almas ||
+        !tiempoDatos
+    ){
 
         console.log(
             "No se pudieron cargar datos de vida."
@@ -38,8 +65,12 @@ function actualizarVidaHabitantes(){
 
 
 
+
+
     const tiempo =
     tiempoDatos.tiempo;
+
+
 
 
 
@@ -47,36 +78,47 @@ function actualizarVidaHabitantes(){
 
 
 
-    if(tiempo.hora >= 6 && tiempo.hora < 12){
+    if(
+        tiempo.hora >= 6 &&
+        tiempo.hora < 12
+    ){
 
-        periodo = "mañana";
-
-    }
-
-    else if(tiempo.hora >= 12 && tiempo.hora < 18){
-
-        periodo = "dia";
+        periodo="mañana";
 
     }
 
-    else if(tiempo.hora >= 18 && tiempo.hora < 22){
+    else if(
+        tiempo.hora >=12 &&
+        tiempo.hora <18
+    ){
 
-        periodo = "tarde";
+        periodo="dia";
+
+    }
+
+    else if(
+        tiempo.hora >=18 &&
+        tiempo.hora <22
+    ){
+
+        periodo="tarde";
 
     }
 
     else{
 
-        periodo = "noche";
+        periodo="noche";
 
     }
+
+
 
 
 
 
 
     console.log(
-        "Periodo:",
+        "Periodo actual:",
         periodo
     );
 
@@ -84,99 +126,184 @@ function actualizarVidaHabitantes(){
 
 
 
-    almas.almas.forEach(habitante => {
+
+
+    almas.almas.forEach(
+
+        habitante=>{
 
 
 
-        if(
-            habitante.estado !== "viviendo"
-        ){
+            if(
+                habitante.estado !== "viviendo"
+            ){
 
-            return;
+                return;
 
-        }
-
-
-
-
-
-        console.log(
-
-            habitante.nombre +
-            " está en periodo " +
-            periodo
-
-        );
+            }
 
 
 
 
 
-        // Rutina nocturna
+            console.log(
+                "Actualizando:",
+                habitante.nombre
+            );
 
-        if(periodo === "noche"){
 
 
-            crearMemoria(
+
+
+
+            // =========================
+            // ETAPA DE VIDA
+            // =========================
+
+
+            actualizarEtapa(
+                habitante
+            );
+
+
+
+
+
+
+
+
+            // =========================
+            // NECESIDADES
+            // =========================
+
+
+            actualizarNecesidades(
 
                 habitante.id,
 
-                "rutina",
-
-                "Descansó durante la noche.",
-
-                "baja"
+                1
 
             );
 
 
+
+
+
+
+
+
+            // =========================
+            // RUTINA NOCTURNA
+            // =========================
+
+
+            if(
+                periodo==="noche"
+            ){
+
+
+                crearMemoria(
+
+                    habitante.id,
+
+                    "descanso",
+
+                    habitante.nombre +
+                    " descansó durante la noche.",
+
+                    "baja"
+
+                );
+
+
+            }
+
+
+
+
+
+
+
+            // =========================
+            // ACTIVIDAD DIARIA
+            // =========================
+
+
+            if(
+                periodo==="dia"
+            ){
+
+
+                crearEvento(
+
+                    "actividad_diaria",
+
+                    [
+                        habitante.id
+                    ],
+
+                    {
+
+                        habitante:
+                        habitante.nombre,
+
+                        actividad:
+                        "rutina diaria"
+
+                    }
+
+                );
+
+
+            }
+
+
+
+
+
         }
 
-
-
-
-
-        // Rutina diaria
-
-        if(periodo === "dia"){
-
-
-            crearEvento(
-
-                "actividad_diaria",
-
-                [
-                    habitante.id
-                ],
-
-                {
-
-                    actividad:
-                    "rutina diaria"
-
-                }
-
-            );
-
-
-        }
-
-
-
-
-    });
+    );
 
 
 
 
 
-    // Revisar crecimiento
+
+
+    // =========================
+    // CRECIMIENTO
+    // =========================
+
 
     actualizarCrecimiento();
 
 
 
+
+
+
+
+    // =========================
+    // EMBARAZOS
+    // =========================
+
+
+    avanzarEmbarazos();
+
+
+
+
+
+
+    console.log(
+        "Vida de habitantes actualizada."
+    );
+
+
+
     return almas.almas;
+
 
 }
 
@@ -184,10 +311,8 @@ function actualizarVidaHabitantes(){
 
 
 
-module.exports = {
-
+module.exports={
 
     actualizarVidaHabitantes
-
 
 };
