@@ -38,11 +38,116 @@ function procesarDecision(id, contexto = {}) {
 
 
     // ==============================
+    // PROFESIONES
+    // ==============================
+
+
+    const profesion =
+    contexto.profesion?.toLowerCase();
+
+
+
+    switch(profesion){
+
+
+        case "agricultor":
+
+            eleccion = "trabajar_granja";
+
+        break;
+
+
+
+        case "trabajador_social":
+
+            eleccion = "evaluar_adopciones";
+
+        break;
+
+
+
+        case "cuidador_orfanato":
+
+            eleccion = "cuidar_ninos";
+
+        break;
+
+
+
+        case "guardia_seguridad":
+
+            eleccion = "patrullar_comunidad";
+
+        break;
+
+
+
+        case "medico":
+
+        case "pediatra":
+
+            eleccion = "atender_pacientes";
+
+        break;
+
+
+
+        case "enfermero":
+
+            eleccion = "cuidar_pacientes";
+
+        break;
+
+
+
+        case "maestro":
+
+            eleccion = "enseñar_ninos";
+
+        break;
+
+
+
+        case "cocinero":
+
+        case "chef_restaurante":
+
+            eleccion = "preparar_comida";
+
+        break;
+
+
+
+        case "ama_de_llaves":
+
+        case "sirvienta":
+
+            eleccion = "mantener_hogar";
+
+        break;
+
+
+
+        case "niñera":
+
+            eleccion = "cuidar_hijos";
+
+        break;
+
+
+    }
+
+
+
+
+
+    // ==============================
     // EMOCIONES PRINCIPALES
     // ==============================
 
 
     switch(contexto.emocion) {
+
 
         case "tristeza":
 
@@ -64,6 +169,7 @@ function procesarDecision(id, contexto = {}) {
 
         break;
 
+
     }
 
 
@@ -74,7 +180,8 @@ function procesarDecision(id, contexto = {}) {
     // ==============================
 
 
-    const emociones = contexto.emociones_secundarias || {};
+    const emociones =
+    contexto.emociones_secundarias || {};
 
 
 
@@ -122,12 +229,23 @@ function procesarDecision(id, contexto = {}) {
 
 
         else if(
-            contexto.personalidad === "aventurero"
+            contexto.personalidad === "curiosa"
         ){
 
             eleccion = "explorar_el_mundo";
 
         }
+
+
+
+        else if(
+            contexto.personalidad === "protectora"
+        ){
+
+            eleccion = "ayudar_comunidad";
+
+        }
+
 
     }
 
@@ -149,12 +267,14 @@ function procesarDecision(id, contexto = {}) {
 
 
 
+
     // ==============================
     // OBJETIVOS
     // ==============================
 
 
-    const objetivo = contexto.objetivo?.toLowerCase();
+    const objetivo =
+    contexto.objetivo?.toLowerCase();
 
 
 
@@ -172,9 +292,9 @@ function procesarDecision(id, contexto = {}) {
     }
 
 
-    else if(objetivo === "crear_una_familia"){
+    else if(objetivo === "formar una familia"){
 
-        eleccion = "proteger_familia";
+        eleccion = "crear_familia";
 
     }
 
@@ -183,7 +303,7 @@ function procesarDecision(id, contexto = {}) {
 
 
     // ==============================
-    // BUSCAR RESULTADO
+    // RESULTADO
     // ==============================
 
 
@@ -196,7 +316,8 @@ function procesarDecision(id, contexto = {}) {
 
         if(decision.resultados[eleccion]){
 
-            resultadoTexto = decision.resultados[eleccion];
+            resultadoTexto =
+            decision.resultados[eleccion];
 
         }
 
@@ -209,15 +330,24 @@ function procesarDecision(id, contexto = {}) {
     const resultado = {
 
 
-        habitante_id: decision.habitante_id,
+        habitante_id:
+        decision.habitante_id,
 
-        situacion: decision.situacion,
 
-        eleccion: eleccion,
+        situacion:
+        decision.situacion,
 
-        resultado: resultadoTexto,
 
-        contexto: contexto
+        eleccion:
+        eleccion,
+
+
+        resultado:
+        resultadoTexto,
+
+
+        contexto:
+        contexto
 
 
     };
@@ -231,9 +361,13 @@ function procesarDecision(id, contexto = {}) {
     console.log("=================================");
 
 
-    console.log("Habitante:", decision.habitante_id);
+    console.log("Habitante:",
+    decision.habitante_id);
 
-    console.log("Elección:", eleccion);
+
+    console.log("Elección:",
+    eleccion);
+
 
     console.log("Resultado:");
 
