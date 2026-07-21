@@ -15,16 +15,16 @@
     },
     {
       "id": 2,
-      "nombre": "aventurero",
+      "nombre": "curiosa",
       "rasgos": [
-        "explora",
-        "busca novedades",
-        "acepta riesgos"
+        "explora lugares nuevos",
+        "busca aprender",
+        "acepta desafíos"
       ],
       "curiosidad": 90,
-      "valentia": 85,
-      "sociabilidad": 60,
-      "paciencia": 40
+      "valentia": 75,
+      "sociabilidad": 65,
+      "paciencia": 50
     }
   ]
 }
