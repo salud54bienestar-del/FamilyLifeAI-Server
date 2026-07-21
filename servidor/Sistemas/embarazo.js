@@ -4,6 +4,11 @@ const cargarArchivo = require("./cargador_datos.js");
 const crearEvento = require("./eventos.js");
 const crearMemoria = require("./memorias.js");
 
+const {
+    registrarNacimiento
+} = require("./nacimientos.js");
+
+
 
 
 // =================================
@@ -51,10 +56,6 @@ function evaluarEmbarazo(
 
     if(!pareja){
 
-        console.log(
-            "No existe relación."
-        );
-
         return null;
 
     }
@@ -66,25 +67,18 @@ function evaluarEmbarazo(
 
 
         matrimonio:
-
         pareja.estado_pareja === "casados",
 
 
-
         romance:
-
         pareja.romance >= 80,
 
 
-
         confianza:
-
         pareja.confianza >= 80
 
 
     };
-
-
 
 
 
@@ -95,22 +89,17 @@ function evaluarEmbarazo(
 
         padre_id,
 
-
-        requisitos,
-
-
         aprobado:
 
         Object.values(requisitos)
-        .every(r=>r===true)
+        .every(r=>r===true),
 
+
+        requisitos
 
     };
 
-
 }
-
-
 
 
 
@@ -125,7 +114,6 @@ function iniciarEmbarazo(
 ){
 
 
-
     const evaluacion =
     evaluarEmbarazo(
         madre_id,
@@ -133,25 +121,15 @@ function iniciarEmbarazo(
     );
 
 
-
-    if(!evaluacion){
-
-        return null;
-
-    }
-
-
-
-    if(!evaluacion.aprobado){
+    if(!evaluacion || !evaluacion.aprobado){
 
         console.log(
-            "No cumplen requisitos para embarazo."
+            "No puede iniciar embarazo."
         );
 
         return null;
 
     }
-
 
 
 
@@ -166,6 +144,33 @@ function iniciarEmbarazo(
         return null;
 
     }
+
+
+
+
+
+    const activo =
+    datos.embarazos.find(
+
+        e =>
+
+        e.madre === madre_id &&
+        e.estado === "embarazada"
+
+    );
+
+
+
+    if(activo){
+
+        console.log(
+            "Ya existe un embarazo."
+        );
+
+        return null;
+
+    }
+
 
 
 
@@ -188,10 +193,24 @@ function iniciarEmbarazo(
         padre_id,
 
 
-
-        tiempo:
+        dias:
 
         0,
+
+
+        meses:
+
+        0,
+
+
+        duracion_dias:
+
+        270,
+
+
+        etapa:
+
+        "primer_trimestre",
 
 
 
@@ -201,7 +220,23 @@ function iniciarEmbarazo(
 
 
 
-        fecha_inicio:
+        salud_madre:
+
+        100,
+
+
+        salud_bebe:
+
+        100,
+
+
+        complicaciones:
+
+        [],
+
+
+
+        bebe_id:
 
         null
 
@@ -235,7 +270,8 @@ function iniciarEmbarazo(
 
         {
 
-            tipo:"embarazo_iniciado"
+            tipo:
+            "embarazo_iniciado"
 
         }
 
@@ -260,8 +296,8 @@ function iniciarEmbarazo(
 
 
 
-    return embarazo;
 
+    return embarazo;
 
 }
 
@@ -269,12 +305,145 @@ function iniciarEmbarazo(
 
 
 
-module.exports={
+
+
+// =================================
+// AVANZAR UN DÍA VILLAGE SOUL
+// =================================
+
+function avanzarEmbarazos(
+    familia_id
+){
+
+
+    const datos =
+    cargarArchivo("../datos/embarazos.json");
+
+
+    if(!datos){
+
+        return null;
+
+    }
+
+
+
+    datos.embarazos.forEach(
+
+        embarazo => {
+
+
+
+            if(
+                embarazo.estado !== "embarazada"
+            ){
+
+                return;
+
+            }
+
+
+
+
+            embarazo.dias++;
+
+
+
+
+            // Cada 30 días = 1 mes
+
+            embarazo.meses =
+            Math.floor(
+                embarazo.dias / 30
+            );
+
+
+
+
+
+            if(embarazo.meses <= 3){
+
+                embarazo.etapa =
+                "primer_trimestre";
+
+            }
+
+
+            else if(embarazo.meses <= 6){
+
+                embarazo.etapa =
+                "segundo_trimestre";
+
+            }
+
+
+            else {
+
+                embarazo.etapa =
+                "tercer_trimestre";
+
+            }
+
+
+
+
+
+
+
+            if(
+                embarazo.dias >=
+                embarazo.duracion_dias
+            ){
+
+
+                registrarNacimiento(
+
+                    embarazo.id,
+
+                    familia_id,
+
+                    {
+
+                        nombre:
+                        "Nuevo habitante"
+
+                    }
+
+                );
+
+
+
+                embarazo.estado =
+                "finalizado";
+
+
+            }
+
+
+
+        }
+
+    );
+
+
+
+    return datos.embarazos;
+
+}
+
+
+
+
+
+
+module.exports = {
 
 
     evaluarEmbarazo,
 
-    iniciarEmbarazo
+    iniciarEmbarazo,
+
+    avanzarEmbarazos
 
 
 };
