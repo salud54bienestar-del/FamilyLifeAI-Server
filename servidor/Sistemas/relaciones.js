@@ -1,24 +1,51 @@
 // Sistema avanzado de relaciones - Village Soul
 
-
-const cargarArchivo =
-require("./cargador_datos.js");
-
-
-const crearEvento =
-require("./eventos.js");
-
-
-const crearMemoria =
-require("./memorias.js");
+const cargarArchivo = require("./cargador_datos.js");
+const crearEvento = require("./eventos.js");
+const crearMemoria = require("./memorias.js");
 
 
 
-const {
-    obtenerEtapaHabitante
+// =================================
+// BUSCAR RELACIÓN
+// =================================
+
+function obtenerRelacion(
+    habitante_a,
+    habitante_b
+){
+
+    const datos =
+    cargarArchivo("../datos/relaciones.json");
+
+
+    if(!datos){
+
+        return null;
+
+    }
+
+
+    return datos.relaciones.find(
+
+        r =>
+
+        (
+            r.habitante_a === habitante_a &&
+            r.habitante_b === habitante_b
+        )
+
+        ||
+
+        (
+            r.habitante_a === habitante_b &&
+            r.habitante_b === habitante_a
+        )
+
+    ) || null;
+
+
 }
-=
-require("./etapas.js");
 
 
 
@@ -27,7 +54,6 @@ require("./etapas.js");
 // =================================
 // CREAR RELACIÓN
 // =================================
-
 
 function crearRelacion(
     habitante_a,
@@ -40,16 +66,7 @@ function crearRelacion(
     cargarArchivo("../datos/relaciones.json");
 
 
-
-    const almas =
-    cargarArchivo("../datos/almas.json");
-
-
-
-    if(
-        !datos ||
-        !almas
-    ){
+    if(!datos){
 
         return null;
 
@@ -58,63 +75,35 @@ function crearRelacion(
 
 
 
-    const personaA =
-    almas.almas.find(
-        a=>a.id===habitante_a
+    const existente =
+    obtenerRelacion(
+        habitante_a,
+        habitante_b
     );
 
 
-    const personaB =
-    almas.almas.find(
-        a=>a.id===habitante_b
-    );
+    if(existente){
 
-
-
-    if(
-        !personaA ||
-        !personaB
-    ){
-
-        return null;
+        return existente;
 
     }
 
 
 
 
+    const nuevoId =
 
+    datos.relaciones.length > 0
 
-    const etapaA =
-    obtenerEtapaHabitante(personaA);
+    ?
 
+    Math.max(
+        ...datos.relaciones.map(r=>r.id)
+    ) + 1
 
-    const etapaB =
-    obtenerEtapaHabitante(personaB);
+    :
 
-
-
-
-
-    // Evitar romance en menores
-
-    if(
-        tipo==="romance" &&
-        (
-            etapaA.nombre !== "adulto" ||
-            etapaB.nombre !== "adulto"
-        )
-    ){
-
-        console.log(
-            "No se puede crear relación romántica."
-        );
-
-        tipo="amistad";
-
-    }
-
-
+    1;
 
 
 
@@ -123,48 +112,35 @@ function crearRelacion(
     const relacion = {
 
 
-        id:
-        datos.relaciones.length + 1,
-
+        id:nuevoId,
 
 
         habitante_a,
 
-        habitante_b,
 
+        habitante_b,
 
 
         tipo,
 
 
-
-        nivel:
-        "nuevo",
+        nivel:"nuevo",
 
 
-
-        confianza:
-        0,
+        confianza:0,
 
 
-
-        afinidad:
-        50,
+        afinidad:50,
 
 
+        romance:0,
 
-        romance:
-        0,
+
+        estado_pareja:"ninguno",
 
 
 
-        estado_pareja:
-        "ninguno",
-
-
-
-        familia:
-        {
+        familia:{
 
             parentesco:false,
 
@@ -174,8 +150,7 @@ function crearRelacion(
 
 
 
-        historial:
-        [
+        historial:[
 
             "Primer encuentro"
 
@@ -183,13 +158,11 @@ function crearRelacion(
 
 
 
-        eventos_importantes:
-        [
+        eventos_importantes:[
 
             {
 
-                evento:
-                "primer_encuentro",
+                evento:"primer_encuentro",
 
                 fecha:null,
 
@@ -205,12 +178,9 @@ function crearRelacion(
 
 
 
-
-
     datos.relaciones.push(
         relacion
     );
-
 
 
 
@@ -240,14 +210,13 @@ function crearRelacion(
 
 
 
-
     crearMemoria(
 
         habitante_a,
 
         "relacion",
 
-        "Conoció a " + personaB.nombre,
+        "Conoció a un nuevo habitante.",
 
         "media",
 
@@ -255,9 +224,27 @@ function crearRelacion(
 
             habitante_b
 
-        ],
+        ]
 
-        "social"
+    );
+
+
+
+    crearMemoria(
+
+        habitante_b,
+
+        "relacion",
+
+        "Conoció a un nuevo habitante.",
+
+        "media",
+
+        [
+
+            habitante_a
+
+        ]
 
     );
 
@@ -268,8 +255,6 @@ function crearRelacion(
     return relacion;
 
 }
-
-
 
 
 
@@ -281,7 +266,6 @@ function crearRelacion(
 // AUMENTAR CONFIANZA
 // =================================
 
-
 function aumentarConfianza(
     habitante_a,
     habitante_b,
@@ -290,11 +274,10 @@ function aumentarConfianza(
 
 
     const relacion =
-    buscarRelacion(
+    obtenerRelacion(
         habitante_a,
         habitante_b
     );
-
 
 
     if(!relacion){
@@ -305,17 +288,46 @@ function aumentarConfianza(
 
 
 
+
     relacion.confianza += cantidad;
 
 
 
-    if(
-        relacion.confianza > 100
-    ){
+    if(relacion.confianza > 100){
 
-        relacion.confianza=100;
+        relacion.confianza = 100;
 
     }
+
+
+
+    actualizarNivelRelacion(
+        relacion
+    );
+
+
+
+
+    crearEvento(
+
+        "cambio_confianza",
+
+        [
+
+            habitante_a,
+
+            habitante_b
+
+        ],
+
+        {
+
+            confianza:
+            relacion.confianza
+
+        }
+
+    );
 
 
 
@@ -328,64 +340,9 @@ function aumentarConfianza(
 
 
 
-
-
 // =================================
-// BUSCAR RELACIÓN
+// ROMANCE
 // =================================
-
-
-function buscarRelacion(
-    habitante_a,
-    habitante_b
-){
-
-
-    const datos =
-    cargarArchivo("../datos/relaciones.json");
-
-
-
-    if(!datos){
-
-        return null;
-
-    }
-
-
-
-    return datos.relaciones.find(
-
-        r=>
-
-        (
-            r.habitante_a===habitante_a &&
-            r.habitante_b===habitante_b
-        )
-
-        ||
-
-        (
-            r.habitante_a===habitante_b &&
-            r.habitante_b===habitante_a
-        )
-
-    ) || null;
-
-
-}
-
-
-
-
-
-
-
-
-// =================================
-// AUMENTAR ROMANCE
-// =================================
-
 
 function aumentarRomance(
     habitante_a,
@@ -395,14 +352,23 @@ function aumentarRomance(
 
 
     const relacion =
-    buscarRelacion(
+    obtenerRelacion(
         habitante_a,
         habitante_b
     );
 
 
-
     if(!relacion){
+
+        return null;
+
+    }
+
+
+
+    if(
+        relacion.familia.parentesco
+    ){
 
         return null;
 
@@ -414,13 +380,91 @@ function aumentarRomance(
 
 
 
-    if(
-        relacion.romance > 100
-    ){
+    if(relacion.romance > 100){
 
-        relacion.romance=100;
+        relacion.romance = 100;
 
     }
+
+
+
+    actualizarNivelRelacion(
+        relacion
+    );
+
+
+    return relacion;
+
+}
+
+
+
+
+
+
+
+// =================================
+// CASARSE
+// =================================
+
+function casarHabitantes(
+    habitante_a,
+    habitante_b
+){
+
+
+    const relacion =
+    obtenerRelacion(
+        habitante_a,
+        habitante_b
+    );
+
+
+    if(!relacion){
+
+        return null;
+
+    }
+
+
+
+    if(
+        relacion.confianza < 80 ||
+        relacion.romance < 80
+    ){
+
+        return null;
+
+    }
+
+
+
+    relacion.estado_pareja =
+    "casados";
+
+
+
+    relacion.historial.push(
+        "Matrimonio"
+    );
+
+
+
+    crearEvento(
+
+        "boda",
+
+        [
+
+            habitante_a,
+
+            habitante_b
+
+        ],
+
+        {}
+
+    );
 
 
 
@@ -434,16 +478,29 @@ function aumentarRomance(
 
 
 
-module.exports = {
+// =================================
+// NIVEL DE RELACIÓN
+// =================================
+
+function actualizarNivelRelacion(
+    relacion
+){
 
 
-    crearRelacion,
+    const valor =
 
-    buscarRelacion,
+    (
+        relacion.confianza +
+        relacion.afinidad +
+        relacion.romance
+    ) / 3;
 
-    aumentarConfianza,
-
-    aumentarRomance
 
 
-};
+    if(valor >= 80){
+
+        relacion.nivel="mejores_amigos";
+
+    }
+
+   
