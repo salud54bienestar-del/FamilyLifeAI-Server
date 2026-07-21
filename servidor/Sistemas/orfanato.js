@@ -6,23 +6,28 @@ const crearMemoria = require("./memorias.js");
 
 
 
-// Obtener datos del orfanato
+// ==============================
+// OBTENER ORFANATO
+// ==============================
 
 function obtenerOrfanato() {
 
-    const datos = cargarArchivo("../datos/orfanato.json");
+    const datos =
+    cargarArchivo("../datos/orfanato.json");
 
 
     if(!datos){
 
-        console.log("No se pudo cargar el orfanato.");
+        console.log(
+            "No se pudo cargar el orfanato."
+        );
 
         return null;
 
     }
 
 
-    return datos.orfanatos[0];
+    return datos.orfanato;
 
 }
 
@@ -30,7 +35,9 @@ function obtenerOrfanato() {
 
 
 
-// Registrar trabajador del orfanato
+// ==============================
+// ASIGNAR PERSONAL
+// ==============================
 
 function asignarTrabajador(
     habitante_id,
@@ -48,6 +55,7 @@ function asignarTrabajador(
     }
 
 
+
     if(!orfanato.personal){
 
         orfanato.personal = [];
@@ -55,13 +63,14 @@ function asignarTrabajador(
     }
 
 
+
     orfanato.personal.push({
 
-        habitante_id: habitante_id,
+        habitante_id,
 
-        profesion: profesion,
+        profesion,
 
-        estado: "activo"
+        estado:"activo"
 
     });
 
@@ -81,9 +90,22 @@ function asignarTrabajador(
 
 
 
-    console.log(
-        "Trabajador añadido al orfanato."
+    crearEvento(
+
+        12,
+
+        [habitante_id],
+
+        {
+
+            lugar:"Hogar Nuevo Amanecer",
+
+            profesion:profesion
+
+        }
+
     );
+
 
 
     return orfanato;
@@ -94,7 +116,9 @@ function asignarTrabajador(
 
 
 
-// Registrar niño o niña en el orfanato
+// ==============================
+// REGISTRAR NIÑO/A
+// ==============================
 
 function registrarInfante(datosInfante){
 
@@ -112,15 +136,33 @@ function registrarInfante(datosInfante){
 
 
     const orfanato =
-    datos.orfanatos[0];
+    datos.orfanato;
 
 
 
-    if(!orfanato.ninos){
+    let grupo;
 
-        orfanato.ninos=[];
+
+
+    if(datosInfante.edad <= 2){
+
+        grupo="bebes";
 
     }
+
+    else if(datosInfante.edad < 13){
+
+        grupo="niños";
+
+    }
+
+    else{
+
+        grupo="adolescentes";
+
+    }
+
+
 
 
 
@@ -128,7 +170,7 @@ function registrarInfante(datosInfante){
 
 
         id:
-        orfanato.ninos.length + 1,
+        Date.now(),
 
 
         nombre:
@@ -144,11 +186,13 @@ function registrarInfante(datosInfante){
 
 
         personalidad:
-        datosInfante.personalidad || "desconocida",
+        datosInfante.personalidad ||
+        "desconocida",
 
 
         apariencia:
-        datosInfante.apariencia || "aleatoria",
+        datosInfante.apariencia ||
+        "aleatoria",
 
 
         estado:
@@ -159,7 +203,19 @@ function registrarInfante(datosInfante){
 
 
 
-    orfanato.ninos.push(nuevoInfante);
+    if(!orfanato[grupo]){
+
+        orfanato[grupo]=[];
+
+    }
+
+
+
+    orfanato[grupo].push(nuevoInfante);
+
+
+
+    orfanato.ocupacion++;
 
 
 
@@ -189,7 +245,9 @@ function registrarInfante(datosInfante){
 
 
 
-// Buscar niños disponibles
+// ==============================
+// LISTAR NIÑOS PARA ADOPCIÓN
+// ==============================
 
 function listarAdopciones(){
 
@@ -207,12 +265,87 @@ function listarAdopciones(){
 
 
 
-    return orfanato.ninos.filter(
+    return [
+
+        ...orfanato.bebes,
+
+        ...orfanato.niños,
+
+        ...orfanato.adolescentes
+
+    ]
+
+    .filter(
 
         niño =>
-        niño.estado === "disponible_adopcion"
+        niño.estado==="disponible_adopcion"
 
     );
+
+}
+
+
+
+
+
+// ==============================
+// REGISTRAR SOLICITUD
+// ==============================
+
+function crearSolicitudAdopcion(
+    familia_id,
+    infante_id
+){
+
+
+    const datos =
+    cargarArchivo("../datos/orfanato.json");
+
+
+    if(!datos){
+
+        return null;
+
+    }
+
+
+
+    const orfanato =
+    datos.orfanato;
+
+
+
+    const solicitud={
+
+
+        id:
+        Date.now(),
+
+
+        familia_id,
+
+
+        infante_id,
+
+
+        estado:
+        "pendiente",
+
+
+        fecha:
+        null
+
+    };
+
+
+
+    orfanato.solicitudes_adopcion.push(
+        solicitud
+    );
+
+
+
+    return solicitud;
 
 }
 
@@ -229,7 +362,9 @@ module.exports={
 
     registrarInfante,
 
-    listarAdopciones
+    listarAdopciones,
+
+    crearSolicitudAdopcion
 
 
 };
