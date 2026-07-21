@@ -1,14 +1,17 @@
-// Sistema de profesiones de Village Soul
+// Sistema avanzado de profesiones - Village Soul
 
 const cargarArchivo = require("./cargador_datos.js");
 const crearEvento = require("./eventos.js");
 const crearMemoria = require("./memorias.js");
 
 
+// Asignar profesión a un habitante
+
 function asignarProfesion(habitante_id, nombreProfesion) {
 
     const catalogo = cargarArchivo("../datos/profesiones.json");
     const almas = cargarArchivo("../datos/almas.json");
+
 
     if (!catalogo || !almas) {
 
@@ -19,16 +22,19 @@ function asignarProfesion(habitante_id, nombreProfesion) {
     }
 
 
-    const profesionExiste = catalogo.profesiones.find(
+    const profesion = catalogo.profesiones.find(
 
-        (p) => p.nombre === nombreProfesion.toLowerCase()
+        p => p.nombre === nombreProfesion.toLowerCase()
 
     );
 
 
-    if (!profesionExiste) {
+    if (!profesion) {
 
-        console.log("La profesión no existe.");
+        console.log(
+            "Profesión no encontrada:",
+            nombreProfesion
+        );
 
         return null;
 
@@ -37,7 +43,7 @@ function asignarProfesion(habitante_id, nombreProfesion) {
 
     const habitante = almas.almas.find(
 
-        (a) => a.id === habitante_id
+        a => a.id === habitante_id
 
     );
 
@@ -51,9 +57,19 @@ function asignarProfesion(habitante_id, nombreProfesion) {
     }
 
 
+
     habitante.profesion = {
 
-        nombre: profesionExiste.nombre,
+        nombre: profesion.nombre,
+
+        categoria:
+            profesion.categoria || "general",
+
+        lugar_trabajo:
+            profesion.lugar_trabajo || null,
+
+        habilidades:
+            profesion.habilidades || [],
 
         nivel: 1,
 
@@ -64,19 +80,21 @@ function asignarProfesion(habitante_id, nombreProfesion) {
     };
 
 
+
     crearEvento(
 
-        12,
+        "nueva_profesion",
 
         [habitante_id],
 
         {
 
-            profesion: profesionExiste.nombre
+            profesion: profesion.nombre
 
         }
 
     );
+
 
 
     crearMemoria(
@@ -85,7 +103,8 @@ function asignarProfesion(habitante_id, nombreProfesion) {
 
         "profesion",
 
-        "Comenzó a trabajar como " + profesionExiste.nombre + ".",
+        "Comenzó su vida laboral como " +
+        profesion.nombre,
 
         "media",
 
@@ -96,9 +115,11 @@ function asignarProfesion(habitante_id, nombreProfesion) {
     );
 
 
-    console.log("Profesión asignada:");
 
-    console.log(habitante.profesion);
+    console.log(
+        "Profesión asignada:",
+        habitante.profesion
+    );
 
 
     return habitante.profesion;
@@ -107,10 +128,15 @@ function asignarProfesion(habitante_id, nombreProfesion) {
 
 
 
+
+// Cambiar profesión
+
 function cambiarProfesion(habitante_id, nuevaProfesion) {
+
 
     const catalogo = cargarArchivo("../datos/profesiones.json");
     const almas = cargarArchivo("../datos/almas.json");
+
 
     if (!catalogo || !almas) {
 
@@ -119,42 +145,64 @@ function cambiarProfesion(habitante_id, nuevaProfesion) {
     }
 
 
-    const profesionExiste = catalogo.profesiones.find(
 
-        (p) => p.nombre === nuevaProfesion.toLowerCase()
+    const profesion =
+        catalogo.profesiones.find(
 
-    );
+            p => p.nombre === nuevaProfesion.toLowerCase()
+
+        );
 
 
-    if (!profesionExiste) {
 
-        console.log("La profesión no existe.");
+    if (!profesion) {
+
+        console.log("Profesión inexistente.");
 
         return null;
 
     }
 
 
-    const habitante = almas.almas.find(
 
-        (a) => a.id === habitante_id
+    const habitante =
+        almas.almas.find(
 
-    );
+            a => a.id === habitante_id
+
+        );
+
 
 
     if (!habitante) {
 
-        console.log("Habitante no encontrado.");
-
         return null;
 
     }
 
 
-    habitante.profesion.nombre = profesionExiste.nombre;
-    habitante.profesion.nivel = 1;
-    habitante.profesion.experiencia = 0;
-    habitante.profesion.estado = "activa";
+
+    habitante.profesion = {
+
+        nombre: profesion.nombre,
+
+        categoria:
+            profesion.categoria || "general",
+
+        lugar_trabajo:
+            profesion.lugar_trabajo || null,
+
+        habilidades:
+            profesion.habilidades || [],
+
+        nivel: 1,
+
+        experiencia: 0,
+
+        estado: "activa"
+
+    };
+
 
 
     crearMemoria(
@@ -163,7 +211,8 @@ function cambiarProfesion(habitante_id, nuevaProfesion) {
 
         "profesion",
 
-        "Cambió de profesión a " + profesionExiste.nombre + ".",
+        "Cambió de profesión a " +
+        profesion.nombre,
 
         "media",
 
@@ -174,10 +223,6 @@ function cambiarProfesion(habitante_id, nuevaProfesion) {
     );
 
 
-    console.log("Profesión actualizada:");
-
-    console.log(habitante.profesion);
-
 
     return habitante.profesion;
 
@@ -185,9 +230,14 @@ function cambiarProfesion(habitante_id, nuevaProfesion) {
 
 
 
+
+// Obtener profesión actual
+
 function obtenerProfesion(habitante_id) {
 
-    const almas = cargarArchivo("../datos/almas.json");
+
+    const almas =
+        cargarArchivo("../datos/almas.json");
 
 
     if (!almas) {
@@ -197,11 +247,14 @@ function obtenerProfesion(habitante_id) {
     }
 
 
-    const habitante = almas.almas.find(
 
-        (a) => a.id === habitante_id
+    const habitante =
+        almas.almas.find(
 
-    );
+            a => a.id === habitante_id
+
+        );
+
 
 
     if (!habitante) {
@@ -211,21 +264,34 @@ function obtenerProfesion(habitante_id) {
     }
 
 
-    return habitante.profesion;
+
+    return habitante.profesion || null;
 
 }
 
 
 
-// Prueba inicial
 
-asignarProfesion(
+// Obtener todas las profesiones disponibles
 
-    1,
+function obtenerCatalogoProfesiones() {
 
-    "agricultor"
 
-);
+    const catalogo =
+        cargarArchivo("../datos/profesiones.json");
+
+
+    if (!catalogo) {
+
+        return [];
+
+    }
+
+
+    return catalogo.profesiones;
+
+}
+
 
 
 
@@ -235,6 +301,8 @@ module.exports = {
 
     cambiarProfesion,
 
-    obtenerProfesion
+    obtenerProfesion,
+
+    obtenerCatalogoProfesiones
 
 };
