@@ -32,12 +32,14 @@
       "rasgos": [
         "cuida a otros",
         "piensa antes de actuar",
-        "defiende a sus amigos"
+        "defiende a sus amigos",
+        "comparte conocimiento",
+        "orienta a los nuevos habitantes"
       ],
-      "curiosidad": 60,
+      "curiosidad": 80,
       "valentia": 90,
-      "sociabilidad": 70,
-      "paciencia": 75
+      "sociabilidad": 85,
+      "paciencia": 100
     }
   ]
 }
