@@ -1,62 +1,180 @@
+// Actualización diaria de vida de habitantes
+
+const cargarArchivo = require("./cargador_datos.js");
+const obtenerLugarTrabajo = require("./profesiones.js").obtenerLugarTrabajo;
+
+const {
+    avanzarEmbarazos
+} = require("./embarazo.js");
+
+
+
 function actualizarVidaHabitantes() {
 
-    console.log("Actualizando vida de habitantes...");
+
+    console.log(
+        "================================="
+    );
+
+    console.log(
+        " ACTUALIZANDO VIDA HABITANTES "
+    );
+
+    console.log(
+        "================================="
+    );
 
 
-    const almas = cargarArchivo("../datos/almas.json");
 
 
-    if (!almas) {
 
-        console.log("No se pudieron cargar los habitantes.");
+    const almas =
+    cargarArchivo("../datos/almas.json");
 
-        return;
+
+
+    const tiempo =
+    cargarArchivo("../datos/tiempo.json");
+
+
+
+    if(
+        !almas ||
+        !tiempo
+    ){
+
+        console.log(
+            "No se pudieron cargar los datos."
+        );
+
+        return null;
 
     }
 
 
 
-    const tiempo =
-        cargarArchivo("../datos/tiempo.json").tiempo;
 
 
 
-    almas.almas.forEach((habitante) => {
+    almas.almas.forEach(
+
+        habitante => {
 
 
-        if (!habitante.profesion) {
 
-            return;
+            if(
+                habitante.estado !== "viviendo"
+            ){
+
+                return;
+
+            }
+
+
+
+
+
+
+            // ==========================
+            // PROFESIONES
+            // ==========================
+
+
+            if(
+                habitante.profesion
+            ){
+
+
+                const trabajo =
+                obtenerLugarTrabajo(
+                    habitante.profesion.nombre
+                );
+
+
+
+                if(trabajo){
+
+
+                    console.log(
+
+                        habitante.nombre +
+
+                        " trabaja en " +
+
+                        trabajo.nombre
+
+                    );
+
+
+
+                    // Futuro:
+                    // ganar experiencia
+                    // realizar tareas
+                    // recibir salario
+                    // relacionarse con compañeros
+
+
+                }
+
+
+            }
+
+
+
+
+
+
+            // ==========================
+            // NECESIDADES
+            // ==========================
+
+
+            // Futuro:
+            // hambre
+            // energía
+            // diversión
+            // relaciones
+            // emociones
+
+
+
+
 
         }
 
-
-
-        const trabajo =
-            obtenerLugarTrabajo(habitante.id);
+    );
 
 
 
-        if (trabajo) {
-
-            console.log(
-                habitante.nombre +
-                " trabaja en " +
-                trabajo.nombre
-            );
-
-        }
 
 
+    // ==========================
+    // EMBARAZOS
+    // ==========================
 
-        // Aquí después conectaremos:
-        // entrada al trabajo
-        // salida del trabajo
-        // tareas
-        // experiencia
-        // salario
 
-    });
+    avanzarEmbarazos();
+
+
+
+
+
+
+    console.log(
+
+        "Día Village Soul:",
+
+        tiempo.tiempo.dia_mundo
+
+    );
+
 
 
 }
+
+
+
+
+
+
+module.exports = actualizarVidaHabitantes;
