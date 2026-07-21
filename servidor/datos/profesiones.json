@@ -1,0 +1,96 @@
+{
+  "profesiones": [
+    {
+      "id": 1,
+      "nombre": "agricultor",
+      "categoria": "recursos",
+      "descripcion": "Cultiva alimentos y mantiene los campos de la comunidad.",
+      "nivel": 1,
+      "experiencia": 0,
+      "habilidades_requeridas": [
+        "cultivo",
+        "resistencia"
+      ],
+      "lugar_trabajo": "granja",
+      "horario": {
+        "inicio": 6,
+        "fin": 18
+      },
+      "tareas": [
+        "cultivar",
+        "cosechar",
+        "cuidar animales"
+      ],
+      "salario": {
+        "tipo": "esmeraldas",
+        "cantidad": 5
+      },
+      "ascensos": [
+        "granjero_experto",
+        "maestro_agricultor"
+      ]
+    },
+
+    {
+      "id": 2,
+      "nombre": "trabajador_social",
+      "categoria": "comunidad",
+      "descripcion": "Ayuda en procesos de adopción y bienestar familiar.",
+      "nivel": 1,
+      "experiencia": 0,
+      "habilidades_requeridas": [
+        "empatia",
+        "comunicacion"
+      ],
+      "lugar_trabajo": "orfanato_hogar_nuevo_amanecer",
+      "horario": {
+        "inicio": 8,
+        "fin": 17
+      },
+      "tareas": [
+        "evaluar familias",
+        "aprobar adopciones",
+        "proteger niños"
+      ],
+      "salario": {
+        "tipo": "esmeraldas",
+        "cantidad": 8
+      },
+      "ascensos": [
+        "coordinador_orfanato",
+        "director_orfanato"
+      ]
+    },
+
+    {
+      "id": 3,
+      "nombre": "guardia_seguridad",
+      "categoria": "proteccion",
+      "descripcion": "Protege edificios y habitantes de amenazas.",
+      "nivel": 1,
+      "experiencia": 0,
+      "habilidades_requeridas": [
+        "combate",
+        "valentia"
+      ],
+      "lugar_trabajo": "comunidad",
+      "horario": {
+        "inicio": 18,
+        "fin": 6
+      },
+      "tareas": [
+        "vigilar",
+        "defender habitantes",
+        "proteger niños"
+      ],
+      "salario": {
+        "tipo": "esmeraldas",
+        "cantidad": 7
+      },
+      "ascensos": [
+        "jefe_seguridad",
+        "guardian_comunidad"
+      ]
+    }
+  ]
+}
