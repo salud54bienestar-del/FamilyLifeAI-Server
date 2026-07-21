@@ -3,6 +3,7 @@
     {
       "id": 1,
       "nombre": "agricultor",
+      "tipo_npc": "comun",
       "categoria": "recursos",
       "descripcion": "Cultiva alimentos y mantiene los campos de la comunidad.",
       "nivel": 1,
@@ -12,6 +13,7 @@
         "resistencia"
       ],
       "lugar_trabajo": "granja",
+      "edificio_requerido": "granja",
       "horario": {
         "inicio": 6,
         "fin": 18
@@ -21,10 +23,16 @@
         "cosechar",
         "cuidar animales"
       ],
+      "interacciones": [
+        "vender_alimentos",
+        "enseñar_cultivo"
+      ],
       "salario": {
         "tipo": "esmeraldas",
         "cantidad": 5
       },
+      "puede_tener_familia": true,
+      "puede_ser_contratado": false,
       "ascensos": [
         "granjero_experto",
         "maestro_agricultor"
@@ -34,28 +42,36 @@
     {
       "id": 2,
       "nombre": "trabajador_social",
+      "tipo_npc": "servicio",
       "categoria": "comunidad",
-      "descripcion": "Ayuda en procesos de adopción y bienestar familiar.",
+      "descripcion": "Ayuda a familias en procesos de adopción y bienestar infantil.",
       "nivel": 1,
       "experiencia": 0,
       "habilidades_requeridas": [
         "empatia",
         "comunicacion"
       ],
-      "lugar_trabajo": "orfanato_hogar_nuevo_amanecer",
+      "lugar_trabajo": "Hogar Nuevo Amanecer",
+      "edificio_requerido": "orfanato",
       "horario": {
         "inicio": 8,
         "fin": 17
       },
       "tareas": [
-        "evaluar familias",
-        "aprobar adopciones",
-        "proteger niños"
+        "evaluar_familias",
+        "aprobar_adopciones",
+        "supervisar_hogares"
+      ],
+      "interacciones": [
+        "iniciar_proceso_adopcion",
+        "evaluar_confianza"
       ],
       "salario": {
         "tipo": "esmeraldas",
         "cantidad": 8
       },
+      "puede_tener_familia": true,
+      "puede_ser_contratado": false,
       "ascensos": [
         "coordinador_orfanato",
         "director_orfanato"
@@ -65,8 +81,9 @@
     {
       "id": 3,
       "nombre": "guardia_seguridad",
-      "categoria": "proteccion",
-      "descripcion": "Protege edificios y habitantes de amenazas.",
+      "tipo_npc": "proteccion",
+      "categoria": "seguridad",
+      "descripcion": "Protege habitantes, niños y edificios contra amenazas.",
       "nivel": 1,
       "experiencia": 0,
       "habilidades_requeridas": [
@@ -74,19 +91,26 @@
         "valentia"
       ],
       "lugar_trabajo": "comunidad",
+      "edificio_requerido": "cuartel_seguridad",
       "horario": {
         "inicio": 18,
         "fin": 6
       },
       "tareas": [
         "vigilar",
-        "defender habitantes",
-        "proteger niños"
+        "defender",
+        "patrullar"
+      ],
+      "interacciones": [
+        "proteger_jugador",
+        "proteger_familia"
       ],
       "salario": {
         "tipo": "esmeraldas",
         "cantidad": 7
       },
+      "puede_tener_familia": true,
+      "puede_ser_contratado": true,
       "ascensos": [
         "jefe_seguridad",
         "guardian_comunidad"
