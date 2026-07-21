@@ -3,6 +3,9 @@
 const cargarArchivo = require("./cargador_datos.js");
 const crearEvento = require("./eventos.js");
 const crearMemoria = require("./memorias.js");
+const obtenerLugarTrabajo =
+require("./lugares_trabajo.js").obtenerLugarTrabajo;
+
 
 
 function ejecutarAccion(habitante_id, accion) {
@@ -30,8 +33,6 @@ function ejecutarAccion(habitante_id, accion) {
     }
 
 
-
-    // Obtener nombre real de la acción
 
     let nombreAccion;
 
@@ -213,6 +214,132 @@ function ejecutarAccion(habitante_id, accion) {
 
 
 
+
+        // NUEVO SISTEMA LABORAL
+
+
+
+        case "ir_al_trabajo":
+
+
+            const lugar =
+            obtenerLugarTrabajo(habitante_id);
+
+
+
+            if (lugar) {
+
+                resultadoAccion =
+                "El habitante fue a trabajar en " +
+                lugar.nombre + ".";
+
+            } else {
+
+                resultadoAccion =
+                "El habitante no tiene un lugar de trabajo asignado.";
+
+            }
+
+
+            break;
+
+
+
+
+        case "trabajar":
+
+
+            const trabajo =
+            obtenerLugarTrabajo(habitante_id);
+
+
+
+            if (trabajo) {
+
+                resultadoAccion =
+                "El habitante realizó sus tareas en " +
+                trabajo.nombre +
+                " y ganó experiencia.";
+
+            } else {
+
+                resultadoAccion =
+                "El habitante no tiene trabajo.";
+
+            }
+
+
+            break;
+
+
+
+
+        case "terminar_turno":
+
+
+            resultadoAccion =
+            "El habitante terminó su jornada laboral y regresó a casa.";
+
+
+            break;
+
+
+
+
+        case "cuidar_ninos":
+
+
+            resultadoAccion =
+            "El habitante cuidó a los niños del establecimiento.";
+
+
+            evento = 8;
+
+
+            break;
+
+
+
+
+        case "proteger_comunidad":
+
+
+            resultadoAccion =
+            "El guardia protegió la comunidad de amenazas.";
+
+
+            evento = 2;
+
+
+            break;
+
+
+
+
+        case "atender_pacientes":
+
+
+            resultadoAccion =
+            "El trabajador de salud atendió a los habitantes.";
+
+
+            break;
+
+
+
+
+        case "cocinar":
+
+
+            resultadoAccion =
+            "El cocinero preparó alimentos para la comunidad.";
+
+
+            break;
+
+
+
+
         default:
 
 
@@ -267,6 +394,9 @@ function ejecutarAccion(habitante_id, accion) {
 }
 
 
+
+
+// Prueba inicial
 
 ejecutarAccion(
 
