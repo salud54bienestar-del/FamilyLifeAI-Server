@@ -6,7 +6,6 @@ const procesarDecision = require("../Sistemas/decisiones.js");
 
 function pensarAlma(habitante_id) {
 
-
     const almas = cargarArchivo("datos/almas.json");
     const emociones = cargarArchivo("datos/emociones.json");
     const memorias = cargarArchivo("datos/memorias.json");
@@ -27,5 +26,34 @@ function pensarAlma(habitante_id) {
         console.log("No se pudieron cargar los datos de la IA.");
 
         return null;
-
     }
+
+
+    const alma = almas.find(
+        a => a.id === habitante_id
+    );
+
+
+    if (!alma) {
+
+        console.log("No existe el habitante:", habitante_id);
+
+        return null;
+    }
+
+
+    console.log("Pensando alma:", alma.nombre);
+
+
+    return {
+        habitante_id: habitante_id,
+        estado: "pensando",
+        decision: "explorar el mundo"
+    };
+
+}
+
+
+module.exports = {
+    pensarAlma
+};
