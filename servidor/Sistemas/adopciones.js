@@ -3,13 +3,15 @@
 const cargarArchivo = require("./cargador_datos.js");
 const crearEvento = require("./eventos.js");
 const crearMemoria = require("./memorias.js");
+
 const { agregarMiembro } = require("./familias.js");
+const { crearAlma } = require("./almas.js");
 
 
 
-// ==============================
-// EVALUAR FAMILIA
-// ==============================
+// =================================
+// EVALUAR FAMILIA PARA ADOPCIÓN
+// =================================
 
 function evaluarFamiliaAdopcion(familia_id){
 
@@ -17,11 +19,17 @@ function evaluarFamiliaAdopcion(familia_id){
     const familias =
     cargarArchivo("../datos/familias.json");
 
+
     const relaciones =
     cargarArchivo("../datos/relaciones.json");
 
 
+
     if(!familias || !relaciones){
+
+        console.log(
+            "No se pudieron cargar datos familiares."
+        );
 
         return null;
 
@@ -38,6 +46,10 @@ function evaluarFamiliaAdopcion(familia_id){
 
     if(!familia){
 
+        console.log(
+            "Familia no encontrada."
+        );
+
         return null;
 
     }
@@ -45,6 +57,7 @@ function evaluarFamiliaAdopcion(familia_id){
 
 
     let confianzaPareja = 0;
+
     let casados = false;
 
 
@@ -53,8 +66,13 @@ function evaluarFamiliaAdopcion(familia_id){
 
 
         if(
-            familia.padres.includes(r.habitante_a) ||
+
+            familia.padres.includes(r.habitante_a)
+
+            ||
+
             familia.padres.includes(r.habitante_b)
+
         ){
 
 
@@ -74,7 +92,9 @@ function evaluarFamiliaAdopcion(familia_id){
 
             }
 
+
         }
+
 
     });
 
@@ -88,12 +108,13 @@ function evaluarFamiliaAdopcion(familia_id){
 
 
 
-    const requisitos={
+
+    const requisitos = {
 
 
         confianza:
 
-        confianzaPareja>=80
+        confianzaPareja >= 80
         ||
         familiaMonoparental,
 
@@ -101,7 +122,7 @@ function evaluarFamiliaAdopcion(familia_id){
 
         vivienda:
 
-        familia.hogar!==null,
+        familia.hogar !== null,
 
 
 
@@ -144,7 +165,9 @@ function evaluarFamiliaAdopcion(familia_id){
         aprobado:
 
         Object.values(requisitos)
-        .every(r=>r===true)
+        .every(
+            r=>r===true
+        )
 
 
     };
@@ -157,9 +180,90 @@ function evaluarFamiliaAdopcion(familia_id){
 
 
 
-// ==============================
+
+// =================================
+// CREAR SOLICITUD DE ADOPCIÓN
+// =================================
+
+
+function crearSolicitudAdopcion(
+    familia_id,
+    niño_id
+){
+
+
+    const datos =
+    cargarArchivo("../datos/orfanato.json");
+
+
+
+    if(!datos){
+
+        return null;
+
+    }
+
+
+
+    if(!datos.orfanato.solicitudes_adopcion){
+
+        datos.orfanato.solicitudes_adopcion=[];
+
+    }
+
+
+
+    const solicitud = {
+
+
+        id:
+
+        datos.orfanato.solicitudes_adopcion.length + 1,
+
+
+        familia:
+
+        familia_id,
+
+
+        niño:
+
+        niño_id,
+
+
+        estado:
+
+        "pendiente",
+
+
+        fecha:
+
+        null
+
+
+    };
+
+
+
+    datos.orfanato.solicitudes_adopcion.push(
+        solicitud
+    );
+
+
+
+    return solicitud;
+
+}
+
+
+
+
+
+
+
+// =================================
 // ADOPTAR NIÑO/A
-// ==============================
+// =================================
 
 
 function adoptarNiño(
@@ -170,6 +274,7 @@ function adoptarNiño(
 
     const datos =
     cargarArchivo("../datos/orfanato.json");
+
 
 
     if(!datos){
@@ -185,8 +290,7 @@ function adoptarNiño(
 
 
 
-
-    const lista = [
+    const listaInfantes = [
 
         ...orfanato.bebes,
 
@@ -198,9 +302,8 @@ function adoptarNiño(
 
 
 
-
     const niño =
-    lista.find(
+    listaInfantes.find(
         n=>n.id===niño_id
     );
 
@@ -209,12 +312,13 @@ function adoptarNiño(
     if(!niño){
 
         console.log(
-            "Infante no encontrado."
+            "Niño o niña no encontrado."
         );
 
         return null;
 
     }
+
 
 
 
@@ -229,7 +333,7 @@ function adoptarNiño(
     if(!evaluacion.aprobado){
 
         console.log(
-            "Familia rechazada."
+            "La familia no cumple requisitos."
         );
 
         return null;
@@ -240,38 +344,36 @@ function adoptarNiño(
 
 
 
-    agregarMiembro(
-        familia_id,
-        niño_id
-    );
+    // Crear alma real del niño
+
+    const nuevaAlma =
+    crearAlma({
+
+        nombre:
+        niño.nombre,
 
 
-
-    niño.estado =
-    "adoptado";
-
-
-    niño.familia_nueva =
-    familia_id;
+        edad:
+        niño.edad,
 
 
+        personalidad_id:
+        niño.personalidad_id || null,
 
 
-    if(!orfanato.adopciones_realizadas){
-
-        orfanato.adopciones_realizadas=[];
-
-    }
+        tipo:
+        "habitante",
 
 
+        objetivos:[
 
-    orfanato.adopciones_realizadas.push({
+            "conocer su nueva familia",
 
-        niño: niño_id,
+            "crecer",
 
-        familia: familia_id,
+            "desarrollar habilidades"
 
-        fecha:null
+        ]
 
     });
 
@@ -279,20 +381,30 @@ function adoptarNiño(
 
 
 
-    crearEvento(
 
-        8,
 
-        [niño_id],
+    if(!nuevaAlma){
 
-        {
+        console.log(
+            "No se pudo crear el alma."
+        );
 
-            tipo:"adopcion_exitosa",
+        return null;
 
-            familia:
-            familia_id
+    }
 
-        }
+
+
+
+
+    // Agregar a familia
+
+
+    agregarMiembro(
+
+        familia_id,
+
+        nuevaAlma.id
 
     );
 
@@ -300,11 +412,51 @@ function adoptarNiño(
 
 
 
+
+    niño.estado =
+    "adoptado";
+
+
+
+    niño.familia_nueva =
+    familia_id;
+
+
+
+    niño.alma_id =
+    nuevaAlma.id;
+
+
+
+
+
+
+    orfanato.adopciones_realizadas.push({
+
+        niño:nuevaAlma.id,
+
+        familia:
+        familia_id,
+
+        fecha:null
+
+
+    });
+
+
+
+
+
+
+
+    // Memorias
+
+
     crearMemoria(
 
-        niño_id,
+        nuevaAlma.id,
 
-        "familia",
+        "adopcion",
 
         "Encontró una nueva familia mediante adopción.",
 
@@ -320,7 +472,44 @@ function adoptarNiño(
 
 
 
-    return niño;
+
+
+    crearEvento(
+
+        8,
+
+        [nuevaAlma.id],
+
+        {
+
+            tipo:
+            "adopcion_exitosa",
+
+            familia:
+            familia_id
+
+        }
+
+    );
+
+
+
+
+
+
+
+    console.log(
+        "Adopción completada:"
+    );
+
+
+    console.log(
+        nuevaAlma
+    );
+
+
+
+    return nuevaAlma;
 
 
 }
@@ -329,10 +518,16 @@ function adoptarNiño(
 
 
 
-module.exports={
+
+
+module.exports = {
+
 
     evaluarFamiliaAdopcion,
 
+    crearSolicitudAdopcion,
+
     adoptarNiño
+
 
 };
