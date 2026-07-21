@@ -1,0 +1,27 @@
+{
+  "orfanato": {
+    "nombre": "Hogar Nuevo Amanecer",
+
+    "director": null,
+
+    "cuidadores": [],
+
+    "trabajadores_sociales": [],
+
+    "capacidad": 20,
+
+    "ocupacion": 0,
+
+    "niños": [],
+
+    "bebes": [],
+
+    "adolescentes": [],
+
+    "solicitudes_adopcion": [],
+
+    "adopciones_realizadas": [],
+
+    "historial": []
+  }
+}
