@@ -44,9 +44,15 @@ const sistemas = [
 
   "recursos",
 
+
+  // Sistemas de vida laboral
+
   "profesiones",
 
+  "lugares_trabajo",
+
   "habilidades",
+
 
   "historia"
 
