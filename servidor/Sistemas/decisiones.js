@@ -1,4 +1,4 @@
-// Sistema de decisiones de Village Soul
+// Sistema de decisiones avanzado de Village Soul
 
 const cargarArchivo = require("./cargador_datos.js");
 
@@ -37,113 +37,9 @@ function procesarDecision(id, contexto = {}) {
 
 
 
-    // ==============================
-    // PROFESIONES
-    // ==============================
-
-
-    const profesion =
-    contexto.profesion?.toLowerCase();
-
-
-
-    switch(profesion){
-
-
-        case "agricultor":
-
-            eleccion = "trabajar_granja";
-
-        break;
-
-
-
-        case "trabajador_social":
-
-            eleccion = "evaluar_adopciones";
-
-        break;
-
-
-
-        case "cuidador_orfanato":
-
-            eleccion = "cuidar_ninos";
-
-        break;
-
-
-
-        case "guardia_seguridad":
-
-            eleccion = "patrullar_comunidad";
-
-        break;
-
-
-
-        case "medico":
-
-        case "pediatra":
-
-            eleccion = "atender_pacientes";
-
-        break;
-
-
-
-        case "enfermero":
-
-            eleccion = "cuidar_pacientes";
-
-        break;
-
-
-
-        case "maestro":
-
-            eleccion = "enseñar_ninos";
-
-        break;
-
-
-
-        case "cocinero":
-
-        case "chef_restaurante":
-
-            eleccion = "preparar_comida";
-
-        break;
-
-
-
-        case "ama_de_llaves":
-
-        case "sirvienta":
-
-            eleccion = "mantener_hogar";
-
-        break;
-
-
-
-        case "niñera":
-
-            eleccion = "cuidar_hijos";
-
-        break;
-
-
-    }
-
-
-
-
-
-    // ==============================
-    // EMOCIONES PRINCIPALES
-    // ==============================
+    // ==================================
+    // ESTADO EMOCIONAL PRINCIPAL
+    // ==================================
 
 
     switch(contexto.emocion) {
@@ -156,12 +52,16 @@ function procesarDecision(id, contexto = {}) {
         break;
 
 
+        case "miedo":
+
         case "asustado":
 
             eleccion = "buscar_refugio";
 
         break;
 
+
+        case "ira":
 
         case "enojado":
 
@@ -170,14 +70,21 @@ function procesarDecision(id, contexto = {}) {
         break;
 
 
+        case "feliz":
+
+            eleccion = "compartir_momento";
+
+        break;
+
     }
 
 
 
 
-    // ==============================
+
+    // ==================================
     // EMOCIONES SECUNDARIAS
-    // ==============================
+    // ==================================
 
 
     const emociones =
@@ -206,46 +113,141 @@ function procesarDecision(id, contexto = {}) {
     }
 
 
+    else if(emociones.esperanza > 80){
+
+        eleccion = "crear_objetivos";
+
+    }
 
 
 
-    // ==============================
+
+
+    // ==================================
     // PERSONALIDAD
-    // ==============================
+    // ==================================
 
 
-    if(contexto.personalidad){
+    switch(contexto.personalidad) {
+
+
+        case "amable":
+
+
+            if(contexto.familia){
+
+                eleccion =
+                "proteger_familia";
+
+            }
+
+
+        break;
+
+
+
+        case "curiosa":
+
+
+            eleccion =
+            "explorar_el_mundo";
+
+
+        break;
+
+
+
+        case "protectora":
+
+
+            eleccion =
+            "ayudar_comunidad";
+
+
+        break;
+
+
+
+        case "aventurero":
+
+
+            eleccion =
+            "explorar_el_mundo";
+
+
+        break;
+
+    }
+
+
+
+
+
+    // ==================================
+    // FAMILIA Y RELACIONES
+    // ==================================
+
+
+    if(contexto.estado_pareja === "casado"){
+
+
+        if(contexto.desea_hijos){
+
+            eleccion =
+            "formar_familia";
+
+        }
+
+
+    }
+
+
+
+    if(contexto.tiene_hijos){
+
+
+        eleccion =
+        "cuidar_hijos";
+
+
+    }
+
+
+
+
+
+    // ==================================
+    // SISTEMA DE ADOPCIÓN
+    // ==================================
+
+
+    if(contexto.interes_adopcion){
 
 
         if(
-            contexto.personalidad === "amable" &&
-            contexto.familia
+
+            contexto.confianza_pareja >= 80 &&
+            contexto.vivienda &&
+            contexto.alimentos &&
+            contexto.estabilidad_emocional === "alta" &&
+            contexto.estado_pareja === "casado"
+
         ){
 
-            eleccion = "proteger_familia";
+            eleccion =
+            "solicitar_adopcion";
+
 
         }
 
 
-
-        else if(
-            contexto.personalidad === "curiosa"
-        ){
-
-            eleccion = "explorar_el_mundo";
-
-        }
+        else {
 
 
-
-        else if(
-            contexto.personalidad === "protectora"
-        ){
-
-            eleccion = "ayudar_comunidad";
+            eleccion =
+            "mejorar_condiciones_familia";
 
         }
-
 
     }
 
@@ -253,14 +255,91 @@ function procesarDecision(id, contexto = {}) {
 
 
 
-    // ==============================
-    // RELACIONES
-    // ==============================
+    // ==================================
+    // PROFESIONES
+    // ==================================
 
 
-    if(contexto.relacion === "conflicto"){
+    switch(contexto.profesion) {
 
-        eleccion = "resolver_conflicto";
+
+        case "trabajador_social":
+
+            eleccion =
+            "evaluar_adopcion";
+
+
+        break;
+
+
+
+        case "cuidador_orfanato":
+
+            eleccion =
+            "cuidar_ninos";
+
+
+        break;
+
+
+
+        case "guardia_seguridad":
+
+            eleccion =
+            "patrullar_comunidad";
+
+
+        break;
+
+
+
+        case "medico":
+
+            eleccion =
+            "atender_pacientes";
+
+
+        break;
+
+
+
+        case "pediatra":
+
+            eleccion =
+            "cuidar_bebes";
+
+
+        break;
+
+
+
+        case "niñera":
+
+            eleccion =
+            "cuidar_hijos";
+
+
+        break;
+
+
+
+        case "cocinero":
+
+            eleccion =
+            "preparar_comida";
+
+
+        break;
+
+
+
+        case "ama_de_llaves":
+
+            eleccion =
+            "mantener_hogar";
+
+
+        break;
 
     }
 
@@ -268,9 +347,9 @@ function procesarDecision(id, contexto = {}) {
 
 
 
-    // ==============================
+    // ==================================
     // OBJETIVOS
-    // ==============================
+    // ==================================
 
 
     const objetivo =
@@ -278,23 +357,28 @@ function procesarDecision(id, contexto = {}) {
 
 
 
-    if(objetivo === "crear una amistad"){
+    if(objetivo === "conocer el mundo"){
 
-        eleccion = "buscar_compañia";
-
-    }
-
-
-    else if(objetivo === "conocer el mundo"){
-
-        eleccion = "explorar_el_mundo";
+        eleccion =
+        "explorar_el_mundo";
 
     }
 
 
-    else if(objetivo === "formar una familia"){
+    else if(objetivo === "crear una amistad"){
 
-        eleccion = "crear_familia";
+        eleccion =
+        "buscar_compañia";
+
+    }
+
+
+    else if(
+        objetivo === "formar una familia"
+    ){
+
+        eleccion =
+        "crear_familia";
 
     }
 
@@ -302,22 +386,27 @@ function procesarDecision(id, contexto = {}) {
 
 
 
-    // ==============================
+    // ==================================
     // RESULTADO
-    // ==============================
+    // ==================================
 
 
     let resultadoTexto =
-    "La decisión no tiene un resultado definido todavía.";
+    "La decisión todavía no tiene resultado definido.";
+
+
 
 
 
     if(decision.resultados){
 
+
         if(decision.resultados[eleccion]){
+
 
             resultadoTexto =
             decision.resultados[eleccion];
+
 
         }
 
@@ -369,9 +458,8 @@ function procesarDecision(id, contexto = {}) {
     eleccion);
 
 
-    console.log("Resultado:");
-
     console.log(resultado);
+
 
 
 
@@ -379,6 +467,8 @@ function procesarDecision(id, contexto = {}) {
 
 
 }
+
+
 
 
 
