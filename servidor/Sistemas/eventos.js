@@ -1,19 +1,47 @@
 // Sistema de eventos de Village Soul
 
-const cargarArchivo = require("./cargador_datos.js");
-const crearMemoria = require("./memorias.js");
-const emociones = require("./emociones.js");
+
+const cargarArchivo =
+require("./cargador_datos.js");
 
 
-function crearEvento(id, participantes = [], datosExtra = {}) {
+const crearMemoria =
+require("./memorias.js");
 
 
-    const sistemaEventos = cargarArchivo("../datos/sistema_eventos.json");
+const emociones =
+require("./emociones.js");
 
 
-    if (!sistemaEventos) {
 
-        console.log("No se pudo cargar el sistema de eventos.");
+
+
+
+
+// =================================
+// CREAR EVENTO
+// =================================
+
+function crearEvento(
+    id,
+    participantes=[],
+    datosExtra={}
+){
+
+
+
+    const sistemaEventos =
+    cargarArchivo(
+        "../datos/sistema_eventos.json"
+    );
+
+
+
+    if(!sistemaEventos){
+
+        console.log(
+            "No se pudo cargar el sistema de eventos."
+        );
 
         return null;
 
@@ -21,116 +49,195 @@ function crearEvento(id, participantes = [], datosExtra = {}) {
 
 
 
-    const eventoBase = sistemaEventos.eventos_disponibles.find(
 
-        (evento) => evento.id === id
+
+    const eventoBase =
+    sistemaEventos.eventos_disponibles.find(
+
+        evento =>
+        evento.id === id
 
     );
 
 
 
-    if (!eventoBase) {
 
-        console.log("Evento no encontrado.");
+
+    if(!eventoBase){
+
+        console.log(
+            "Evento no encontrado:",
+            id
+        );
 
         return null;
 
     }
+
+
+
+
+
 
 
 
     const evento = {
 
 
-        id: id,
 
-        nombre: eventoBase.nombre,
+        id,
 
-        descripcion: eventoBase.descripcion,
 
-        tipo: eventoBase.tipo,
 
-        fecha: new Date().toISOString(),
+        nombre:
+        eventoBase.nombre,
 
-        participantes: participantes,
 
-        datos: datosExtra,
 
-        importancia: eventoBase.importancia || "media"
+        descripcion:
+        eventoBase.descripcion,
+
+
+
+        tipo:
+        eventoBase.tipo,
+
+
+
+        fecha:
+        new Date().toISOString(),
+
+
+
+        participantes,
+
+
+
+        datos:
+        datosExtra,
+
+
+
+        importancia:
+        eventoBase.importancia ||
+        "media"
+
+
 
     };
 
 
 
-    console.log("Nuevo evento creado:");
-
-    console.log(evento);
 
 
 
-
-    participantes.forEach((habitante) => {
-
-
-
-        // Crear memoria del evento
-
-        crearMemoria(
-
-            habitante,
-
-            "evento",
-
-            evento.nombre,
-
-            evento.importancia,
-
-            participantes,
-
-            eventoBase.emocion || "neutral"
-
-        );
+    console.log(
+        "Nuevo evento creado:",
+        evento.nombre
+    );
 
 
 
 
-        // Aplicar efectos emocionales del evento
-
-        if (eventoBase.efectos) {
 
 
 
-            Object.keys(eventoBase.efectos).forEach((emocion) => {
+
+    participantes.forEach(
+
+        habitante_id => {
 
 
 
-                emociones.cambiarEmocion(
+            // =========================
+            // MEMORIA
+            // =========================
 
-                    habitante,
 
-                    emocion,
+            crearMemoria(
 
-                    eventoBase.efectos[emocion],
+                habitante_id,
 
-                    evento.nombre
+                "evento",
+
+                evento.descripcion,
+
+                evento.importancia,
+
+                participantes,
+
+                eventoBase.emocion ||
+                "neutral"
+
+            );
+
+
+
+
+
+
+
+
+            // =========================
+            // EMOCIONES
+            // =========================
+
+
+            if(
+                eventoBase.efectos
+            ){
+
+
+
+                Object.keys(
+                    eventoBase.efectos
+                )
+                .forEach(
+
+                    emocion => {
+
+
+
+                        emociones.cambiarEmocion(
+
+                            habitante_id,
+
+                            emocion,
+
+                            eventoBase.efectos[emocion],
+
+                            evento.nombre
+
+                        );
+
+
+                    }
 
                 );
 
 
 
-            });
+            }
+
+
+
+
 
 
 
         }
 
+    );
 
 
-    });
+
+
+
 
 
 
     return evento;
+
 
 }
 
@@ -138,23 +245,101 @@ function crearEvento(id, participantes = [], datosExtra = {}) {
 
 
 
-// Evento inicial del mundo
-
-crearEvento(
-
-    1,
-
-    [1],
-
-    {
-
-        inicio: "primera historia del mundo"
-
-    }
-
-);
 
 
 
 
-module.exports = crearEvento;
+// =================================
+// EVENTOS PERSONALIZADOS
+// =================================
+
+function crearEventoPersonalizado(
+    nombre,
+    participantes=[],
+    descripcion="",
+    importancia="media"
+){
+
+
+
+    const evento = {
+
+
+
+        nombre,
+
+
+
+        descripcion,
+
+
+
+        participantes,
+
+
+
+        fecha:
+        new Date().toISOString(),
+
+
+
+        importancia
+
+
+
+    };
+
+
+
+
+
+    participantes.forEach(
+
+        habitante_id => {
+
+
+
+            crearMemoria(
+
+                habitante_id,
+
+                "evento",
+
+                descripcion,
+
+                importancia,
+
+                participantes
+
+            );
+
+
+        }
+
+    );
+
+
+
+
+
+    return evento;
+
+
+}
+
+
+
+
+
+
+
+
+module.exports={
+
+
+    crearEvento,
+
+    crearEventoPersonalizado
+
+
+};
