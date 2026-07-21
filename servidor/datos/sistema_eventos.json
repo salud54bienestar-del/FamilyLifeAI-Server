@@ -6,7 +6,12 @@
       "descripcion": "Un habitante descubre el mundo por primera vez.",
       "tipo": "inicio",
       "importancia": "media",
-      "emocion": "curiosidad"
+      "emocion": "curiosidad",
+      "efectos": {
+        "felicidad": 5,
+        "confianza": 2,
+        "curiosidad": 5
+      }
     },
     {
       "id": 2,
@@ -14,7 +19,11 @@
       "descripcion": "Comienza un nuevo día en el mundo.",
       "tipo": "tiempo",
       "importancia": "baja",
-      "emocion": "calma"
+      "emocion": "calma",
+      "efectos": {
+        "calma": 2,
+        "estres": -1
+      }
     },
     {
       "id": 3,
@@ -22,7 +31,12 @@
       "descripcion": "Una habitante inicia una etapa de embarazo.",
       "tipo": "familia",
       "importancia": "alta",
-      "emocion": "alegria"
+      "emocion": "alegria",
+      "efectos": {
+        "felicidad": 10,
+        "esperanza": 10,
+        "amor": 5
+      }
     },
     {
       "id": 4,
@@ -30,7 +44,12 @@
       "descripcion": "Un nuevo habitante llega al mundo.",
       "tipo": "familia",
       "importancia": "alta",
-      "emocion": "felicidad"
+      "emocion": "felicidad",
+      "efectos": {
+        "felicidad": 15,
+        "amor": 10,
+        "orgullo": 5
+      }
     },
     {
       "id": 5,
@@ -38,7 +57,12 @@
       "descripcion": "Nacen gemelos o más bebés en un mismo embarazo.",
       "tipo": "familia",
       "importancia": "muy_alta",
-      "emocion": "sorpresa"
+      "emocion": "sorpresa",
+      "efectos": {
+        "felicidad": 20,
+        "sorpresa": 10,
+        "estres": 2
+      }
     },
     {
       "id": 6,
@@ -46,7 +70,12 @@
       "descripcion": "Dos habitantes unen sus vidas y forman una familia.",
       "tipo": "relacion",
       "importancia": "alta",
-      "emocion": "felicidad"
+      "emocion": "felicidad",
+      "efectos": {
+        "felicidad": 15,
+        "amor": 20,
+        "confianza": 10
+      }
     },
     {
       "id": 7,
@@ -54,7 +83,12 @@
       "descripcion": "Una relación matrimonial termina.",
       "tipo": "familia",
       "importancia": "alta",
-      "emocion": "tristeza"
+      "emocion": "tristeza",
+      "efectos": {
+        "tristeza": 15,
+        "confianza": -10,
+        "estres": 10
+      }
     },
     {
       "id": 8,
@@ -62,7 +96,12 @@
       "descripcion": "Un habitante crea un vínculo familiar mediante adopción.",
       "tipo": "familia",
       "importancia": "alta",
-      "emocion": "amor"
+      "emocion": "amor",
+      "efectos": {
+        "amor": 15,
+        "felicidad": 10,
+        "confianza": 5
+      }
     },
     {
       "id": 9,
@@ -70,7 +109,11 @@
       "descripcion": "Un habitante cumple un nuevo año de vida.",
       "tipo": "vida",
       "importancia": "media",
-      "emocion": "felicidad"
+      "emocion": "felicidad",
+      "efectos": {
+        "felicidad": 5,
+        "orgullo": 3
+      }
     },
     {
       "id": 10,
@@ -78,7 +121,11 @@
       "descripcion": "Un habitante pasa a una nueva etapa de crecimiento.",
       "tipo": "vida",
       "importancia": "media",
-      "emocion": "orgullo"
+      "emocion": "orgullo",
+      "efectos": {
+        "orgullo": 10,
+        "confianza": 5
+      }
     },
     {
       "id": 11,
@@ -86,7 +133,12 @@
       "descripcion": "Un habitante deja este mundo y su legado continúa.",
       "tipo": "vida",
       "importancia": "muy_alta",
-      "emocion": "tristeza"
+      "emocion": "tristeza",
+      "efectos": {
+        "tristeza": 25,
+        "soledad": 10,
+        "estres": 5
+      }
     },
     {
       "id": 12,
@@ -94,7 +146,12 @@
       "descripcion": "Un habitante comienza una nueva profesión.",
       "tipo": "profesion",
       "importancia": "media",
-      "emocion": "motivacion"
+      "emocion": "motivacion",
+      "efectos": {
+        "felicidad": 5,
+        "orgullo": 5,
+        "esperanza": 5
+      }
     }
   ]
-}
+    }
