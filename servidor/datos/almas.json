@@ -17,11 +17,18 @@
 
       "memorias": [],
 
-      "relaciones": [],
+      "relaciones": [
+        {
+          "habitante_id": 2,
+          "tipo": "amistad",
+          "confianza": 50
+        }
+      ],
 
       "objetivos": [
         "conocer el mundo",
-        "crear una amistad"
+        "crear una amistad",
+        "formar una familia"
       ],
 
       "profesion": {
@@ -35,6 +42,7 @@
 
       "estado": "viviendo"
     },
+
 
     {
       "id": 2,
@@ -53,11 +61,18 @@
 
       "memorias": [],
 
-      "relaciones": [],
+      "relaciones": [
+        {
+          "habitante_id": 1,
+          "tipo": "amistad",
+          "confianza": 50
+        }
+      ],
 
       "objetivos": [
-        "explorar nuevos lugares",
-        "conocer habitantes"
+        "descubrir nuevos territorios",
+        "crear un mapa del mundo",
+        "ayudar a la comunidad"
       ],
 
       "profesion": {
