@@ -6,6 +6,7 @@ const crearEvento = require("./eventos.js");
 
 
 
+
 // =================================
 // OBTENER ETAPA POR EDAD
 // =================================
@@ -14,14 +15,14 @@ function obtenerEtapaPorEdad(edad){
 
 
     const datos =
-    cargarArchivo("../datos/etapas.json");
+    cargarArchivo("../datos/etapas_vida.json");
 
 
 
     if(!datos){
 
         console.log(
-            "No se pudieron cargar las etapas."
+            "No se pudieron cargar las etapas de vida."
         );
 
         return null;
@@ -30,16 +31,15 @@ function obtenerEtapaPorEdad(edad){
 
 
 
-
     return datos.etapas.find(
 
         etapa =>
 
-        edad >= etapa.edad_minima
-        &&
+        edad >= etapa.edad_minima &&
         edad <= etapa.edad_maxima
 
-    );
+    ) || null;
+
 
 }
 
@@ -63,7 +63,9 @@ function obtenerEtapaHabitante(habitante){
 
 
     return obtenerEtapaPorEdad(
+
         habitante.edad || 0
+
     );
 
 
@@ -77,9 +79,7 @@ function obtenerEtapaHabitante(habitante){
 // ACTUALIZAR ETAPA
 // =================================
 
-function actualizarEtapa(
-    habitante
-){
+function actualizarEtapa(habitante){
 
 
     if(!habitante){
@@ -91,8 +91,8 @@ function actualizarEtapa(
 
 
     const nuevaEtapa =
-    obtenerEtapaPorEdad(
-        habitante.edad
+    obtenerEtapaHabitante(
+        habitante
     );
 
 
@@ -102,7 +102,6 @@ function actualizarEtapa(
         return habitante;
 
     }
-
 
 
 
@@ -117,9 +116,6 @@ function actualizarEtapa(
 
 
 
-
-
-    // Solo crear evento si cambió
 
     if(
         etapaAnterior !== nuevaEtapa.nombre
@@ -156,7 +152,7 @@ function actualizarEtapa(
 
             "crecimiento",
 
-            "Llegó a la etapa de " +
+            "Alcanzó la etapa de " +
             nuevaEtapa.nombre,
 
             "alta"
@@ -170,6 +166,7 @@ function actualizarEtapa(
 
     return habitante;
 
+
 }
 
 
@@ -180,9 +177,7 @@ function actualizarEtapa(
 // OBTENER ACCIONES DISPONIBLES
 // =================================
 
-function obtenerAccionesEtapa(
-    habitante
-){
+function obtenerAccionesEtapa(habitante){
 
 
     const etapa =
@@ -200,7 +195,7 @@ function obtenerAccionesEtapa(
 
 
 
-    return etapa.acciones || [];
+    return etapa.puede || [];
 
 }
 
@@ -228,6 +223,7 @@ function puedeRealizarAccion(
     return acciones.includes(
         accion
     );
+
 
 }
 
