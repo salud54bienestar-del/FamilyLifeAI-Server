@@ -34,6 +34,42 @@
       "familia": [],
 
       "estado": "viviendo"
+    },
+
+    {
+      "id": 2,
+      "nombre": "Maya",
+      "edad": 20,
+      "personalidad_id": 2,
+
+      "emociones": {
+        "felicidad": 70,
+        "confianza": 15,
+        "miedo": 10,
+        "tristeza": 10,
+        "ira": 0,
+        "calma": 75
+      },
+
+      "memorias": [],
+
+      "relaciones": [],
+
+      "objetivos": [
+        "explorar nuevos lugares",
+        "conocer habitantes"
+      ],
+
+      "profesion": {
+        "nombre": "exploradora",
+        "nivel": 1,
+        "experiencia": 0,
+        "estado": "activa"
+      },
+
+      "familia": [],
+
+      "estado": "viviendo"
     }
   ]
 }
