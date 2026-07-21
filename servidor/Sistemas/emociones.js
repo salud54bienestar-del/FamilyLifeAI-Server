@@ -56,6 +56,18 @@ function cambiarEmocion(
 
     }
 
+    else {
+
+        console.log(
+            "Emoción no encontrada:",
+            emocion
+        );
+
+        return estado;
+
+    }
+
+
 
     limitarValores(estado);
 
@@ -105,21 +117,25 @@ function cambiarEmocion(
 
 
 
+
+
 function limitarValores(estado) {
 
 
-    Object.keys(estado).forEach((clave) => {
+    Object.keys(estado).forEach((clave)=>{
 
-        if (typeof estado[clave] === "number") {
 
-            if (estado[clave] > 100) {
+        if(typeof estado[clave] === "number"){
+
+
+            if(estado[clave] > 100){
 
                 estado[clave] = 100;
 
             }
 
 
-            if (estado[clave] < 0) {
+            if(estado[clave] < 0){
 
                 estado[clave] = 0;
 
@@ -127,160 +143,144 @@ function limitarValores(estado) {
 
         }
 
+
     });
 
 
 
-    if (estado.emociones_secundarias) {
+    if(estado.emociones_secundarias){
 
-        Object.keys(estado.emociones_secundarias).forEach((clave) => {
 
-            if (estado.emociones_secundarias[clave] > 100) {
+        Object.keys(estado.emociones_secundarias).forEach((clave)=>{
+
+
+            if(estado.emociones_secundarias[clave] > 100){
 
                 estado.emociones_secundarias[clave] = 100;
 
             }
 
 
-            if (estado.emociones_secundarias[clave] < 0) {
+            if(estado.emociones_secundarias[clave] < 0){
 
                 estado.emociones_secundarias[clave] = 0;
 
             }
 
+
         });
 
+
     }
+
 
 }
 
 
 
-function actualizarEstadoActual(estado) {
 
 
-    if (estado.tristeza > 60) {
+function actualizarEstadoActual(estado){
+
+
+    if(estado.tristeza > 60){
 
         estado.estado_actual = "triste";
 
     }
 
-    else if (estado.miedo > 60) {
+    else if(estado.miedo > 60){
 
         estado.estado_actual = "asustado";
 
     }
 
-    else if (estado.ira > 60) {
+    else if(estado.ira > 60){
 
         estado.estado_actual = "enojado";
 
     }
 
-    else if (estado.felicidad > 70) {
+    else if(estado.felicidad > 70){
 
         estado.estado_actual = "feliz";
 
     }
 
-    else if (estado.calma > 70) {
+    else if(estado.calma > 70){
 
         estado.estado_actual = "tranquila";
 
     }
 
-    else {
+    else{
 
         estado.estado_actual = "neutral";
 
     }
 
+
 }
 
+
+
+
+
+// =====================================
+// APLICAR EVENTOS DESDE sistema_eventos.json
+// =====================================
 
 
 function aplicarEventoEmocional(
     habitante_id,
     evento
-) {
+){
 
 
-    switch(evento) {
-
-        case "primer_encuentro":
-
-            cambiarEmocion(habitante_id,"felicidad",5,"primer encuentro");
-            cambiarEmocion(habitante_id,"confianza",5,"primer encuentro");
-
-            break;
+    const datosEventos = cargarArchivo(
+        "../datos/sistema_eventos.json"
+    );
 
 
-        case "amistad":
 
-            cambiarEmocion(habitante_id,"felicidad",10,"amistad");
-            cambiarEmocion(habitante_id,"confianza",10,"amistad");
+    if(!datosEventos){
 
-            break;
+        console.log(
+            "No se pudo cargar sistema_eventos.json"
+        );
 
-
-        case "nacimiento":
-
-            cambiarEmocion(habitante_id,"felicidad",20,"nacimiento");
-            cambiarEmocion(habitante_id,"amor",20,"nacimiento");
-            cambiarEmocion(habitante_id,"orgullo",10,"nacimiento");
-
-            break;
-
-
-        case "boda":
-
-            cambiarEmocion(habitante_id,"felicidad",20,"boda");
-            cambiarEmocion(habitante_id,"amor",20,"boda");
-
-            break;
-
-
-        case "divorcio":
-
-            cambiarEmocion(habitante_id,"tristeza",20,"divorcio");
-            cambiarEmocion(habitante_id,"soledad",10,"divorcio");
-
-            break;
-
-
-        case "conflicto":
-
-            cambiarEmocion(habitante_id,"tristeza",15,"conflicto");
-            cambiarEmocion(habitante_id,"ira",10,"conflicto");
-
-            break;
-
-
-        case "familia":
-
-            cambiarEmocion(habitante_id,"confianza",15,"familia");
-
-            break;
-
-
-        default:
-
-            console.log(
-                "Evento emocional sin efecto definido:" + evento
-            );
-
-            break;
+        return;
 
     }
 
-}
+
+
+    const eventoEncontrado =
+    datosEventos.eventos_disponibles.find(
+        e => e.nombre === evento
+    );
 
 
 
-module.exports = {
+    if(!eventoEncontrado){
 
-    cambiarEmocion,
 
-    aplicarEventoEmocional
+        console.log(
+            "Evento no encontrado:",
+            evento
+        );
 
-};
+
+        return;
+
+
+    }
+
+
+
+
+
+    if(!eventoEncontrado.efectos){
+
+
+        console
