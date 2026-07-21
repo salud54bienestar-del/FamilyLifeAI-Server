@@ -1,8 +1,13 @@
 // Sistema avanzado de necesidades de Village Soul
 
 const cargarArchivo = require("./cargador_datos.js");
+
 const crearMemoria = require("./memorias.js");
-const cambiarEmocion = require("./emociones.js");
+
+const {
+    cambiarEmocion
+} = require("./emociones.js");
+
 
 
 
@@ -28,7 +33,6 @@ function obtenerNecesidades(habitante_id){
     }
 
 
-
     return datos.necesidades.find(
 
         n => n.habitante_id === habitante_id
@@ -37,6 +41,7 @@ function obtenerNecesidades(habitante_id){
 
 
 }
+
 
 
 
@@ -77,6 +82,13 @@ function crearNecesidades(habitante_id){
         diversion:100,
 
 
+        social:50,
+
+        seguridad:100,
+
+        descanso:100,
+
+
         estres:0,
 
 
@@ -104,9 +116,9 @@ function crearNecesidades(habitante_id){
 
 
 
+
 // =================================
 // ACTUALIZAR NECESIDADES
-// Tiempo Village Soul
 // =================================
 
 function actualizarNecesidades(
@@ -130,13 +142,6 @@ function actualizarNecesidades(
 
 
 
-    /*
-    
-    Un ciclo representa una actualización
-    del mundo, no un día real.
-
-    */
-
 
     necesidad.hambre -= 2 * ciclo;
 
@@ -146,6 +151,9 @@ function actualizarNecesidades(
 
     necesidad.diversion -= 1 * ciclo;
 
+    necesidad.social -= 1 * ciclo;
+
+
 
 
 
@@ -154,19 +162,48 @@ function actualizarNecesidades(
 
 
 
-    if(
-        necesidad.hambre < 30 ||
-        necesidad.energia < 30
-    ){
 
-        necesidad.estres += 5;
+    // EFECTOS EMOCIONALES
+
+
+    if(necesidad.hambre < 30){
+
+        cambiarEmocion(
+            habitante_id,
+            "tristeza",
+            5,
+            "hambre"
+        );
 
     }
 
 
 
+    if(necesidad.energia < 30){
 
-    limitar(necesidad);
+        cambiarEmocion(
+            habitante_id,
+            "estres",
+            5,
+            "cansancio"
+        );
+
+    }
+
+
+
+    if(necesidad.diversion < 30){
+
+        cambiarEmocion(
+            habitante_id,
+            "aburrimiento",
+            5,
+            "falta de diversión"
+        );
+
+    }
+
+
 
 
 
@@ -185,6 +222,7 @@ function actualizarNecesidades(
 
 
 
+
 // =================================
 // LIMITAR VALORES
 // =================================
@@ -192,39 +230,40 @@ function actualizarNecesidades(
 function limitar(necesidad){
 
 
-    const valores = [
+    Object.keys(necesidad).forEach(
 
-        "hambre",
-        "energia",
-        "higiene",
-        "diversion",
-        "estres"
-
-    ];
+        valor =>{
 
 
+            if(
+                typeof necesidad[valor] === "number"
+            ){
 
-    valores.forEach(v=>{
+
+                if(necesidad[valor] > 100){
+
+                    necesidad[valor]=100;
+
+                }
 
 
-        if(necesidad[v] > 100){
+                if(necesidad[valor] < 0){
 
-            necesidad[v]=100;
+                    necesidad[valor]=0;
+
+                }
+
+
+            }
+
 
         }
 
-
-        if(necesidad[v] < 0){
-
-            necesidad[v]=0;
-
-        }
-
-
-    });
+    );
 
 
 }
+
 
 
 
@@ -242,12 +281,18 @@ function actualizarEstado(necesidad){
     const promedio =
 
     (
-        necesidad.hambre +
-        necesidad.energia +
-        necesidad.higiene +
-        necesidad.diversion
 
-    ) / 4;
+        necesidad.hambre +
+
+        necesidad.energia +
+
+        necesidad.higiene +
+
+        necesidad.diversion +
+
+        necesidad.social
+
+    ) / 5;
 
 
 
@@ -275,6 +320,7 @@ function actualizarEstado(necesidad){
         necesidad.estado="critico";
 
     }
+
 
 
     return necesidad;
@@ -313,6 +359,7 @@ function satisfacerNecesidad(
 
 
 
+
     switch(tipo){
 
 
@@ -327,6 +374,7 @@ function satisfacerNecesidad(
         case "dormir":
 
             necesidad.energia=100;
+            necesidad.descanso=100;
 
         break;
 
@@ -347,7 +395,16 @@ function satisfacerNecesidad(
         break;
 
 
+
+        case "social":
+
+            necesidad.social=100;
+
+        break;
+
+
     }
+
 
 
 
@@ -368,6 +425,7 @@ function satisfacerNecesidad(
 
 
 
+
     actualizarEstado(necesidad);
 
 
@@ -376,6 +434,7 @@ function satisfacerNecesidad(
 
 
 }
+
 
 
 
