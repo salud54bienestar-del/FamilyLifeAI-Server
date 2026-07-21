@@ -5,45 +5,112 @@ const crearEvento = require("./eventos.js");
 const crearMemoria = require("./memorias.js");
 
 
-function crearFamilia(apellido = "") {
 
-    const datos = cargarArchivo("../datos/familias.json");
+// =================================
+// CREAR FAMILIA
+// =================================
 
-    if (!datos) {
+function crearFamilia(apellido = "", tipo = "nuclear") {
 
-        console.log("No se pudieron cargar las familias.");
+
+    const datos =
+    cargarArchivo("../datos/familias.json");
+
+
+    if(!datos){
+
+        console.log(
+            "No se pudieron cargar las familias."
+        );
 
         return null;
 
     }
 
 
+
     const familia = {
 
-        id: datos.familias.length + 1,
 
-        apellido: apellido,
+        id:
+        datos.familias.length + 1,
 
-        miembros: [],
 
-        padres: [],
+        apellido:
+        apellido,
 
-        hijos: [],
 
-        generacion: 1,
 
-        tipo_familia: "nuclear",
+        miembros:
+        [],
 
-        estado: "activa",
 
-        custodia: {},
 
-        historial: []
+        padres:
+        [],
+
+
+
+        hijos:
+        [],
+
+
+
+        generacion:
+        1,
+
+
+
+        tipo_familia:
+        tipo,
+
+
+
+        estado:
+        "activa",
+
+
+
+        custodia:
+        {},
+
+
+
+        hogar:
+        null,
+
+
+
+        recursos_compartidos:
+        {
+
+            alimentos:0,
+
+            esmeraldas:0
+
+        },
+
+
+
+        reputacion:
+        0,
+
+
+
+        historial:
+        [
+
+            "Familia creada"
+
+        ]
+
 
     };
 
 
+
     datos.familias.push(familia);
+
 
 
     crearEvento(
@@ -54,58 +121,110 @@ function crearFamilia(apellido = "") {
 
         {
 
-            sistema: "familias",
+            sistema:"familias",
 
-            accion: "crear_familia"
+            accion:"crear_familia",
+
+            familia_id:familia.id
 
         }
 
     );
 
 
-    console.log("Nueva familia creada:");
+
+    console.log(
+        "Nueva familia creada:"
+    );
+
 
     console.log(familia);
 
 
+
     return familia;
+
 
 }
 
 
 
-function agregarMiembro(idFamilia, habitante_id) {
 
-    const datos = cargarArchivo("../datos/familias.json");
 
-    if (!datos) {
+// =================================
+// AGREGAR MIEMBRO
+// =================================
+
+
+function agregarMiembro(idFamilia, habitante_id, rol="miembro"){
+
+
+
+    const datos =
+    cargarArchivo("../datos/familias.json");
+
+
+
+    if(!datos){
 
         return null;
 
     }
 
 
-    const familia = datos.familias.find(
 
-        (f) => f.id === idFamilia
+    const familia =
+    datos.familias.find(
+
+        f => f.id === idFamilia
 
     );
 
 
-    if (!familia) {
 
-        console.log("Familia no encontrada.");
+    if(!familia){
+
+        console.log(
+            "Familia no encontrada."
+        );
 
         return null;
 
     }
 
 
-    if (!familia.miembros.includes(habitante_id)) {
 
-        familia.miembros.push(habitante_id);
+
+
+    if(!familia.miembros.includes(habitante_id)){
+
+
+        familia.miembros.push(
+            habitante_id
+        );
+
 
     }
+
+
+
+    if(rol === "padre" || rol === "madre"){
+
+
+        familia.padres.push({
+
+            habitante_id:
+            habitante_id,
+
+            rol:
+            rol
+
+        });
+
+
+    }
+
+
 
 
     crearMemoria(
@@ -114,7 +233,7 @@ function agregarMiembro(idFamilia, habitante_id) {
 
         "familia",
 
-        "Se unió a una familia.",
+        "Formó parte de una familia.",
 
         "alta",
 
@@ -125,88 +244,244 @@ function agregarMiembro(idFamilia, habitante_id) {
     );
 
 
-    console.log("Miembro agregado.");
 
     return familia;
+
 
 }
 
 
 
-function eliminarMiembro(idFamilia, habitante_id) {
 
-    const datos = cargarArchivo("../datos/familias.json");
 
-    if (!datos) {
+
+// =================================
+// AGREGAR HIJO
+// =================================
+
+
+function agregarHijo(idFamilia, hijo_id, tipo="adoptado"){
+
+
+
+    const datos =
+    cargarArchivo("../datos/familias.json");
+
+
+
+    if(!datos){
 
         return null;
 
     }
 
 
-    const familia = datos.familias.find(
 
-        (f) => f.id === idFamilia
+    const familia =
+    datos.familias.find(
+
+        f=>f.id===idFamilia
 
     );
 
 
-    if (!familia) {
+
+    if(!familia){
 
         return null;
 
     }
 
 
-    familia.miembros = familia.miembros.filter(
 
-        (id) => id !== habitante_id
+    familia.hijos.push({
+
+
+        habitante_id:
+        hijo_id,
+
+
+        tipo:
+        tipo,
+
+
+        fecha:
+        new Date().toISOString()
+
+
+    });
+
+
+
+    if(!familia.miembros.includes(hijo_id)){
+
+
+        familia.miembros.push(
+            hijo_id
+        );
+
+
+    }
+
+
+
+    familia.historial.push(
+
+        "Nuevo hijo agregado: " + tipo
 
     );
 
 
-    console.log("Miembro eliminado.");
+
+    crearEvento(
+
+        8,
+
+        familia.miembros,
+
+        {
+
+            accion:
+            "nuevo_hijo",
+
+            tipo:
+            tipo
+
+        }
+
+    );
+
+
 
     return familia;
+
 
 }
 
 
 
-function obtenerFamilia(habitante_id) {
 
-    const datos = cargarArchivo("../datos/familias.json");
 
-    if (!datos) {
+
+
+// =================================
+// ELIMINAR MIEMBRO
+// =================================
+
+
+function eliminarMiembro(idFamilia, habitante_id){
+
+
+
+    const datos =
+    cargarArchivo("../datos/familias.json");
+
+
+
+    if(!datos){
 
         return null;
 
     }
+
+
+
+    const familia =
+    datos.familias.find(
+
+        f=>f.id===idFamilia
+
+    );
+
+
+
+    if(!familia){
+
+        return null;
+
+    }
+
+
+
+    familia.miembros =
+    familia.miembros.filter(
+
+        id=>id!==habitante_id
+
+    );
+
+
+
+    familia.padres =
+    familia.padres.filter(
+
+        p=>p.habitante_id!==habitante_id
+
+    );
+
+
+
+    return familia;
+
+
+}
+
+
+
+
+
+
+
+// =================================
+// OBTENER FAMILIA
+// =================================
+
+
+function obtenerFamilia(habitante_id){
+
+
+    const datos =
+    cargarArchivo("../datos/familias.json");
+
+
+
+    if(!datos){
+
+        return null;
+
+    }
+
 
 
     return datos.familias.find(
 
-        (familia) => familia.miembros.includes(habitante_id)
+        familia =>
+        familia.miembros.includes(
+            habitante_id
+        )
 
     );
+
 
 }
 
 
 
-// Prueba inicial
 
-crearFamilia("Soul");
 
 
 module.exports = {
+
 
     crearFamilia,
 
     agregarMiembro,
 
+    agregarHijo,
+
     eliminarMiembro,
 
     obtenerFamilia
+
 
 };
