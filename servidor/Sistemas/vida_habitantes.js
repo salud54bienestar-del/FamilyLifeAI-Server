@@ -1,32 +1,48 @@
 // Sistema de vida diaria de habitantes - Village Soul
 
 
-const cargarArchivo = require("./cargador_datos.js");
+const cargarArchivo =
+require("./cargador_datos.js");
 
-const crearEvento = require("./eventos.js");
 
-const crearMemoria = require("./memorias.js");
+const crearEvento =
+require("./eventos.js");
+
+
+const crearMemoria =
+require("./memorias.js");
+
 
 
 const {
     actualizarCrecimiento
-} = require("./crecimiento.js");
+}
+=
+require("./crecimiento.js");
+
 
 
 const {
     actualizarNecesidades
-} = require("./necesidades.js");
+}
+=
+require("./necesidades.js");
+
 
 
 const {
     actualizarEtapa
-} = require("./etapas.js");
+}
+=
+require("./etapas.js");
+
 
 
 const {
     avanzarEmbarazos
-} = require("./embarazo.js");
-
+}
+=
+require("./embarazo.js");
 
 
 
@@ -34,6 +50,7 @@ const {
 // =================================
 // ACTUALIZAR VIDA HABITANTES
 // =================================
+
 
 function actualizarVidaHabitantes(){
 
@@ -46,7 +63,6 @@ function actualizarVidaHabitantes(){
 
     const tiempoDatos =
     cargarArchivo("../datos/tiempo.json");
-
 
 
 
@@ -116,7 +132,6 @@ function actualizarVidaHabitantes(){
 
 
 
-
     console.log(
         "Periodo actual:",
         periodo
@@ -130,7 +145,7 @@ function actualizarVidaHabitantes(){
 
     almas.almas.forEach(
 
-        habitante=>{
+        habitante => {
 
 
 
@@ -147,10 +162,9 @@ function actualizarVidaHabitantes(){
 
 
             console.log(
-                "Actualizando:",
+                "Actualizando habitante:",
                 habitante.nombre
             );
-
 
 
 
@@ -179,9 +193,7 @@ function actualizarVidaHabitantes(){
 
             actualizarNecesidades(
 
-                habitante.id,
-
-                1
+                habitante.id
 
             );
 
@@ -192,31 +204,51 @@ function actualizarVidaHabitantes(){
 
 
 
+
             // =========================
-            // RUTINA NOCTURNA
+            // DESCANSO
             // =========================
 
 
             if(
-                periodo==="noche"
+                periodo === "noche"
             ){
 
 
-                crearMemoria(
 
-                    habitante.id,
+                if(
+                    habitante.ultimo_descanso
+                    !==
+                    tiempo.dia
+                ){
 
-                    "descanso",
 
-                    habitante.nombre +
-                    " descansó durante la noche.",
 
-                    "baja"
+                    crearMemoria(
 
-                );
+                        habitante.id,
+
+                        "descanso",
+
+                        habitante.nombre +
+                        " descansó durante la noche.",
+
+                        "baja"
+
+                    );
+
+
+
+                    habitante.ultimo_descanso =
+                    tiempo.dia;
+
+
+
+                }
 
 
             }
+
 
 
 
@@ -230,8 +262,9 @@ function actualizarVidaHabitantes(){
 
 
             if(
-                periodo==="dia"
+                periodo === "dia"
             ){
+
 
 
                 crearEvento(
@@ -246,6 +279,7 @@ function actualizarVidaHabitantes(){
 
                         habitante:
                         habitante.nombre,
+
 
                         actividad:
                         "rutina diaria"
@@ -296,13 +330,16 @@ function actualizarVidaHabitantes(){
 
 
 
+
     console.log(
-        "Vida de habitantes actualizada."
+        "Vida de habitantes actualizada correctamente."
     );
 
 
 
+
     return almas.almas;
+
 
 
 }
@@ -311,8 +348,10 @@ function actualizarVidaHabitantes(){
 
 
 
-module.exports={
+module.exports = {
+
 
     actualizarVidaHabitantes
+
 
 };
