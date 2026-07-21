@@ -29,7 +29,7 @@ function pensarAlma(habitante_id) {
     }
 
 
-    const alma = almas.find(
+    const alma = almas.almas.find(
         a => a.id === habitante_id
     );
 
