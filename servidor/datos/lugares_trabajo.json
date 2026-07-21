@@ -1,134 +1,236 @@
 {
   "lugares_trabajo": [
+
     {
       "id": 1,
-      "nombre": "granja",
+      "id_interno": "granja",
+      "nombre": "Granja comunitaria",
       "categoria": "recursos",
       "descripcion": "Lugar donde los agricultores cultivan alimentos y cuidan animales.",
+
       "profesiones": [
-        "agricultor"
+        "agricultor",
+        "granjero_experto",
+        "maestro_agricultor"
       ],
+
       "servicios": [
         "produccion_alimentos",
         "cuidado_animales"
       ],
+
+      "horario": {
+        "inicio": 6,
+        "fin": 18
+      },
+
+      "capacidad_trabajadores": 20,
+
+      "trabajadores": [],
+
+      "eventos": [
+        "cosecha_exitosa",
+        "falta_alimentos"
+      ],
+
       "estado": "activo"
     },
 
 
     {
       "id": 2,
+      "id_interno": "orfanato_hogar_nuevo_amanecer",
       "nombre": "Hogar Nuevo Amanecer",
       "categoria": "adopcion",
+
       "descripcion": "Centro encargado del cuidado y adopción de niños y niñas del mundo.",
+
       "profesiones": [
         "trabajador_social",
         "cuidador_orfanato",
         "ayudante_orfanato",
         "director_orfanato"
       ],
+
       "servicios": [
         "proceso_adopcion",
         "cuidado_infantil",
         "evaluacion_familias"
       ],
-      "capacidad": 50,
+
+      "capacidad_ninos": 50,
+
+      "capacidad_trabajadores": 15,
+
+      "horario": {
+        "inicio": 8,
+        "fin": 18
+      },
+
+      "trabajadores": [],
+
+      "eventos": [
+        "nueva_adopcion",
+        "llegada_nino",
+        "evaluacion_familiar"
+      ],
+
       "estado": "activo"
     },
 
 
     {
       "id": 3,
-      "nombre": "hospital",
+      "id_interno": "hospital",
+      "nombre": "Hospital comunitario",
+
       "categoria": "salud",
-      "descripcion": "Centro médico para atender habitantes, embarazos y niños.",
+
+      "descripcion": "Centro médico para habitantes, embarazos y niños.",
+
       "profesiones": [
         "medico",
         "pediatra",
         "enfermero"
       ],
+
       "servicios": [
         "atencion_medica",
         "control_embarazo",
         "cuidado_bebes"
       ],
+
       "areas": [
         "emergencias",
         "maternidad",
         "pediatria"
       ],
+
+      "horario": {
+        "inicio": 0,
+        "fin": 24
+      },
+
+      "trabajadores": [],
+
       "estado": "activo"
     },
 
 
     {
       "id": 4,
-      "nombre": "escuela",
+      "id_interno": "escuela",
+      "nombre": "Escuela comunitaria",
+
       "categoria": "educacion",
-      "descripcion": "Lugar donde los niños aprenden y desarrollan habilidades.",
+
+      "descripcion": "Lugar donde los niños desarrollan conocimientos y habilidades.",
+
       "profesiones": [
         "maestro",
         "cuidador_infantil"
       ],
+
       "servicios": [
         "educacion",
         "actividades_recreativas"
       ],
+
+      "horario": {
+        "inicio": 8,
+        "fin": 15
+      },
+
+      "trabajadores": [],
+
       "estado": "activo"
     },
 
 
     {
       "id": 5,
-      "nombre": "cuartel_seguridad",
+      "id_interno": "cuartel_seguridad",
+
+      "nombre": "Cuartel de seguridad",
+
       "categoria": "proteccion",
+
       "descripcion": "Base de los guardias encargados de proteger la comunidad.",
+
       "profesiones": [
         "guardia_seguridad",
         "jefe_seguridad"
       ],
+
       "servicios": [
         "patrullaje",
         "defensa_contra_mobs",
         "proteccion_familias"
       ],
+
+      "horario": {
+        "inicio": 18,
+        "fin": 6
+      },
+
+      "trabajadores": [],
+
       "estado": "activo"
     },
 
 
     {
       "id": 6,
-      "nombre": "restaurante",
+      "id_interno": "restaurante",
+
+      "nombre": "Restaurante",
+
       "categoria": "alimentacion",
-      "descripcion": "Lugar donde cocineros preparan alimentos para habitantes.",
+
+      "descripcion": "Lugar donde cocineros preparan alimentos.",
+
       "profesiones": [
         "cocinero",
         "chef_restaurante"
       ],
+
       "servicios": [
         "preparar_comida",
         "vender_alimentos"
       ],
+
+      "trabajadores": [],
+
       "estado": "activo"
     },
 
 
     {
       "id": 7,
-      "nombre": "hogar_privado",
+      "id_interno": "hogar_privado",
+
+      "nombre": "Hogares privados",
+
       "categoria": "servicios",
-      "descripcion": "Casa donde habitantes pueden contratar ayuda doméstica.",
+
+      "descripcion": "Servicio doméstico para familias de la comunidad.",
+
       "profesiones": [
         "ama_de_llaves",
         "sirvienta",
         "niñera"
       ],
+
       "servicios": [
         "limpieza",
         "cuidado_hogar",
         "cuidado_ninos"
       ],
+
+      "trabajadores": [],
+
       "estado": "activo"
     }
+
   ]
 }
