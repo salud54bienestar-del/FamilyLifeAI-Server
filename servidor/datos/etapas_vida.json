@@ -1,157 +1,109 @@
-// Sistema de etapas de vida - Village Soul
+{
+  "etapas": [
 
-const cargarArchivo = require("./cargador_datos.js");
+    {
+      "id": 1,
+      "nombre": "bebe",
+      "edad_minima": 0,
+      "edad_maxima": 2,
+
+      "descripcion": "Etapa inicial donde el habitante depende completamente de su familia. Desarrolla vínculos emocionales y comienza a formar sus primeras memorias.",
+
+      "puede": [
+        "crear_memorias",
+        "formar_vinculos",
+        "recibir_cuidados"
+      ],
+
+      "no_puede": [
+        "trabajar",
+        "tener_profesion",
+        "casarse"
+      ]
+    },
 
 
+    {
+      "id": 2,
+      "nombre": "niño",
+      "edad_minima": 3,
+      "edad_maxima": 12,
 
-// =================================
-// OBTENER ETAPA POR EDAD
-// =================================
+      "descripcion": "Etapa de aprendizaje, juegos y descubrimiento. Desarrolla gustos, habilidades básicas y personalidad.",
 
-function obtenerEtapaPorEdad(edad){
+      "puede": [
+        "aprender",
+        "jugar",
+        "ayudar_en_casa",
+        "desarrollar_habilidades"
+      ],
+
+      "no_puede": [
+        "trabajo_completo",
+        "matrimonio"
+      ]
+    },
 
 
-    const datos =
-    cargarArchivo("../datos/etapas_vida.json");
+    {
+      "id": 3,
+      "nombre": "adolescente",
+      "edad_minima": 13,
+      "edad_maxima": 17,
+
+      "descripcion": "Etapa donde comienza a definir su identidad, intereses, amistades y posibles talentos.",
+
+      "puede": [
+        "aprender_profesion",
+        "tener_hobbies",
+        "crear_relaciones",
+        "explorar"
+      ],
+
+      "no_puede": [
+        "matrimonio",
+        "tener_hijos"
+      ]
+    },
 
 
-    if(!datos){
+    {
+      "id": 4,
+      "nombre": "adulto",
+      "edad_minima": 18,
+      "edad_maxima": 59,
 
-        console.log(
-            "No se pudieron cargar las etapas de vida."
-        );
+      "descripcion": "Etapa principal de vida donde puede trabajar, formar relaciones, crear una familia y participar en la comunidad.",
 
-        return null;
+      "puede": [
+        "trabajar",
+        "casarse",
+        "adoptar",
+        "tener_hijos",
+        "liderar"
+      ]
+    },
 
+
+    {
+      "id": 5,
+      "nombre": "adulto_mayor",
+      "edad_minima": 60,
+      "edad_maxima": 120,
+
+      "descripcion": "Etapa de experiencia y sabiduría. Puede enseñar, aconsejar y transmitir conocimientos a nuevas generaciones.",
+
+      "puede": [
+        "enseñar",
+        "aconsejar",
+        "ser_mentor",
+        "contar_historias"
+      ],
+
+      "no_puede": [
+        "trabajos_pesados"
+      ]
     }
 
-
-
-    const etapa =
-    datos.etapas.find(
-
-        e =>
-
-        edad >= e.edad_minima &&
-        edad <= e.edad_maxima
-
-    );
-
-
-
-    return etapa || null;
-
+  ]
 }
-
-
-
-
-// =================================
-// OBTENER ETAPA DE HABITANTE
-// =================================
-
-function obtenerEtapaHabitante(habitante){
-
-
-    if(!habitante){
-
-        return null;
-
-    }
-
-
-
-    return obtenerEtapaPorEdad(
-
-        habitante.edad || 0
-
-    );
-
-}
-
-
-
-
-
-// =================================
-// ACTUALIZAR ETAPA
-// =================================
-
-function actualizarEtapa(habitante){
-
-
-    if(!habitante){
-
-        return null;
-
-    }
-
-
-
-    const etapa =
-    obtenerEtapaHabitante(
-        habitante
-    );
-
-
-
-    if(etapa){
-
-        habitante.etapa =
-        etapa.nombre;
-
-    }
-
-
-
-    return habitante;
-
-}
-
-
-
-
-
-// =================================
-// DESCRIPCIÓN
-// =================================
-
-function obtenerDescripcionEtapa(habitante){
-
-
-    const etapa =
-    obtenerEtapaHabitante(
-        habitante
-    );
-
-
-
-    if(!etapa){
-
-        return "Sin etapa definida";
-
-    }
-
-
-
-    return etapa.descripcion;
-
-}
-
-
-
-
-
-module.exports = {
-
-
-    obtenerEtapaPorEdad,
-
-    obtenerEtapaHabitante,
-
-    actualizarEtapa,
-
-    obtenerDescripcionEtapa
-
-
-};
