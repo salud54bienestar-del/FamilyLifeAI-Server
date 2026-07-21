@@ -16,16 +16,16 @@ require("./memorias.js");
 
 
 
+
 // =================================
-// OBTENER OBJETIVOS DE HABITANTE
+// CARGAR OBJETIVOS
 // =================================
 
-function obtenerObjetivos(habitante_id){
+function cargarObjetivos(){
 
 
     const datos =
     cargarArchivo("../datos/objetivos.json");
-
 
 
     if(!datos){
@@ -39,8 +39,39 @@ function obtenerObjetivos(habitante_id){
     }
 
 
+    return datos.objetivos || [];
 
-    return datos.objetivos.filter(
+}
+
+
+
+
+
+
+
+// =================================
+// OBTENER OBJETIVOS DE HABITANTE
+// =================================
+
+function obtenerObjetivos(
+    habitante_id
+){
+
+
+    const objetivos =
+    cargarObjetivos();
+
+
+
+    if(!objetivos){
+
+        return [];
+
+    }
+
+
+
+    return objetivos.filter(
 
         objetivo =>
         objetivo.habitante_id === habitante_id
@@ -55,8 +86,9 @@ function obtenerObjetivos(habitante_id){
 
 
 
+
 // =================================
-// OBTENER OBJETIVO ACTIVO
+// OBJETIVO ACTIVO
 // =================================
 
 function obtenerObjetivoActivo(
@@ -71,23 +103,46 @@ function obtenerObjetivoActivo(
 
 
 
-    if(!objetivos){
-
-        return null;
-
-    }
-
-
-
     return objetivos.find(
 
         objetivo =>
+
         objetivo.estado === "activo"
 
     ) || null;
 
 
 }
+
+
+
+
+
+
+
+// =================================
+// BUSCAR POR TIPO
+// =================================
+
+function obtenerObjetivosPorTipo(
+    habitante_id,
+    tipo
+){
+
+
+    return obtenerObjetivos(
+        habitante_id
+    )
+    .filter(
+
+        objetivo =>
+        objetivo.tipo === tipo
+
+    );
+
+
+}
+
 
 
 
@@ -107,6 +162,7 @@ function crearObjetivo(
 ){
 
 
+
     const datos =
     cargarArchivo("../datos/objetivos.json");
 
@@ -117,7 +173,6 @@ function crearObjetivo(
         return null;
 
     }
-
 
 
 
@@ -142,11 +197,11 @@ function crearObjetivo(
 
 
 
+
     const objetivo = {
 
 
-        id:
-        nuevoId,
+        id:nuevoId,
 
 
         habitante_id,
@@ -196,9 +251,7 @@ function crearObjetivo(
         "nuevo_objetivo",
 
         [
-
             habitante_id
-
         ],
 
         {
@@ -221,7 +274,7 @@ function crearObjetivo(
 
         "objetivo",
 
-        "Tiene un nuevo objetivo: " +
+        "Comenzó un nuevo objetivo: " +
         titulo,
 
         "media"
@@ -267,7 +320,6 @@ function actualizarProgreso(
 
 
 
-
     const objetivo =
     datos.objetivos.find(
 
@@ -292,10 +344,26 @@ function actualizarProgreso(
 
 
 
-    if(objetivo.progreso >= 100){
-
+    if(objetivo.progreso > 100){
 
         objetivo.progreso = 100;
+
+    }
+
+
+    if(objetivo.progreso < 0){
+
+        objetivo.progreso = 0;
+
+    }
+
+
+
+
+
+
+
+    if(objetivo.progreso >= 100){
 
 
         objetivo.estado =
@@ -308,19 +376,21 @@ function actualizarProgreso(
             "objetivo_completado",
 
             [
-
                 objetivo.habitante_id
-
             ],
 
             {
 
                 objetivo:
-                objetivo.titulo
+                objetivo.titulo,
+
+                recompensa:
+                objetivo.recompensa
 
             }
 
         );
+
 
 
 
@@ -331,7 +401,7 @@ function actualizarProgreso(
 
             "logro",
 
-            "Completó el objetivo: " +
+            "Completó: " +
             objetivo.titulo,
 
             "alta"
@@ -355,14 +425,16 @@ function actualizarProgreso(
 
 
 
+
 // =================================
-// CAMBIAR ESTADO OBJETIVO
+// CAMBIAR ESTADO
 // =================================
 
 function cambiarEstadoObjetivo(
     objetivo_id,
     estado
 ){
+
 
 
     const datos =
@@ -395,7 +467,23 @@ function cambiarEstadoObjetivo(
 
 
 
+
+
     objetivo.estado = estado;
+
+
+
+    crearMemoria(
+
+        objetivo.habitante_id,
+
+        "objetivo",
+
+        "Su objetivo cambió a: " + estado,
+
+        "baja"
+
+    );
 
 
 
@@ -409,14 +497,14 @@ function cambiarEstadoObjetivo(
 
 
 
+
 // =================================
-// DESBLOQUEAR OBJETIVO
+// DESBLOQUEAR
 // =================================
 
 function desbloquearObjetivo(
     objetivo_id
 ){
-
 
     return cambiarEstadoObjetivo(
 
@@ -426,7 +514,6 @@ function desbloquearObjetivo(
 
     );
 
-
 }
 
 
@@ -434,27 +521,22 @@ function desbloquearObjetivo(
 
 
 
+
 // =================================
-// COMPLETAR OBJETIVO MANUAL
+// COMPLETAR
 // =================================
 
 function completarObjetivo(
     objetivo_id
 ){
 
-
-    const objetivo =
-    actualizarProgreso(
+    return actualizarProgreso(
 
         objetivo_id,
 
         100
 
     );
-
-
-    return objetivo;
-
 
 }
 
@@ -467,9 +549,13 @@ function completarObjetivo(
 module.exports = {
 
 
+    cargarObjetivos,
+
     obtenerObjetivos,
 
     obtenerObjetivoActivo,
+
+    obtenerObjetivosPorTipo,
 
     crearObjetivo,
 
