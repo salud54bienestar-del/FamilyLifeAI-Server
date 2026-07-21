@@ -1,8 +1,6 @@
 // Sistema de etapas de vida - Village Soul
 
 const cargarArchivo = require("./cargador_datos.js");
-const crearMemoria = require("./memorias.js");
-const crearEvento = require("./eventos.js");
 
 
 
@@ -17,7 +15,6 @@ function obtenerEtapaPorEdad(edad){
     cargarArchivo("../datos/etapas_vida.json");
 
 
-
     if(!datos){
 
         console.log(
@@ -30,23 +27,27 @@ function obtenerEtapaPorEdad(edad){
 
 
 
+    const etapa =
+    datos.etapas.find(
 
-    return datos.etapas.find(
+        e =>
 
-        etapa =>
-
-        edad >= etapa.edad_minima
-        &&
-        edad <= etapa.edad_maxima
+        edad >= e.edad_minima &&
+        edad <= e.edad_maxima
 
     );
+
+
+
+    return etapa || null;
 
 }
 
 
 
+
 // =================================
-// OBTENER ETAPA DE UN HABITANTE
+// OBTENER ETAPA DE HABITANTE
 // =================================
 
 function obtenerEtapaHabitante(habitante){
@@ -73,7 +74,7 @@ function obtenerEtapaHabitante(habitante){
 
 
 // =================================
-// ACTUALIZAR ETAPA DE VIDA
+// ACTUALIZAR ETAPA
 // =================================
 
 function actualizarEtapa(habitante){
@@ -87,87 +88,23 @@ function actualizarEtapa(habitante){
 
 
 
-    const etapaActual =
-    obtenerEtapaPorEdad(
-        habitante.edad
+    const etapa =
+    obtenerEtapaHabitante(
+        habitante
     );
 
 
 
-    if(!etapaActual){
+    if(etapa){
 
-        return habitante;
-
-    }
-
-
-
-
-
-    const etapaAnterior =
-    habitante.etapa || null;
-
-
-
-
-    habitante.etapa =
-    etapaActual.nombre;
-
-
-
-
-
-
-    if(
-        etapaAnterior !== etapaActual.nombre
-    ){
-
-
-        crearEvento(
-
-            "cambio_etapa_vida",
-
-            [
-                habitante.id
-            ],
-
-            {
-
-                anterior:
-                etapaAnterior,
-
-                nueva:
-                etapaActual.nombre
-
-            }
-
-        );
-
-
-
-
-
-        crearMemoria(
-
-            habitante.id,
-
-            "crecimiento",
-
-            "Ahora está en la etapa de " 
-            + etapaActual.nombre,
-
-            "alta"
-
-        );
-
+        habitante.etapa =
+        etapa.nombre;
 
     }
-
 
 
 
     return habitante;
-
 
 }
 
@@ -175,9 +112,8 @@ function actualizarEtapa(habitante){
 
 
 
-
 // =================================
-// OBTENER DESCRIPCIÓN DE ETAPA
+// DESCRIPCIÓN
 // =================================
 
 function obtenerDescripcionEtapa(habitante){
@@ -192,7 +128,7 @@ function obtenerDescripcionEtapa(habitante){
 
     if(!etapa){
 
-        return null;
+        return "Sin etapa definida";
 
     }
 
@@ -200,10 +136,7 @@ function obtenerDescripcionEtapa(habitante){
 
     return etapa.descripcion;
 
-
 }
-
-
 
 
 
