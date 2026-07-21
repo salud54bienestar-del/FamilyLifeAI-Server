@@ -36,20 +36,75 @@ function pensarAlma(habitante_id) {
     );
 
 
+
     if (!alma) {
 
-        console.log("No existe el habitante:", habitante_id);
+        console.log(
+            "No existe el habitante:",
+            habitante_id
+        );
 
         return null;
     }
 
 
 
-    console.log("Pensando alma:", alma.nombre);
+    console.log(
+        "Pensando alma:",
+        alma.nombre
+    );
 
 
 
-    const personalidad = personalidades.personalidades.find(
+    // ==============================
+    // ALMAS ESPECIALES (GUÍAS)
+    // ==============================
+
+
+    if (alma.tipo === "guia") {
+
+
+        console.log(
+            "Tipo de alma: guía"
+        );
+
+
+        return {
+
+
+            habitante_id: alma.id,
+
+            nombre: alma.nombre,
+
+            tipo: "guia",
+
+            estado: "asistiendo",
+
+
+            funcion:
+            "Ayudar al jugador y explicar el mundo de Village Soul",
+
+
+            objetivos:
+            alma.objetivos
+
+
+        };
+
+
+    }
+
+
+
+
+
+    // ==============================
+    // PERSONALIDAD
+    // ==============================
+
+
+    const personalidad =
+    personalidades.personalidades.find(
         p => p.id === alma.personalidad_id
     );
 
@@ -57,86 +112,197 @@ function pensarAlma(habitante_id) {
 
     if (personalidad) {
 
-        console.log("Personalidad:", personalidad.nombre);
+        console.log(
+            "Personalidad:",
+            personalidad.nombre
+        );
 
-    } else {
+    }
 
-        console.log("Personalidad no encontrada.");
+    else {
+
+        console.log(
+            "Personalidad no encontrada."
+        );
 
     }
 
 
 
-    const emocionActual = emociones.emociones.find(
+
+
+    // ==============================
+    // EMOCIONES
+    // ==============================
+
+
+    const emocionActual =
+    emociones.emociones.find(
         e => e.habitante_id === habitante_id
     );
 
 
 
-    const objetivoActual = alma.objetivos?.[0] || "explorar el mundo";
+
+
+    // ==============================
+    // OBJETIVO ACTUAL
+    // ==============================
+
+
+    const objetivoActual =
+    alma.objetivos?.[0]
+    ||
+    "explorar el mundo";
 
 
 
-    const tieneFamilia = alma.familia && alma.familia.length > 0;
 
+
+    // ==============================
+    // FAMILIA
+    // ==============================
+
+
+    const tieneFamilia =
+    alma.familia &&
+    alma.familia.length > 0;
+
+
+
+
+
+
+    // ==============================
+    // CONTEXTO DE DECISIÓN
+    // ==============================
 
 
     const contexto = {
 
+
         emocion:
-            emocionActual?.estado_actual || "neutral",
+        emocionActual?.estado_actual
+        ||
+        "neutral",
+
 
 
         emociones_secundarias:
-            emocionActual?.emociones_secundarias || {},
+        emocionActual?.emociones_secundarias
+        ||
+        {},
+
 
 
         familia:
-            tieneFamilia,
+        tieneFamilia,
+
 
 
         objetivo:
-            objetivoActual,
+        objetivoActual,
+
 
 
         personalidad:
-            personalidad?.nombre || "desconocida",
+        personalidad?.nombre
+        ||
+        "desconocida",
+
 
 
         rasgos:
-            personalidad?.rasgos || []
+        personalidad?.rasgos
+        ||
+        []
+
 
     };
 
 
 
-    const decision = procesarDecision(
-        1,
+
+
+
+    // ==============================
+    // TOMAR DECISIÓN
+    // ==============================
+
+
+    const decision =
+    procesarDecision(
+        habitante_id,
         contexto
     );
 
 
 
+
+
+
     return {
 
-        habitante_id: habitante_id,
 
-        nombre: alma.nombre,
+        habitante_id:
 
-        estado: "pensando",
 
-        personalidad: personalidad,
+        habitante_id,
 
-        contexto: contexto,
 
-        decision: decision
+        nombre:
+
+
+        alma.nombre,
+
+
+
+        tipo:
+
+
+        alma.tipo
+        ||
+        "habitante",
+
+
+
+        estado:
+
+
+        "pensando",
+
+
+
+        personalidad:
+
+
+        personalidad,
+
+
+
+        contexto:
+
+
+        contexto,
+
+
+
+        decision:
+
+
+        decision
+
 
     };
+
 
 }
 
 
 
+
 module.exports = {
+
     pensarAlma
+
 };
