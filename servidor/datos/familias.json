@@ -1,45 +1,93 @@
 {
   "familias": [
+
     {
-      "id": 1,
+      "id":1,
 
-      "apellido": "",
+      "apellido":"",
 
-      "tipo_familia": "nuclear",
+      "tipo_familia":"nuclear",
 
-      "estado": "activa",
+      "estado":"activa",
 
-      "generacion": 1,
+      "generacion":1,
 
-      "adultos": [],
 
-      "hijos_biologicos": [],
+      "miembros":[],
 
-      "hijos_adoptivos": [],
 
-      "tutores": [],
+      "adultos":[
 
-      "embarazos": [],
+      ],
 
-      "adopciones": [],
 
-      "hogar": null,
+      "hijos_biologicos":[],
 
-      "mascotas": [],
 
-      "custodia": {},
+      "hijos_adoptivos":[],
 
-      "historial": [],
 
-      "legado_id": null,
+      "tutores":[],
 
-      "relaciones_familiares": [],
 
-      "recursos_compartidos": [],
+      "embarazos":[],
 
-      "tradiciones": [],
 
-      "reputacion": 0
+      "adopciones":[],
+
+
+      "hogar":null,
+
+
+      "mascotas":[],
+
+
+      "custodia":{},
+
+
+      "estabilidad":{
+
+        "felicidad":50,
+
+        "confianza":50,
+
+        "recursos":0
+
+      },
+
+
+      "recursos_compartidos":{
+
+        "esmeraldas":0,
+
+        "alimentos":0,
+
+        "materiales":0
+
+      },
+
+
+      "tradiciones":[],
+
+
+      "reputacion":0,
+
+
+      "ancestros":[],
+
+
+      "descendientes":[],
+
+
+      "historial":[],
+
+
+      "legado_id":null,
+
+
+      "relaciones_familiares":[]
+
     }
+
   ]
 }
