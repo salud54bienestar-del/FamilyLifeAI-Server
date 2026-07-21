@@ -4,6 +4,10 @@ const cargarArchivo = require("./cargador_datos.js");
 const crearEvento = require("./eventos.js");
 const crearMemoria = require("./memorias.js");
 
+const {
+    crearFamiliaMatrimonio
+} = require("./familias.js");
+
 
 // =================================
 // EVALUAR MATRIMONIO
@@ -62,19 +66,14 @@ function evaluarMatrimonio(habitante_a, habitante_b){
 
 
         confianza:
-
         relacion.confianza >= 80,
 
 
-
         romance:
-
         relacion.romance >= 80,
 
 
-
         permitido:
-
         relacion.limites.relacion_permitida === true
 
 
@@ -83,7 +82,9 @@ function evaluarMatrimonio(habitante_a, habitante_b){
 
 
 
+
     return {
+
 
         habitante_a,
 
@@ -97,10 +98,12 @@ function evaluarMatrimonio(habitante_a, habitante_b){
         Object.values(requisitos)
         .every(r=>r===true)
 
+
     };
 
 
 }
+
 
 
 
@@ -133,19 +136,15 @@ function casarse(habitante_a, habitante_b){
         r =>
 
         (
-
         r.habitante_a === habitante_a &&
         r.habitante_b === habitante_b
-
         )
 
         ||
 
         (
-
         r.habitante_a === habitante_b &&
         r.habitante_b === habitante_a
-
         )
 
     );
@@ -173,7 +172,7 @@ function casarse(habitante_a, habitante_b){
     if(!evaluacion.aprobado){
 
         console.log(
-            "No cumplen los requisitos para casarse."
+            "No cumplen requisitos."
         );
 
         return null;
@@ -184,9 +183,10 @@ function casarse(habitante_a, habitante_b){
 
 
 
+    // Cambiar estado de relación
+
     relacion.estado_pareja =
     "casados";
-
 
 
     relacion.tipo =
@@ -197,6 +197,22 @@ function casarse(habitante_a, habitante_b){
     relacion.historial.push(
 
         "Matrimonio celebrado"
+
+    );
+
+
+
+
+
+    // CREAR FAMILIA AUTOMÁTICA
+
+    const familia =
+
+    crearFamiliaMatrimonio(
+
+        habitante_a,
+
+        habitante_b
 
     );
 
@@ -218,8 +234,10 @@ function casarse(habitante_a, habitante_b){
 
         {
 
-            tipo:
-            "matrimonio"
+            tipo:"matrimonio",
+
+            familia_id:
+            familia?.id || null
 
         }
 
@@ -253,10 +271,21 @@ function casarse(habitante_a, habitante_b){
 
 
 
-    return relacion;
+    return {
+
+
+        relacion,
+
+
+        familia
+
+
+    };
 
 
 }
+
+
 
 
 
@@ -266,7 +295,10 @@ function casarse(habitante_a, habitante_b){
 // DIVORCIO
 // =================================
 
-function divorciarse(habitante_a, habitante_b){
+function divorciarse(
+    habitante_a,
+    habitante_b
+){
 
 
     const relaciones =
@@ -287,19 +319,15 @@ function divorciarse(habitante_a, habitante_b){
         r =>
 
         (
-
         r.habitante_a === habitante_a &&
         r.habitante_b === habitante_b
-
         )
 
         ||
 
         (
-
         r.habitante_a === habitante_b &&
         r.habitante_b === habitante_a
-
         )
 
     );
@@ -327,6 +355,8 @@ function divorciarse(habitante_a, habitante_b){
 
 
 
+
+
     crearEvento(
 
         7,
@@ -341,8 +371,7 @@ function divorciarse(habitante_a, habitante_b){
 
         {
 
-            tipo:
-            "divorcio"
+            tipo:"divorcio"
 
         }
 
@@ -359,7 +388,7 @@ function divorciarse(habitante_a, habitante_b){
 
 
 
-module.exports = {
+module.exports={
 
 
     evaluarMatrimonio,
