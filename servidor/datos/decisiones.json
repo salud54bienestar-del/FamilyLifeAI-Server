@@ -12,14 +12,44 @@
         "proteger_familia",
         "descansar"
       ],
-      "eleccion": "seguir_el_camino",
+      "eleccion_inicial": "seguir_el_camino",
       "resultados": {
-        "seguir_el_camino": "Luna continúa explorando y descubre una nueva zona del mundo.",
-        "regresar_a_la_aldea": "Luna decide volver a la aldea para estar segura.",
-        "explorar_el_mundo": "Luna descubre un nuevo lugar y gana experiencia.",
-        "buscar_compañia": "Luna busca a otro habitante para compartir la aventura.",
-        "proteger_familia": "Luna piensa en la seguridad de su familia y sus seres queridos.",
-        "descansar": "Luna toma un descanso para recuperar energía."
+        "seguir_el_camino": {
+          "texto": "Luna continúa explorando y descubre una nueva zona del mundo.",
+          "emocion": "curiosidad",
+          "memoria": "Descubrió un nuevo camino durante una exploración.",
+          "experiencia": 10
+        },
+        "regresar_a_la_aldea": {
+          "texto": "Luna decide volver a la aldea para estar segura.",
+          "emocion": "calma",
+          "memoria": "Regresó a la aldea después de una exploración.",
+          "experiencia": 2
+        },
+        "explorar_el_mundo": {
+          "texto": "Luna descubre un nuevo lugar y gana experiencia.",
+          "emocion": "felicidad",
+          "memoria": "Encontró una nueva zona del mundo.",
+          "experiencia": 15
+        },
+        "buscar_compañia": {
+          "texto": "Luna busca a otro habitante para compartir la aventura.",
+          "emocion": "confianza",
+          "memoria": "Buscó compañía durante una aventura.",
+          "experiencia": 5
+        },
+        "proteger_familia": {
+          "texto": "Luna piensa en la seguridad de su familia y sus seres queridos.",
+          "emocion": "amor",
+          "memoria": "Protegió a su familia ante una situación desconocida.",
+          "experiencia": 8
+        },
+        "descansar": {
+          "texto": "Luna toma un descanso para recuperar energía.",
+          "emocion": "tranquilidad",
+          "memoria": "Descansó después de una actividad intensa.",
+          "experiencia": 3
+        }
       }
     }
   ]
