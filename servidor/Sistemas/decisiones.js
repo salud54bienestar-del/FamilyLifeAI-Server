@@ -19,7 +19,7 @@ function procesarDecision(id, contexto = {}) {
 
 
     const decision = datos.decisiones.find(
-        (d) => d.id === id
+        d => d.id === id
     );
 
 
@@ -37,77 +37,108 @@ function procesarDecision(id, contexto = {}) {
 
 
 
-    // Prioridad por emociones principales
+    // ==============================
+    // EMOCIONES PRINCIPALES
+    // ==============================
 
-    if (contexto.emocion === "tristeza") {
 
-        eleccion = "buscar_apoyo";
+    switch(contexto.emocion) {
+
+        case "tristeza":
+
+            eleccion = "buscar_apoyo";
+
+        break;
+
+
+        case "asustado":
+
+            eleccion = "buscar_refugio";
+
+        break;
+
+
+        case "enojado":
+
+            eleccion = "calmarse";
+
+        break;
 
     }
 
-    else if (contexto.emocion === "asustado") {
 
-        eleccion = "buscar_refugio";
+
+
+    // ==============================
+    // EMOCIONES SECUNDARIAS
+    // ==============================
+
+
+    const emociones = contexto.emociones_secundarias || {};
+
+
+    if(emociones.soledad > 60){
+
+        eleccion = "buscar_compañia";
 
     }
 
-    else if (contexto.emocion === "enojado") {
 
-        eleccion = "calmarse";
+    else if(emociones.estres > 70){
+
+        eleccion = "descansar";
+
+    }
+
+
+    else if(emociones.amor > 70){
+
+        eleccion = "cuidar_familia";
 
     }
 
 
 
-    // Prioridad por emociones secundarias
+    // ==============================
+    // PERSONALIDAD
+    // ==============================
 
-    if (contexto.emociones_secundarias) {
+
+    if(contexto.personalidad){
 
 
-        if (contexto.emociones_secundarias.soledad > 60) {
+        if(
+            contexto.personalidad === "amable" &&
+            contexto.familia
+        ){
 
-            eleccion = "buscar_compañia";
+            eleccion = "ayudar_familia";
 
         }
 
 
-        else if (contexto.emociones_secundarias.amor > 70) {
 
-            eleccion = "cuidar_familia";
-
-        }
-
-
-        else if (contexto.emociones_secundarias.estres > 70) {
-
-            eleccion = "descansar";
-
-        }
-
-
-        else if (contexto.emociones_secundarias.esperanza > 80) {
+        if(
+            contexto.personalidad === "aventurero"
+        ){
 
             eleccion = "explorar_el_mundo";
 
         }
 
-    }
-
-
-
-    // Prioridad familiar
-
-    if (contexto.familia) {
-
-        eleccion = "proteger_familia";
 
     }
 
 
 
-    // Relaciones
 
-    if (contexto.relacion === "conflicto") {
+
+    // ==============================
+    // RELACIONES
+    // ==============================
+
+
+    if(contexto.relacion === "conflicto"){
 
         eleccion = "resolver_conflicto";
 
@@ -115,23 +146,33 @@ function procesarDecision(id, contexto = {}) {
 
 
 
-    // Objetivos
 
-    if (contexto.objetivo === "Crear una amistad") {
+    // ==============================
+    // OBJETIVOS
+    // ==============================
+
+
+    const objetivo = contexto.objetivo?.toLowerCase();
+
+
+
+    if(objetivo === "crear una amistad"){
 
         eleccion = "crear_vinculos";
 
     }
 
 
-    else if (contexto.objetivo === "Conocer el mundo") {
+
+    else if(objetivo === "conocer el mundo"){
 
         eleccion = "explorar_el_mundo";
 
     }
 
 
-    else if (contexto.objetivo === "crear_una_familia") {
+
+    else if(objetivo === "crear_una_familia"){
 
         eleccion = "crear_familia";
 
@@ -139,46 +180,9 @@ function procesarDecision(id, contexto = {}) {
 
 
 
-    // Influencia de personalidad
-
-    if (contexto.personalidad) {
-
-
-        if (contexto.personalidad === "amable") {
-
-
-            if (
-                !contexto.familia &&
-                contexto.emocion === "tranquila"
-            ) {
-
-                eleccion = "ayudar_habitante";
-
-            }
-
-        }
-
-
-
-        else if (contexto.personalidad === "aventurero") {
-
-
-            if (
-                contexto.emocion === "tranquila"
-            ) {
-
-                eleccion = "explorar_el_mundo";
-
-            }
-
-        }
-
-
-    }
-
-
 
     const resultado = {
+
 
         habitante_id: decision.habitante_id,
 
@@ -190,7 +194,9 @@ function procesarDecision(id, contexto = {}) {
 
         contexto: contexto
 
+
     };
+
 
 
 
@@ -211,6 +217,7 @@ function procesarDecision(id, contexto = {}) {
 
 
     return resultado;
+
 
 }
 
