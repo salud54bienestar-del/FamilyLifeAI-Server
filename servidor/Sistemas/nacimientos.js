@@ -1,18 +1,83 @@
 // Sistema de nacimientos de Village Soul
 
-const cargarArchivo = require("./cargador_datos.js");
 
-const crearEvento = require("./eventos.js");
+const cargarArchivo =
+require("./cargador_datos.js");
 
-const crearMemoria = require("./memorias.js");
+
+const crearEvento =
+require("./eventos.js");
+
+
+const crearMemoria =
+require("./memorias.js");
+
 
 const {
     crearAlma
-} = require("./almas.js");
+}
+=
+require("./almas.js");
+
 
 const {
     agregarHijo
-} = require("./familias.js");
+}
+=
+require("./familias.js");
+
+
+const {
+    crearNecesidades
+}
+=
+require("./necesidades.js");
+
+
+const {
+    crearEmocion
+}
+=
+require("./emociones.js");
+
+
+
+
+
+// =================================
+// TEMPERAMENTOS INICIALES
+// =================================
+
+
+function generarTemperamento(){
+
+
+    const lista = [
+
+        "tranquilo",
+
+        "curioso",
+
+        "activo",
+
+        "sensible",
+
+        "cariñoso",
+
+        "reservado"
+
+    ];
+
+
+
+    return lista[
+        Math.floor(
+            Math.random() * lista.length
+        )
+    ];
+
+}
+
 
 
 
@@ -33,21 +98,20 @@ function registrarNacimiento(
     cargarArchivo("../datos/embarazos.json");
 
 
-
     const tiempo =
     cargarArchivo("../datos/tiempo.json");
 
 
 
-    if(!embarazos || !tiempo){
-
-        console.log(
-            "No se pudieron cargar datos."
-        );
+    if(
+        !embarazos ||
+        !tiempo
+    ){
 
         return null;
 
     }
+
 
 
 
@@ -59,8 +123,6 @@ function registrarNacimiento(
         e=>e.id===embarazo_id
 
     );
-
-
 
 
 
@@ -78,13 +140,12 @@ function registrarNacimiento(
 
 
 
-
     if(
         embarazo.estado === "finalizado"
     ){
 
         console.log(
-            "El nacimiento ya fue registrado."
+            "Nacimiento ya registrado."
         );
 
         return null;
@@ -97,8 +158,17 @@ function registrarNacimiento(
 
 
 
+    const temperamento =
+    generarTemperamento();
+
+
+
+
+
+
+
     // =============================
-    // CREAR BEBÉ
+    // CREAR ALMA DEL BEBÉ
     // =============================
 
 
@@ -108,8 +178,7 @@ function registrarNacimiento(
 
         nombre:
 
-        datosBebe.nombre
-        ||
+        datosBebe.nombre ||
         "Bebé Village Soul",
 
 
@@ -124,11 +193,29 @@ function registrarNacimiento(
 
 
 
-        personalidad_id:null,
+        tipo:
+
+        "habitante",
 
 
 
-        tipo:"habitante",
+
+        temperamento,
+
+
+
+        personalidad_id:
+
+        null,
+
+
+
+        rasgos_iniciales:[
+
+            temperamento
+
+        ],
+
 
 
 
@@ -138,25 +225,30 @@ function registrarNacimiento(
 
             "aprender",
 
-            "formar personalidad"
+            "crear vínculos"
 
         ],
 
 
 
+
         profesion:{
 
-            nombre:"bebé",
+            nombre:
+            "bebé",
 
-            categoria:"infancia",
+            categoria:
+            "infancia",
 
             nivel:0,
 
             experiencia:0,
 
-            estado:"inactivo"
+            estado:
+            "inactivo"
 
         },
+
 
 
 
@@ -190,7 +282,7 @@ function registrarNacimiento(
 
 
     // =============================
-    // FAMILIA
+    // CREAR FAMILIA
     // =============================
 
 
@@ -217,19 +309,58 @@ function registrarNacimiento(
 
 
 
+
+
     // =============================
-    // ACTUALIZAR EMBARAZO
+    // NECESIDADES INICIALES
     // =============================
+
+
+
+    crearNecesidades(
+
+        bebe.id
+
+    );
+
+
+
+
+
+
+
+    // =============================
+    // EMOCIONES INICIALES
+    // =============================
+
+
+
+    crearEmocion(
+
+        bebe.id
+
+    );
+
+
+
+
+
+
+
+
+
+    // =============================
+    // FINALIZAR EMBARAZO
+    // =============================
+
 
 
     embarazo.estado =
     "finalizado";
 
 
-
     embarazo.estado_final =
     "nacimiento";
-
 
 
     embarazo.bebe_id =
@@ -237,14 +368,20 @@ function registrarNacimiento(
 
 
 
-    embarazo.fecha_nacimiento =
-    {
+    embarazo.fecha_nacimiento = {
+
 
         dia:
         tiempo.tiempo.dia,
 
+
         hora:
-        tiempo.tiempo.hora
+        tiempo.tiempo.hora,
+
+
+        año:
+        tiempo.tiempo.año
+
 
     };
 
@@ -263,7 +400,7 @@ function registrarNacimiento(
 
     crearEvento(
 
-        10,
+        "nacimiento",
 
         [
 
@@ -277,15 +414,15 @@ function registrarNacimiento(
 
         {
 
-            tipo:
-            "nacimiento",
-
             bebe:
-            bebe.nombre
+            bebe.nombre,
+
+            temperamento
 
         }
 
     );
+
 
 
 
@@ -306,8 +443,8 @@ function registrarNacimiento(
 
         "nacimiento",
 
-        "Nació su bebé: "
-        + bebe.nombre,
+        "Nació su bebé: " +
+        bebe.nombre,
 
         "alta",
 
@@ -331,8 +468,8 @@ function registrarNacimiento(
 
         "nacimiento",
 
-        "Su hijo nació: "
-        + bebe.nombre,
+        "Nació su hijo: " +
+        bebe.nombre,
 
         "alta",
 
@@ -358,7 +495,8 @@ function registrarNacimiento(
 
         "nacimiento",
 
-        "Llegó al mundo de Village Soul.",
+        "Llegó al mundo con un temperamento " +
+        temperamento,
 
         "alta"
 
@@ -370,9 +508,8 @@ function registrarNacimiento(
 
 
 
-
     console.log(
-        "Nuevo nacimiento:"
+        "Nacimiento registrado:"
     );
 
 
@@ -392,6 +529,8 @@ function registrarNacimiento(
 
 module.exports={
 
+
     registrarNacimiento
+
 
 };
