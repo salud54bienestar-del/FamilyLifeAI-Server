@@ -4,20 +4,17 @@
       "habitante_id": 1,
 
       "hambre": 80,
-
       "energia": 90,
-
       "diversion": 70,
-
       "higiene": 80,
 
       "social": 60,
-
       "seguridad": 90,
-
       "descanso": 80,
 
-      "estado_general": "saludable",
+      "estres": 0,
+
+      "estado": "saludable",
 
       "ultima_actualizacion": "dia_1"
     },
@@ -27,20 +24,17 @@
       "habitante_id": 2,
 
       "hambre": 75,
-
       "energia": 85,
-
       "diversion": 80,
-
       "higiene": 85,
 
       "social": 70,
-
       "seguridad": 90,
-
       "descanso": 75,
 
-      "estado_general": "saludable",
+      "estres": 0,
+
+      "estado": "saludable",
 
       "ultima_actualizacion": "dia_1"
     },
@@ -50,20 +44,17 @@
       "habitante_id": 99,
 
       "hambre": 100,
-
       "energia": 100,
-
       "diversion": 50,
-
       "higiene": 100,
 
       "social": 80,
-
       "seguridad": 100,
-
       "descanso": 100,
 
-      "estado_general": "guia",
+      "estres": 0,
+
+      "estado": "guia",
 
       "ultima_actualizacion": "dia_1"
     }
