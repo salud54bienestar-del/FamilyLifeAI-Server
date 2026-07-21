@@ -1,3 +1,37 @@
 {
-  "conversaciones": []
+  "conversaciones": [
+    {
+      "id": 1,
+      "habitante_a": 1,
+      "habitante_b": 2,
+
+      "participantes": [
+        "Luna",
+        "Maya"
+      ],
+
+      "tipo": "primer_encuentro",
+
+      "mensajes": [
+        {
+          "hablante": "Luna",
+          "texto": "Hola, nunca te había visto por la aldea. ¿Eres nueva?",
+          "emocion": "curiosidad"
+        },
+        {
+          "hablante": "Maya",
+          "texto": "Sí, estoy explorando los alrededores y descubriendo nuevos lugares.",
+          "emocion": "felicidad"
+        }
+      ],
+
+      "resultado": {
+        "confianza_ganada": 5,
+        "afinidad_ganada": 5,
+        "memoria_creada": "Primer encuentro entre Luna y Maya."
+      },
+
+      "fecha": "2026-07-21T18:00:00.000Z"
+    }
+  ]
 }
