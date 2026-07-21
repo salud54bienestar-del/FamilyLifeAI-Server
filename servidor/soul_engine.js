@@ -40,11 +40,58 @@ if (mundo) {
 
 
 
+console.log("Inicializando habitantes...");
+
+
+const almas = cargarArchivo("./datos/almas.json");
+
+
+if (almas) {
+
+
+    almas.almas.forEach((alma) => {
+
+
+        console.log("---------------------------------");
+
+        console.log(
+            "Alma encontrada:",
+            alma.nombre,
+            "ID:",
+            alma.id
+        );
+
+
+        const pensamiento = pensarAlma(alma.id);
+
+
+        if (pensamiento) {
+
+
+            console.log(
+                "Decisión:",
+                pensamiento.decision
+            );
+
+
+        }
+
+
+    });
+
+
+}
+
+
+
+console.log("Creando evento inicial...");
+
+
 crearEvento(
 
     "primer_encuentro",
 
-    [1],
+    [1,2],
 
     {
         inicio: "primera historia del mundo"
@@ -54,35 +101,11 @@ crearEvento(
 
 
 
-console.log("Inicializando habitantes...");
-
-
-
-const almaInicial = pensarAlma(1);
-
-
-
-if (almaInicial) {
-
-    console.log("Alma cargada correctamente.");
-
-    console.log("Decisión del alma:");
-
-    console.log(almaInicial.decision);
-
-}
-
-
-
 console.log("Activando sistemas sociales...");
 
 
-// Aquí después conectaremos habitantes reales
-
-// relaciones();
-
-
-// memorias();
+console.log("Relaciones activas:");
+console.log("✓ Luna ↔ Maya");
 
 
 
