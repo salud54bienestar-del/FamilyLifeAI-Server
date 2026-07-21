@@ -1,5 +1,6 @@
 {
   "tiempo": {
+
     "dia": 1,
     "mes": 1,
     "año": 1,
@@ -7,16 +8,25 @@
     "hora": 8,
     "minuto": 0,
 
+    "dias_totales": 1,
+
+    "contador_vida": 0,
+
     "velocidad": "normal",
 
     "estacion": "primavera",
 
     "ciclo_vida": {
+
       "crecimiento_habitantes": true,
+
       "cumpleaños": true,
+
       "envejecimiento": true
+
     },
 
     "eventos_programados": []
+
   }
 }
