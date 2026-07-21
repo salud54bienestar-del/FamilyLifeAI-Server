@@ -1,24 +1,39 @@
 // Sistema de memorias de Village Soul
 
-const cargarArchivo = require("./cargador_datos.js");
 
+const cargarArchivo =
+require("./cargador_datos.js");
+
+
+
+
+
+
+// =================================
+// CREAR MEMORIA
+// =================================
 
 function crearMemoria(
     habitante_id,
     tipo,
     descripcion,
-    importancia,
-    personas = [],
-    emocion = "neutral"
-) {
+    importancia="baja",
+    personas=[],
+    emocion="neutral"
+){
 
 
-    const datos = cargarArchivo("../datos/memorias.json");
+
+    const datos =
+    cargarArchivo("../datos/memorias.json");
 
 
-    if (!datos) {
 
-        console.log("No se pudieron cargar las memorias.");
+    if(!datos){
+
+        console.log(
+            "No se pudieron cargar las memorias."
+        );
 
         return null;
 
@@ -26,87 +41,291 @@ function crearMemoria(
 
 
 
-    let impacto = "ninguno";
+    if(!datos.memorias){
 
-
-    if (importancia === "alta") {
-
-        impacto = "fuerte";
-
-    } else if (importancia === "media") {
-
-        impacto = "moderado";
+        datos.memorias = [];
 
     }
+
+
+
+
+
+
+    const nuevoId =
+
+
+    datos.memorias.length > 0
+
+
+    ?
+
+
+    Math.max(
+        ...datos.memorias.map(
+            m=>m.id
+        )
+    ) + 1
+
+
+    :
+
+
+    1;
+
+
+
+
+
+
+
+
+    let impacto =
+    "ninguno";
+
+
+
+    switch(importancia){
+
+
+        case "alta":
+
+            impacto="fuerte";
+
+        break;
+
+
+
+        case "media":
+
+            impacto="moderado";
+
+        break;
+
+
+
+        case "baja":
+
+            impacto="leve";
+
+        break;
+
+
+    }
+
+
+
+
+
 
 
 
     const memoria = {
 
 
-        id: datos.memorias.length + 1,
+
+        id:
+        nuevoId,
 
 
-        habitante_id: habitante_id,
+
+        habitante_id,
 
 
-        tipo: tipo,
+
+        tipo,
 
 
-        descripcion: descripcion,
+
+        descripcion,
 
 
-        importancia: importancia,
+
+        importancia,
 
 
-        emocion: emocion,
+
+        emocion,
 
 
-        personas_relacionadas: personas,
+
+        personas_relacionadas:
+        personas,
 
 
-        impacto_comportamiento: impacto,
+
+        impacto_comportamiento:
+        impacto,
 
 
-        fecha: new Date().toISOString()
+
+        fecha:
+        new Date().toISOString()
+
 
 
     };
 
 
 
-    datos.memorias.push(memoria);
 
 
 
-    console.log("Nueva memoria creada:");
 
-    console.log(memoria);
+
+    datos.memorias.push(
+        memoria
+    );
+
+
+
+
+
+    console.log(
+        "Nueva memoria creada:",
+        memoria
+    );
+
+
 
 
 
     return memoria;
 
+
 }
 
 
 
-crearMemoria(
-
-    1,
-
-    "familia",
-
-    "El habitante creó un vínculo importante con otro miembro de la comunidad.",
-
-    "media",
-
-    [2],
-
-    "felicidad"
-
-);
 
 
 
-module.exports = crearMemoria;
+
+
+// =================================
+// OBTENER MEMORIAS DE HABITANTE
+// =================================
+
+function obtenerMemorias(
+    habitante_id
+){
+
+
+
+    const datos =
+    cargarArchivo("../datos/memorias.json");
+
+
+
+    if(!datos){
+
+        return [];
+
+    }
+
+
+
+
+
+    return datos.memorias.filter(
+
+        memoria =>
+        memoria.habitante_id === habitante_id
+
+    );
+
+
+}
+
+
+
+
+
+
+
+
+// =================================
+// BUSCAR MEMORIAS POR TIPO
+// =================================
+
+function buscarMemoriasTipo(
+    habitante_id,
+    tipo
+){
+
+
+
+    return obtenerMemorias(
+        habitante_id
+    )
+    .filter(
+
+        memoria =>
+        memoria.tipo === tipo
+
+    );
+
+
+}
+
+
+
+
+
+
+
+
+// =================================
+// OBTENER ÚLTIMA MEMORIA
+// =================================
+
+function ultimaMemoria(
+    habitante_id
+){
+
+
+
+    const memorias =
+    obtenerMemorias(
+        habitante_id
+    );
+
+
+
+    if(
+        memorias.length === 0
+    ){
+
+        return null;
+
+    }
+
+
+
+    return memorias[
+        memorias.length - 1
+    ];
+
+
+
+}
+
+
+
+
+
+
+
+module.exports={
+
+
+    crearMemoria,
+
+    obtenerMemorias,
+
+    buscarMemoriasTipo,
+
+    ultimaMemoria
+
+
+};
