@@ -1,259 +1,202 @@
-// Sistema de vida de habitantes - Village Soul
+// Sistema de tiempo del mundo - Village Soul
 
+const cargarArchivo = require("./cargador_datos.js");
 
-const cargarArchivo =
-require("./cargador_datos.js");
-
-
-const crearMemoria =
-require("./memorias.js");
-
-
-const crearEvento =
-require("./eventos.js");
-
-
-const {
-    actualizarEmbarazos
-}
-=
-require("./embarazo.js");
+const crearEvento = require("./eventos.js");
 
 
 
-const {
-    obtenerLugarTrabajo
-}
-=
-require("./lugares_trabajo.js");
+// =================================
+// CONFIGURACIÓN DEL TIEMPO
+// =================================
+
+
+// Minecraft:
+// 20 minutos reales = 1 día Minecraft
+
+const MINUTOS_POR_DIA = 20;
+
+const HORAS_POR_DIA = 24;
+
+const DIAS_POR_MES = 30;
+
+const MESES_POR_AÑO = 12;
+
 
 
 
 
 // =================================
-// ACTUALIZAR VIDA HABITANTES
+// OBTENER TIEMPO ACTUAL
 // =================================
 
-
-function actualizarVidaHabitantes(){
-
-
-console.log("=================================");
-console.log(" ACTUALIZANDO VIDA HABITANTES ");
-console.log("=================================");
+function obtenerTiempo(){
 
 
-
-const almas =
-cargarArchivo("../datos/almas.json");
-
+    const datos =
+    cargarArchivo("../datos/tiempo.json");
 
 
-const tiempoDatos =
-cargarArchivo("../datos/tiempo.json");
+    if(!datos){
+
+        console.log(
+            "No se pudo cargar el tiempo."
+        );
+
+        return null;
+
+    }
 
 
-
-if(
-!almas ||
-!tiempoDatos
-){
-
-console.log(
-"No se pudieron cargar datos de vida."
-);
-
-return null;
-
-}
-
-
-
-const tiempo =
-tiempoDatos.tiempo;
-
-
-
-
-// ================================
-// CICLO MINECRAFT
-// ================================
-
-
-let periodo;
-
-
-
-if(tiempo.minuto < 5){
-
-periodo="amanecer";
-
-}
-
-else if(tiempo.minuto < 15){
-
-periodo="dia";
-
-}
-
-else if(tiempo.minuto < 18){
-
-periodo="atardecer";
-
-}
-
-else{
-
-periodo="noche";
+    return datos.tiempo;
 
 }
 
 
 
 
-console.log(
-"Periodo:",
-periodo
-);
 
+// =================================
+// AVANZAR TIEMPO
+// =================================
 
+function avanzarTiempo(minutos = 1){
 
 
 
+    const datos =
+    cargarArchivo("../datos/tiempo.json");
 
 
-almas.almas.forEach(
 
-habitante=>{
+    if(!datos){
 
+        return null;
 
-if(
-habitante.estado !== "viviendo"
-){
+    }
 
-return;
 
-}
 
+    const tiempo =
+    datos.tiempo;
 
 
 
-const profesion =
-habitante.profesion;
+    let nuevoDia = false;
 
 
 
-if(!profesion){
 
-return;
 
-}
+    tiempo.minuto += minutos;
 
 
 
 
-const trabajo =
-obtenerLugarTrabajo(
-habitante.id
-);
 
+    // Cambio de hora
 
+    while(
+        tiempo.minuto >= 60
+    ){
 
+        tiempo.minuto -= 60;
 
+        tiempo.hora++;
 
+    }
 
-// ================================
-// TRABAJO
-// ================================
 
 
-if(
-periodo==="dia"
-&&
-trabajo
-){
 
 
-console.log(
+    // Cambio de día
 
-habitante.nombre+
-" trabaja en "+
-trabajo.nombre
+    if(
+        tiempo.hora >= 24
+    ){
 
-);
+        tiempo.hora = 0;
 
+        tiempo.dia++;
 
+        nuevoDia = true;
 
-if(
-!profesion.ultimo_trabajo
-||
-profesion.ultimo_trabajo !== tiempo.hora
-){
+    }
 
 
 
-profesion.experiencia += 1;
 
 
-profesion.ultimo_trabajo =
-tiempo.hora;
+    // Cambio de mes
 
+    if(
+        tiempo.dia > DIAS_POR_MES
+    ){
 
+        tiempo.dia = 1;
 
-crearMemoria(
+        tiempo.mes++;
 
-habitante.id,
+    }
 
-"trabajo",
 
-"Trabajó como "+
-profesion.nombre,
 
-"media"
 
-);
 
+    // Cambio de año
 
+    if(
+        tiempo.mes > MESES_POR_AÑO
+    ){
 
-}
+        tiempo.mes = 1;
 
+        tiempo.año++;
 
+    }
 
 
-if(
-profesion.experiencia >= 100
-){
 
 
-profesion.nivel++;
 
 
-profesion.experiencia=0;
+    actualizarEstacion(tiempo);
 
 
 
-crearEvento(
 
-"subida_nivel_profesion",
 
-[habitante.id],
+    if(nuevoDia){
 
-{
+        crearEvento(
 
-profesion:
-profesion.nombre,
+            "nuevo_dia",
 
-nivel:
-profesion.nivel
+            [],
 
-}
+            {
 
-);
+                dia:
+                tiempo.dia,
 
+                mes:
+                tiempo.mes,
 
+                año:
+                tiempo.año
 
-}
+            }
 
+        );
+
+    }
+
+
+
+
+
+    return tiempo;
 
 
 }
@@ -263,70 +206,50 @@ profesion.nivel
 
 
 
+// =================================
+// ESTACIONES
+// =================================
 
-// ================================
-// DESCANSO
-// ================================
-
-
-if(
-periodo==="noche"
-){
-
-
-console.log(
-
-habitante.nombre+
-" está descansando."
-
-);
+function actualizarEstacion(tiempo){
 
 
 
-if(
-habitante.emociones
-){
+    if(
+        tiempo.mes >= 3 &&
+        tiempo.mes <= 5
+    ){
+
+        tiempo.estacion="primavera";
+
+    }
+
+    else if(
+        tiempo.mes >= 6 &&
+        tiempo.mes <= 8
+    ){
+
+        tiempo.estacion="verano";
+
+    }
+
+    else if(
+        tiempo.mes >= 9 &&
+        tiempo.mes <= 11
+    ){
+
+        tiempo.estacion="otoño";
+
+    }
+
+    else{
+
+        tiempo.estacion="invierno";
+
+    }
 
 
-habitante.emociones.calma++;
 
-
-
-if(
-habitante.emociones.calma > 100
-){
-
-habitante.emociones.calma=100;
-
-}
-
-
-}
-
-
-}
-
-
-
-
-}
-
-);
-
-
-
-
-
-// ================================
-// ACTUALIZAR EMBARAZOS
-// ================================
-
-
-if(
-periodo==="amanecer"
-){
-
-actualizarEmbarazos();
+    return tiempo.estacion;
 
 }
 
@@ -335,14 +258,57 @@ actualizarEmbarazos();
 
 
 
-console.log(
-"Vida actualizada correctamente."
-);
+// =================================
+// OBTENER PERIODO DEL DÍA
+// =================================
+
+function obtenerPeriodo(){
+
+
+    const tiempo =
+    obtenerTiempo();
 
 
 
-return almas;
+    if(!tiempo){
 
+        return null;
+
+    }
+
+
+
+    if(
+        tiempo.hora >= 6 &&
+        tiempo.hora < 12
+    ){
+
+        return "mañana";
+
+    }
+
+
+    if(
+        tiempo.hora >= 12 &&
+        tiempo.hora < 18
+    ){
+
+        return "dia";
+
+    }
+
+
+    if(
+        tiempo.hora >=18 &&
+        tiempo.hora <22
+    ){
+
+        return "tarde";
+
+    }
+
+
+    return "noche";
 
 
 }
@@ -352,8 +318,17 @@ return almas;
 
 
 
-module.exports={
 
-actualizarVidaHabitantes
+module.exports = {
+
+
+    obtenerTiempo,
+
+    avanzarTiempo,
+
+    obtenerPeriodo,
+
+    actualizarEstacion
+
 
 };
