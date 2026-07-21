@@ -5,7 +5,6 @@
       "nombre": "Luna",
       "edad": 20,
       "personalidad_id": 1,
-
       "tipo": "habitante",
 
       "emociones": {
@@ -51,7 +50,6 @@
       "nombre": "Maya",
       "edad": 20,
       "personalidad_id": 2,
-
       "tipo": "habitante",
 
       "emociones": {
@@ -107,4 +105,41 @@
         "confianza": 100,
         "miedo": 0,
         "tristeza": 0,
-        "
+        "ira": 0,
+        "calma": 100
+      },
+
+      "memorias": [],
+
+      "relaciones": [
+        {
+          "habitante_id": 1,
+          "tipo": "guia",
+          "confianza": 100
+        },
+        {
+          "habitante_id": 2,
+          "tipo": "guia",
+          "confianza": 100
+        }
+      ],
+
+      "objetivos": [
+        "ayudar a los habitantes",
+        "explicar las funciones del mundo",
+        "proteger el conocimiento"
+      ],
+
+      "profesion": {
+        "nombre": "guia_del_mundo",
+        "nivel": 1,
+        "experiencia": 0,
+        "estado": "activa"
+      },
+
+      "familia": [],
+
+      "estado": "viviendo"
+    }
+  ]
+}
