@@ -1,8 +1,54 @@
-// Sistema de familias de Village Soul
+// Sistema avanzado de familias - Village Soul
+
 
 const cargarArchivo = require("./cargador_datos.js");
+
 const crearEvento = require("./eventos.js");
+
 const crearMemoria = require("./memorias.js");
+
+
+
+
+// =================================
+// OBTENER TIEMPO DEL MUNDO
+// =================================
+
+function obtenerFechaMundo(){
+
+
+    const tiempo =
+    cargarArchivo("../datos/tiempo.json");
+
+
+    if(!tiempo){
+
+        return null;
+
+    }
+
+
+    return {
+
+        dia:
+        tiempo.tiempo.dia,
+
+
+        mes:
+        tiempo.tiempo.mes,
+
+
+        año:
+        tiempo.tiempo.año
+
+    };
+
+
+}
+
+
+
+
 
 
 
@@ -11,12 +57,14 @@ const crearMemoria = require("./memorias.js");
 // =================================
 
 function crearFamilia(
-    apellido = "",
-    tipo = "nuclear"
+    apellido="",
+    tipo="nuclear"
 ){
+
 
     const datos =
     cargarArchivo("../datos/familias.json");
+
 
 
     if(!datos){
@@ -40,6 +88,7 @@ function crearFamilia(
     :
 
     1;
+
 
 
 
@@ -72,17 +121,13 @@ function crearFamilia(
 
 
 
-        custodia:{},
-
-
-
         hogar:null,
 
 
 
         estabilidad:{
 
-            confianza:0,
+            confianza:50,
 
             felicidad:50,
 
@@ -97,6 +142,7 @@ function crearFamilia(
 
             alimentos:0,
 
+
             esmeraldas:0
 
 
@@ -110,13 +156,18 @@ function crearFamilia(
 
         historial:[
 
-            "Familia creada"
+            {
 
-        ],
+                evento:
+                "familia_creada",
 
+                fecha:
+                obtenerFechaMundo()
 
+            }
 
-        relaciones_familiares:[]
+        ]
+
 
 
     };
@@ -124,23 +175,25 @@ function crearFamilia(
 
 
 
-    datos.familias.push(familia);
+
+    datos.familias.push(
+        familia
+    );
+
+
 
 
 
     crearEvento(
 
-        2,
+        "familia_creada",
 
         [],
 
         {
 
-            sistema:"familias",
-
-            accion:"crear_familia",
-
-            familia_id:familia.id
+            familia_id:
+            familia.id
 
         }
 
@@ -148,7 +201,9 @@ function crearFamilia(
 
 
 
+
     return familia;
+
 
 }
 
@@ -169,7 +224,6 @@ function crearFamiliaMatrimonio(
 ){
 
 
-
     const datos =
     cargarArchivo("../datos/familias.json");
 
@@ -183,16 +237,16 @@ function crearFamiliaMatrimonio(
 
 
 
+
+
     const existente =
     datos.familias.find(
 
-        f=>
+        familia =>
 
-        f.miembros.includes(habitante_a)
-
+        familia.miembros.includes(habitante_a)
         &&
-
-        f.miembros.includes(habitante_b)
+        familia.miembros.includes(habitante_b)
 
     );
 
@@ -203,6 +257,8 @@ function crearFamiliaMatrimonio(
         return existente;
 
     }
+
+
 
 
 
@@ -230,15 +286,24 @@ function crearFamiliaMatrimonio(
 
 
 
-    familia.historial.push(
-        "Familia creada por matrimonio"
-    );
+    familia.historial.push({
+
+        evento:
+        "matrimonio",
+
+        fecha:
+        obtenerFechaMundo()
+
+    });
 
 
 
     return familia;
 
+
 }
+
+
 
 
 
@@ -260,6 +325,7 @@ function agregarMiembro(
     cargarArchivo("../datos/familias.json");
 
 
+
     if(!datos){
 
         return null;
@@ -270,7 +336,9 @@ function agregarMiembro(
 
     const familia =
     datos.familias.find(
+
         f=>f.id===idFamilia
+
     );
 
 
@@ -284,10 +352,9 @@ function agregarMiembro(
 
 
 
+
     if(
-        !familia.miembros.includes(
-            habitante_id
-        )
+        !familia.miembros.includes(habitante_id)
     ){
 
         familia.miembros.push(
@@ -299,6 +366,7 @@ function agregarMiembro(
 
 
 
+
     if(
         rol==="padre"
         ||
@@ -306,16 +374,33 @@ function agregarMiembro(
     ){
 
 
-        familia.padres.push({
+        const existePadre =
+        familia.padres.find(
 
-            habitante_id,
+            p=>p.habitante_id===habitante_id
 
-            rol
+        );
 
-        });
+
+
+        if(!existePadre){
+
+
+            familia.padres.push({
+
+                habitante_id,
+
+                rol
+
+            });
+
+
+        }
 
 
     }
+
+
 
 
 
@@ -326,7 +411,7 @@ function agregarMiembro(
 
         "familia",
 
-        "Se integró a una familia.",
+        "Forma parte de una familia.",
 
         "alta"
 
@@ -334,9 +419,14 @@ function agregarMiembro(
 
 
 
+
+
     return familia;
 
+
 }
+
+
 
 
 
@@ -350,7 +440,7 @@ function agregarMiembro(
 function agregarHijo(
     idFamilia,
     hijo_id,
-    tipo="adoptado"
+    tipo="biologico"
 ){
 
 
@@ -369,7 +459,9 @@ function agregarHijo(
 
     const familia =
     datos.familias.find(
+
         f=>f.id===idFamilia
+
     );
 
 
@@ -382,6 +474,28 @@ function agregarHijo(
 
 
 
+
+
+
+    const existe =
+    familia.hijos.find(
+
+        h=>h.habitante_id===hijo_id
+
+    );
+
+
+
+    if(existe){
+
+        return familia;
+
+    }
+
+
+
+
+
     familia.hijos.push({
 
         habitante_id:hijo_id,
@@ -389,43 +503,60 @@ function agregarHijo(
         tipo,
 
         fecha:
-        new Date().toISOString()
+        obtenerFechaMundo()
 
     });
 
 
 
-    if(
-        !familia.miembros.includes(hijo_id)
-    ){
-
-        familia.miembros.push(hijo_id);
-
-    }
 
 
 
+    agregarMiembro(
 
-    familia.historial.push(
+        idFamilia,
 
-        "Nuevo hijo agregado mediante "
-        + tipo
+        hijo_id,
+
+        "hijo"
 
     );
 
 
 
+
+
+    familia.historial.push({
+
+        evento:
+        "nuevo_hijo",
+
+        hijo:
+        hijo_id,
+
+        fecha:
+        obtenerFechaMundo()
+
+    });
+
+
+
+
+
+
     crearEvento(
 
-        8,
+        "nuevo_hijo",
 
         familia.miembros,
 
         {
 
-            accion:"nuevo_hijo",
+            familia_id:
+            idFamilia,
 
-            tipo
+            hijo:
+            hijo_id
 
         }
 
@@ -433,9 +564,31 @@ function agregarHijo(
 
 
 
+
+
+
+    crearMemoria(
+
+        hijo_id,
+
+        "familia",
+
+        "Nació dentro de una familia.",
+
+        "alta"
+
+    );
+
+
+
+
+
     return familia;
 
+
 }
+
+
 
 
 
@@ -452,22 +605,9 @@ function asignarHogar(
 ){
 
 
-    const datos =
-    cargarArchivo("../datos/familias.json");
-
-
-
-    if(!datos){
-
-        return null;
-
-    }
-
-
-
     const familia =
-    datos.familias.find(
-        f=>f.id===idFamilia
+    obtenerFamiliaPorId(
+        idFamilia
     );
 
 
@@ -486,6 +626,7 @@ function asignarHogar(
 
     return familia;
 
+
 }
 
 
@@ -493,7 +634,14 @@ function asignarHogar(
 
 
 
-function obtenerFamilia(habitante_id){
+
+// =================================
+// OBTENER FAMILIA
+// =================================
+
+function obtenerFamilia(
+    habitante_id
+){
 
 
     const datos =
@@ -512,9 +660,10 @@ function obtenerFamilia(habitante_id){
     return datos.familias.find(
 
         f=>
+
         f.miembros.includes(habitante_id)
 
-    );
+    ) || null;
 
 
 }
@@ -522,20 +671,37 @@ function obtenerFamilia(habitante_id){
 
 
 
-module.exports={
 
 
-    crearFamilia,
 
-    crearFamiliaMatrimonio,
-
-    agregarMiembro,
-
-    agregarHijo,
-
-    asignarHogar,
-
-    obtenerFamilia
+function obtenerFamiliaPorId(id){
 
 
-};
+    const datos =
+    cargarArchivo("../datos/familias.json");
+
+
+
+    if(!datos){
+
+        return null;
+
+    }
+
+
+
+    return datos.familias.find(
+
+        f=>f.id===id
+
+    ) || null;
+
+
+}
+
+
+
+
+
+
+module
