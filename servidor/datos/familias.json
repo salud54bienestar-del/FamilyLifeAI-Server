@@ -5,23 +5,31 @@
 
       "apellido": "",
 
-      "miembros": [],
-
-      "padres": [],
-
-      "hijos": [],
-
-      "generacion": 1,
-
       "tipo_familia": "nuclear",
 
       "estado": "activa",
 
+      "generacion": 1,
+
+      "adultos": [],
+
+      "hijos_biologicos": [],
+
+      "hijos_adoptivos": [],
+
+      "tutores": [],
+
+      "embarazos": [],
+
+      "adopciones": [],
+
+      "hogar": null,
+
+      "mascotas": [],
+
       "custodia": {},
 
       "historial": [],
-
-      "hogar": null,
 
       "legado_id": null,
 
