@@ -10,7 +10,7 @@ const sistemas = require("./sistemas.js");
 
 
 const crearEvento = require("./Sistemas/eventos.js");
-const pensarAlma = require("./IA/ia_almas.js");
+const { pensarAlma } = require("./IA/ia_almas.js");
 const avanzarTiempo = require("./Sistemas/tiempo.js");
 
 
@@ -22,10 +22,9 @@ const decisiones = require("./Sistemas/decisiones.js");
 
 console.log("Sistemas activos:");
 
-
 sistemas.forEach((sistema) => {
 
-  console.log("✓ " + sistema);
+    console.log("✓ " + sistema);
 
 });
 
@@ -40,9 +39,8 @@ const mundo = cargarArchivo("./datos/mundo.json");
 
 if (mundo) {
 
-  console.log("Mundo cargado:");
-
-  console.log(mundo.nombre);
+    console.log("Mundo cargado:");
+    console.log(mundo.nombre);
 
 }
 
@@ -50,15 +48,13 @@ if (mundo) {
 
 crearEvento(
 
-  1,
+    1,
 
-  [1],
+    [1],
 
-  {
-
-    inicio: "primera historia del mundo"
-
-  }
+    {
+        inicio: "primera historia del mundo"
+    }
 
 );
 
@@ -67,21 +63,19 @@ crearEvento(
 console.log("Inicializando habitantes...");
 
 
-
 const almaInicial = pensarAlma(1);
 
 
 
 if (almaInicial) {
 
-  console.log("Alma cargada correctamente.");
+    console.log("Alma cargada correctamente.");
 
 }
 
 
 
 console.log("Activando sistemas sociales...");
-
 
 
 relaciones();
@@ -93,13 +87,11 @@ memorias();
 console.log("Evaluando decisiones de habitantes...");
 
 
-
 decisiones();
 
 
 
 console.log("Iniciando ciclo de tiempo...");
-
 
 
 avanzarTiempo();
