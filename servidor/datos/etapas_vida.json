@@ -1,28 +1,224 @@
-{
-  "etapas": [
-    {
-      "nombre": "bebe",
-      "edad_minima": 0,
-      "edad_maxima": 2,
-      "descripcion": "Etapa inicial donde el habitante depende de su familia y desarrolla sus primeros vínculos."
-    },
-    {
-      "nombre": "niño",
-      "edad_minima": 3,
-      "edad_maxima": 12,
-      "descripcion": "Etapa de aprendizaje, juego y desarrollo de habilidades básicas."
-    },
-    {
-      "nombre": "adolescente",
-      "edad_minima": 13,
-      "edad_maxima": 17,
-      "descripcion": "Etapa donde desarrolla personalidad, gustos, habilidades y objetivos propios."
-    },
-    {
-      "nombre": "adulto",
-      "edad_minima": 18,
-      "edad_maxima": 120,
-      "descripcion": "Etapa donde puede trabajar, formar relaciones, crear una familia y participar en la comunidad."
+// Sistema de etapas de vida - Village Soul
+
+const cargarArchivo = require("./cargador_datos.js");
+const crearMemoria = require("./memorias.js");
+const crearEvento = require("./eventos.js");
+
+
+
+// =================================
+// OBTENER ETAPA POR EDAD
+// =================================
+
+function obtenerEtapaPorEdad(edad){
+
+
+    const datos =
+    cargarArchivo("../datos/etapas_vida.json");
+
+
+
+    if(!datos){
+
+        console.log(
+            "No se pudieron cargar las etapas de vida."
+        );
+
+        return null;
+
     }
-  ]
+
+
+
+
+    return datos.etapas.find(
+
+        etapa =>
+
+        edad >= etapa.edad_minima
+        &&
+        edad <= etapa.edad_maxima
+
+    );
+
 }
+
+
+
+// =================================
+// OBTENER ETAPA DE UN HABITANTE
+// =================================
+
+function obtenerEtapaHabitante(habitante){
+
+
+    if(!habitante){
+
+        return null;
+
+    }
+
+
+
+    return obtenerEtapaPorEdad(
+
+        habitante.edad || 0
+
+    );
+
+}
+
+
+
+
+
+// =================================
+// ACTUALIZAR ETAPA DE VIDA
+// =================================
+
+function actualizarEtapa(habitante){
+
+
+    if(!habitante){
+
+        return null;
+
+    }
+
+
+
+    const etapaActual =
+    obtenerEtapaPorEdad(
+        habitante.edad
+    );
+
+
+
+    if(!etapaActual){
+
+        return habitante;
+
+    }
+
+
+
+
+
+    const etapaAnterior =
+    habitante.etapa || null;
+
+
+
+
+    habitante.etapa =
+    etapaActual.nombre;
+
+
+
+
+
+
+    if(
+        etapaAnterior !== etapaActual.nombre
+    ){
+
+
+        crearEvento(
+
+            "cambio_etapa_vida",
+
+            [
+                habitante.id
+            ],
+
+            {
+
+                anterior:
+                etapaAnterior,
+
+                nueva:
+                etapaActual.nombre
+
+            }
+
+        );
+
+
+
+
+
+        crearMemoria(
+
+            habitante.id,
+
+            "crecimiento",
+
+            "Ahora está en la etapa de " 
+            + etapaActual.nombre,
+
+            "alta"
+
+        );
+
+
+    }
+
+
+
+
+    return habitante;
+
+
+}
+
+
+
+
+
+
+// =================================
+// OBTENER DESCRIPCIÓN DE ETAPA
+// =================================
+
+function obtenerDescripcionEtapa(habitante){
+
+
+    const etapa =
+    obtenerEtapaHabitante(
+        habitante
+    );
+
+
+
+    if(!etapa){
+
+        return null;
+
+    }
+
+
+
+    return etapa.descripcion;
+
+
+}
+
+
+
+
+
+
+
+module.exports = {
+
+
+    obtenerEtapaPorEdad,
+
+    obtenerEtapaHabitante,
+
+    actualizarEtapa,
+
+    obtenerDescripcionEtapa
+
+
+};
