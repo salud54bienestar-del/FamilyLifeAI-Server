@@ -63,11 +63,13 @@ function procesarDecision(id, contexto = {}) {
 
     if (contexto.emociones_secundarias) {
 
+
         if (contexto.emociones_secundarias.soledad > 60) {
 
             eleccion = "buscar_compañia";
 
         }
+
 
         else if (contexto.emociones_secundarias.amor > 70) {
 
@@ -75,11 +77,13 @@ function procesarDecision(id, contexto = {}) {
 
         }
 
+
         else if (contexto.emociones_secundarias.estres > 70) {
 
             eleccion = "descansar";
 
         }
+
 
         else if (contexto.emociones_secundarias.esperanza > 80) {
 
@@ -119,15 +123,56 @@ function procesarDecision(id, contexto = {}) {
 
     }
 
+
     else if (contexto.objetivo === "Conocer el mundo") {
 
         eleccion = "explorar_el_mundo";
 
     }
 
+
     else if (contexto.objetivo === "crear_una_familia") {
 
         eleccion = "crear_familia";
+
+    }
+
+
+
+    // Influencia de personalidad
+
+    if (contexto.personalidad) {
+
+
+        if (contexto.personalidad === "amable") {
+
+
+            if (
+                !contexto.familia &&
+                contexto.emocion === "tranquila"
+            ) {
+
+                eleccion = "ayudar_habitante";
+
+            }
+
+        }
+
+
+
+        else if (contexto.personalidad === "aventurero") {
+
+
+            if (
+                contexto.emocion === "tranquila"
+            ) {
+
+                eleccion = "explorar_el_mundo";
+
+            }
+
+        }
+
 
     }
 
@@ -153,8 +198,11 @@ function procesarDecision(id, contexto = {}) {
     console.log("        DECISIÓN");
     console.log("=================================");
 
+
     console.log("Habitante:", decision.habitante_id);
+
     console.log("Elección:", eleccion);
+
 
     console.log("Resultado:");
 
@@ -165,40 +213,6 @@ function procesarDecision(id, contexto = {}) {
     return resultado;
 
 }
-
-
-
-// Prueba inicial
-
-procesarDecision(
-
-    1,
-
-    {
-
-        familia: true,
-
-        emocion: "feliz",
-
-        emociones_secundarias: {
-
-            amor: 30,
-
-            orgullo: 0,
-
-            culpa: 0,
-
-            soledad: 10,
-
-            estres: 0,
-
-            esperanza: 60
-
-        }
-
-    }
-
-);
 
 
 
