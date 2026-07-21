@@ -14,6 +14,8 @@
 
       "afinidad": 50,
 
+      "compatibilidad": 50,
+
       "respeto": 50,
 
       "amistad": 0,
@@ -24,38 +26,81 @@
 
       "estado_pareja": "ninguno",
 
+      "conviven": false,
+
+
+      "interacciones": {
+
+        "conversaciones":0,
+
+        "ayudas":0,
+
+        "regalos":0,
+
+        "actividades_compartidas":0
+
+      },
+
+
       "fecha_inicio": null,
 
       "fecha_matrimonio": null,
 
-      "conviven": false,
 
       "familia": {
+
         "parentesco": false,
+
         "tipo": null
+
       },
+
 
       "adopcion": {
+
         "pueden_adoptar": false,
-        "solicitud": "ninguna"
+
+        "solicitud": "ninguna",
+
+        "estabilidad_familia":0,
+
+        "hogar_apropiado":false,
+
+        "recursos_suficientes":false
+
       },
+
 
       "limites": {
+
         "relacion_permitida": true,
+
         "motivo_bloqueo": null
+
       },
 
+
       "historial": [
+
         "Primer encuentro"
+
       ],
 
+
       "eventos_importantes": [
+
         {
-          "evento": "primer_encuentro",
-          "fecha": null,
-          "impacto": "moderado"
+
+          "evento":"primer_encuentro",
+
+          "fecha":null,
+
+          "impacto":"moderado"
+
         }
+
       ]
+
     }
   ]
 }
