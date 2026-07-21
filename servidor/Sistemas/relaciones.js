@@ -5,15 +5,22 @@ const crearEvento = require("./eventos.js");
 const crearMemoria = require("./memorias.js");
 
 
-function crearRelacion(habitante1, habitante2, tipo) {
+// =================================
+// CREAR RELACIÓN
+// =================================
+
+function crearRelacion(habitante_a, habitante_b, tipo="desconocidos") {
 
 
-    const datos = cargarArchivo("../datos/relaciones.json");
+    const datos =
+    cargarArchivo("../datos/relaciones.json");
 
 
-    if (!datos) {
+    if(!datos){
 
-        console.log("No se pudieron cargar las relaciones.");
+        console.log(
+            "No se pudieron cargar las relaciones."
+        );
 
         return null;
 
@@ -24,46 +31,103 @@ function crearRelacion(habitante1, habitante2, tipo) {
     const relacion = {
 
 
-        id: datos.relaciones.length + 1,
+        id:
+        datos.relaciones.length + 1,
 
 
-        habitante_1: habitante1,
 
-        habitante_2: habitante2,
-
-
-        tipo: tipo,
+        habitante_a:
+        habitante_a,
 
 
-        confianza: 0,
 
-        romance: 0,
-
-
-        estado: "nuevo",
+        habitante_b:
+        habitante_b,
 
 
-        estado_pareja: "ninguno",
+
+        tipo:
+        tipo,
 
 
-        compatibilidad: 50,
+
+        nivel:
+        "nuevo",
 
 
-        limites: {
 
-            parentesco: false,
+        confianza:
+        0,
 
-            relacion_permitida: true
+
+
+        afinidad:
+        50,
+
+
+
+        romance:
+        0,
+
+
+
+        estado_pareja:
+        "ninguno",
+
+
+
+        historial:
+        [
+
+            "Primer encuentro"
+
+        ],
+
+
+
+        familia:
+        {
+
+            parentesco:false,
+
+            tipo:null
 
         },
 
 
-        historia: [],
+
+        limites:
+        {
+
+            relacion_permitida:true,
+
+            motivo_bloqueo:null
+
+        },
 
 
-        eventos: []
+
+        eventos_importantes:
+        [
+
+            {
+
+                evento:
+                "primer_encuentro",
+
+                fecha:
+                null,
+
+                impacto:
+                "moderado"
+
+            }
+
+        ]
 
     };
+
+
 
 
 
@@ -71,35 +135,64 @@ function crearRelacion(habitante1, habitante2, tipo) {
 
 
 
+
+
     crearEvento(
 
         2,
 
-        [habitante1, habitante2],
+        [
+
+            habitante_a,
+
+            habitante_b
+
+        ],
 
         {
-            tipo_relacion: tipo
+
+            tipo:
+            "nueva_relacion",
+
+            relacion:
+            tipo
+
         }
 
     );
 
 
 
+
+
     crearMemoria(
 
-        habitante1,
+        habitante_a,
 
         "relacion",
 
-        "Comenzó una relación con el habitante " + habitante2,
+        "Conoció al habitante " + habitante_b,
 
-        "media"
+        "media",
+
+        [
+
+            habitante_b
+
+        ],
+
+        "social"
 
     );
 
 
 
-    console.log("Nueva relación creada:");
+
+
+    console.log(
+        "Nueva relación creada:"
+    );
+
 
     console.log(relacion);
 
@@ -107,16 +200,98 @@ function crearRelacion(habitante1, habitante2, tipo) {
 
     return relacion;
 
+
 }
 
 
 
-crearRelacion(
-    1,
-    2,
-    "desconocidos"
-);
+
+
+// =================================
+// CAMBIAR CONFIANZA
+// =================================
+
+
+function aumentarConfianza(
+    habitante_a,
+    habitante_b,
+    cantidad
+){
+
+
+    const datos =
+    cargarArchivo("../datos/relaciones.json");
 
 
 
-module.exports = crearRelacion;
+    if(!datos){
+
+        return null;
+
+    }
+
+
+
+    const relacion =
+    datos.relaciones.find(
+
+        r =>
+
+        (
+
+        r.habitante_a===habitante_a &&
+        r.habitante_b===habitante_b
+
+        )
+
+        ||
+
+        (
+
+        r.habitante_a===habitante_b &&
+        r.habitante_b===habitante_a
+
+        )
+
+    );
+
+
+
+    if(!relacion){
+
+        return null;
+
+    }
+
+
+
+    relacion.confianza += cantidad;
+
+
+
+    if(relacion.confianza > 100){
+
+        relacion.confianza = 100;
+
+    }
+
+
+
+    return relacion;
+
+
+}
+
+
+
+
+
+module.exports = {
+
+
+    crearRelacion,
+
+    aumentarConfianza
+
+
+};
