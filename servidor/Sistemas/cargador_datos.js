@@ -3,57 +3,36 @@
 const fs = require("fs");
 const path = require("path");
 
-
 function cargarArchivo(nombre) {
 
     try {
 
-        // Carpeta servidor
-        const rutaBase = path.resolve(__dirname, "..");
+        // Eliminar ./ o ../ del inicio
+        nombre = nombre.replace(/^(\.\.\/|\.\/)+/, "");
 
-
-        // Convertir ../datos/archivo.json a datos/archivo.json
-        const archivo = nombre.replace("../", "");
-
-
+        // Siempre buscar dentro de la carpeta datos
         const rutaCompleta = path.join(
-            rutaBase,
-            archivo
+            __dirname,
+            "..",
+            nombre
         );
 
-
-        const datos = fs.readFileSync(
-            rutaCompleta,
-            "utf8"
-        );
-
+        const datos = fs.readFileSync(rutaCompleta, "utf8");
 
         return JSON.parse(datos);
 
-
     } catch (error) {
-
 
         console.log("===============================");
         console.log("ERROR CARGANDO ARCHIVO");
         console.log("===============================");
-
-
         console.log("Archivo:", nombre);
-
-        console.log("Ruta buscada:", path.join(
-            path.resolve(__dirname, ".."),
-            nombre.replace("../", "")
-        ));
-
+        console.log("Ruta buscada:", path.join(__dirname, "..", nombre));
         console.log("Motivo:", error.message);
 
-
         return null;
-
     }
 
 }
-
 
 module.exports = cargarArchivo;
