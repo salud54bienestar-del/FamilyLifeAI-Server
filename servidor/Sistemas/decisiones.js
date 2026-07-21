@@ -1,31 +1,56 @@
 // Sistema de decisiones avanzado de Village Soul
 
 const cargarArchivo = require("./cargador_datos.js");
+const crearMemoria = require("./memorias.js");
+const crearEvento = require("./eventos.js");
 
 
-function procesarDecision(id, contexto = {}) {
 
 
-    const datos = cargarArchivo("../datos/decisiones.json");
+// ==================================
+// PROCESAR DECISIÓN
+// ==================================
+
+function procesarDecision(
+    id,
+    contexto = {}
+){
 
 
-    if (!datos) {
 
-        console.log("No se pudieron cargar las decisiones.");
+    const datos =
+    cargarArchivo("../datos/decisiones.json");
+
+
+
+    if(!datos){
+
+        console.log(
+            "No se pudieron cargar las decisiones."
+        );
 
         return null;
 
     }
 
 
-    const decision = datos.decisiones.find(
-        d => d.id === id
+
+
+    const decision =
+    datos.decisiones.find(
+
+        d=>d.id===id
+
     );
 
 
-    if (!decision) {
 
-        console.log("Decisión no encontrada.");
+
+    if(!decision){
+
+        console.log(
+            "Decisión no encontrada."
+        );
 
         return null;
 
@@ -33,21 +58,27 @@ function procesarDecision(id, contexto = {}) {
 
 
 
-    let eleccion = decision.eleccion;
+
+
+    let eleccion =
+    decision.eleccion;
+
+
+
 
 
 
     // ==================================
-    // ESTADO EMOCIONAL PRINCIPAL
+    // EMOCIONES
     // ==================================
 
 
-    switch(contexto.emocion) {
+    switch(contexto.emocion){
 
 
         case "tristeza":
 
-            eleccion = "buscar_apoyo";
+            eleccion="buscar_apoyo";
 
         break;
 
@@ -56,7 +87,7 @@ function procesarDecision(id, contexto = {}) {
 
         case "asustado":
 
-            eleccion = "buscar_refugio";
+            eleccion="buscar_refugio";
 
         break;
 
@@ -65,59 +96,22 @@ function procesarDecision(id, contexto = {}) {
 
         case "enojado":
 
-            eleccion = "calmarse";
+            eleccion="calmarse";
 
         break;
 
 
         case "feliz":
 
-            eleccion = "compartir_momento";
+            eleccion="compartir_momento";
 
         break;
 
-    }
-
-
-
-
-
-    // ==================================
-    // EMOCIONES SECUNDARIAS
-    // ==================================
-
-
-    const emociones =
-    contexto.emociones_secundarias || {};
-
-
-
-    if(emociones.soledad > 60){
-
-        eleccion = "buscar_compañia";
 
     }
 
 
-    else if(emociones.estres > 70){
 
-        eleccion = "descansar";
-
-    }
-
-
-    else if(emociones.amor > 70){
-
-        eleccion = "cuidar_familia";
-
-    }
-
-
-    else if(emociones.esperanza > 80){
-
-        eleccion = "crear_objetivos";
-
-    }
 
 
 
@@ -128,19 +122,35 @@ function procesarDecision(id, contexto = {}) {
     // ==================================
 
 
-    switch(contexto.personalidad) {
+    let personalidad =
+    contexto.personalidad;
+
+
+
+    if(
+        typeof personalidad === "object"
+    ){
+
+        personalidad =
+        personalidad.nombre;
+
+    }
+
+
+
+
+
+    switch(personalidad){
 
 
         case "amable":
 
-
-            if(contexto.familia){
-
-                eleccion =
-                "proteger_familia";
-
-            }
-
+            eleccion =
+            contexto.familia
+            ?
+            "proteger_familia"
+            :
+            "ayudar_habitante";
 
         break;
 
@@ -148,10 +158,8 @@ function procesarDecision(id, contexto = {}) {
 
         case "curiosa":
 
-
             eleccion =
             "explorar_el_mundo";
-
 
         break;
 
@@ -159,23 +167,11 @@ function procesarDecision(id, contexto = {}) {
 
         case "protectora":
 
-
             eleccion =
             "ayudar_comunidad";
 
-
         break;
 
-
-
-        case "aventurero":
-
-
-            eleccion =
-            "explorar_el_mundo";
-
-
-        break;
 
     }
 
@@ -183,204 +179,89 @@ function procesarDecision(id, contexto = {}) {
 
 
 
+
+
+
     // ==================================
-    // FAMILIA Y RELACIONES
+    // FAMILIA
     // ==================================
 
 
-    if(contexto.estado_pareja === "casado"){
-
-
-        if(contexto.desea_hijos){
-
-            eleccion =
-            "formar_familia";
-
-        }
-
-
-    }
-
-
-
-    if(contexto.tiene_hijos){
-
+    if(
+        contexto.tiene_hijos
+    ){
 
         eleccion =
         "cuidar_hijos";
 
-
     }
 
 
 
 
-
-    // ==================================
-    // SISTEMA DE ADOPCIÓN
-    // ==================================
-
-
-    if(contexto.interes_adopcion){
-
-
-        if(
-
-            contexto.confianza_pareja >= 80 &&
-            contexto.vivienda &&
-            contexto.alimentos &&
-            contexto.estabilidad_emocional === "alta" &&
-            contexto.estado_pareja === "casado"
-
-        ){
-
-            eleccion =
-            "solicitar_adopcion";
-
-
-        }
-
-
-        else {
-
-
-            eleccion =
-            "mejorar_condiciones_familia";
-
-        }
-
-    }
-
-
-
-
-
-    // ==================================
-    // PROFESIONES
-    // ==================================
-
-
-    switch(contexto.profesion) {
-
-
-        case "trabajador_social":
-
-            eleccion =
-            "evaluar_adopcion";
-
-
-        break;
-
-
-
-        case "cuidador_orfanato":
-
-            eleccion =
-            "cuidar_ninos";
-
-
-        break;
-
-
-
-        case "guardia_seguridad":
-
-            eleccion =
-            "patrullar_comunidad";
-
-
-        break;
-
-
-
-        case "medico":
-
-            eleccion =
-            "atender_pacientes";
-
-
-        break;
-
-
-
-        case "pediatra":
-
-            eleccion =
-            "cuidar_bebes";
-
-
-        break;
-
-
-
-        case "niñera":
-
-            eleccion =
-            "cuidar_hijos";
-
-
-        break;
-
-
-
-        case "cocinero":
-
-            eleccion =
-            "preparar_comida";
-
-
-        break;
-
-
-
-        case "ama_de_llaves":
-
-            eleccion =
-            "mantener_hogar";
-
-
-        break;
-
-    }
-
-
-
-
-
-    // ==================================
-    // OBJETIVOS
-    // ==================================
-
-
-    const objetivo =
-    contexto.objetivo?.toLowerCase();
-
-
-
-    if(objetivo === "conocer el mundo"){
-
-        eleccion =
-        "explorar_el_mundo";
-
-    }
-
-
-    else if(objetivo === "crear una amistad"){
-
-        eleccion =
-        "buscar_compañia";
-
-    }
-
-
-    else if(
-        objetivo === "formar una familia"
+    if(
+        contexto.estado_pareja==="casado"
+        &&
+        contexto.desea_hijos
     ){
 
         eleccion =
-        "crear_familia";
+        "formar_familia";
 
     }
+
+
+
+
+
+
+
+    // ==================================
+    // PROFESIÓN
+    // ==================================
+
+
+    if(contexto.profesion){
+
+
+        switch(contexto.profesion){
+
+
+            case "medico":
+
+                eleccion="atender_pacientes";
+
+            break;
+
+
+            case "cocinero":
+
+                eleccion="preparar_comida";
+
+            break;
+
+
+            case "guardia":
+
+                eleccion="patrullar_comunidad";
+
+            break;
+
+
+            case "maestro":
+
+                eleccion="enseñar";
+
+            break;
+
+
+        }
+
+
+    }
+
+
+
 
 
 
@@ -392,23 +273,19 @@ function procesarDecision(id, contexto = {}) {
 
 
     let resultadoTexto =
-    "La decisión todavía no tiene resultado definido.";
+    "Sin resultado definido.";
 
 
 
 
 
-    if(decision.resultados){
+    if(
+        decision.resultados &&
+        decision.resultados[eleccion]
+    ){
 
-
-        if(decision.resultados[eleccion]){
-
-
-            resultadoTexto =
-            decision.resultados[eleccion];
-
-
-        }
+        resultadoTexto =
+        decision.resultados[eleccion];
 
     }
 
@@ -427,7 +304,6 @@ function procesarDecision(id, contexto = {}) {
         decision.situacion,
 
 
-        eleccion:
         eleccion,
 
 
@@ -435,7 +311,6 @@ function procesarDecision(id, contexto = {}) {
         resultadoTexto,
 
 
-        contexto:
         contexto
 
 
@@ -445,21 +320,57 @@ function procesarDecision(id, contexto = {}) {
 
 
 
-    console.log("=================================");
-    console.log("        DECISIÓN");
-    console.log("=================================");
+
+    // ==================================
+    // MEMORIA Y EVENTO
+    // ==================================
 
 
-    console.log("Habitante:",
-    decision.habitante_id);
+    if(decision.habitante_id){
 
 
-    console.log("Elección:",
-    eleccion);
+        crearMemoria(
+
+            decision.habitante_id,
+
+            "decision",
+
+            "Tomó la decisión: "
+            + eleccion,
+
+            "media"
+
+        );
 
 
-    console.log(resultado);
 
+        crearEvento(
+
+            "decision_habitante",
+
+            [
+                decision.habitante_id
+            ],
+
+            {
+                decision:eleccion
+            }
+
+        );
+
+
+    }
+
+
+
+
+
+
+
+    console.log(
+        "Decisión:",
+        eleccion
+    );
 
 
 
@@ -472,4 +383,9 @@ function procesarDecision(id, contexto = {}) {
 
 
 
-module.exports = procesarDecision;
+
+module.exports={
+
+    procesarDecision
+
+};
