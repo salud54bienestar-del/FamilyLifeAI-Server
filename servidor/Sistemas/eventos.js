@@ -73,6 +73,8 @@ function crearEvento(id, participantes = [], datosExtra = {}) {
 
 
 
+        // Crear memoria del evento
+
         crearMemoria(
 
             habitante,
@@ -91,13 +93,36 @@ function crearEvento(id, participantes = [], datosExtra = {}) {
 
 
 
-        emociones.aplicarEventoEmocional(
 
-            habitante,
+        // Aplicar efectos emocionales del evento
 
-            evento.nombre
+        if (eventoBase.efectos) {
 
-        );
+
+
+            Object.keys(eventoBase.efectos).forEach((emocion) => {
+
+
+
+                emociones.cambiarEmocion(
+
+                    habitante,
+
+                    emocion,
+
+                    eventoBase.efectos[emocion],
+
+                    evento.nombre
+
+                );
+
+
+
+            });
+
+
+
+        }
 
 
 
@@ -112,7 +137,8 @@ function crearEvento(id, participantes = [], datosExtra = {}) {
 
 
 
-// Evento inicial
+
+// Evento inicial del mundo
 
 crearEvento(
 
@@ -127,6 +153,7 @@ crearEvento(
     }
 
 );
+
 
 
 
