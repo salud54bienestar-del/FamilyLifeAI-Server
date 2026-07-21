@@ -1,0 +1,30 @@
+{
+  "nacimientos": [
+    {
+      "id": 1,
+
+      "bebe_id": 3,
+
+      "nombre": "Nombre del bebé",
+
+      "madre_id": 1,
+
+      "padre_id": 2,
+
+      "familia_id": 1,
+
+      "fecha_nacimiento": null,
+
+      "lugar_nacimiento": "hospital",
+
+      "estado": "registrado",
+
+      "salud_bebe": 100,
+
+      "memorias_creadas": [
+        "primer_aliento",
+        "llegada_al_mundo"
+      ]
+    }
+  ]
+}
