@@ -1,14 +1,38 @@
 // Sistema de embarazo de Village Soul
 
-const cargarArchivo = require("./cargador_datos.js");
 
-const crearEvento = require("./eventos.js");
+const cargarArchivo =
+require("./cargador_datos.js");
 
-const crearMemoria = require("./memorias.js");
+
+const crearEvento =
+require("./eventos.js");
+
+
+const crearMemoria =
+require("./memorias.js");
+
 
 const {
     registrarNacimiento
-} = require("./nacimientos.js");
+}
+=
+require("./nacimientos.js");
+
+
+
+
+// =================================
+// CONFIGURACIÓN
+// =================================
+
+
+// Duración del embarazo
+
+const DURACION_EMBARAZO =
+90; // días Minecraft
+
+
 
 
 
@@ -27,11 +51,13 @@ function evaluarEmbarazo(
     cargarArchivo("../datos/relaciones.json");
 
 
+
     if(!relaciones){
 
         return null;
 
     }
+
 
 
 
@@ -64,21 +90,19 @@ function evaluarEmbarazo(
 
 
 
+
     const requisitos = {
 
 
         matrimonio:
-
         pareja.estado_pareja === "casados",
 
 
         romance:
-
         pareja.romance >= 80,
 
 
         confianza:
-
         pareja.confianza >= 80
 
 
@@ -86,7 +110,9 @@ function evaluarEmbarazo(
 
 
 
+
     return {
+
 
         madre_id,
 
@@ -100,10 +126,12 @@ function evaluarEmbarazo(
         Object.values(requisitos)
         .every(Boolean)
 
+
     };
 
 
 }
+
 
 
 
@@ -116,7 +144,8 @@ function evaluarEmbarazo(
 
 function iniciarEmbarazo(
     madre_id,
-    padre_id
+    padre_id,
+    familia_id = null
 ){
 
 
@@ -134,7 +163,7 @@ function iniciarEmbarazo(
     ){
 
         console.log(
-            "No cumple requisitos."
+            "No cumple requisitos para embarazo."
         );
 
         return null;
@@ -168,7 +197,8 @@ function iniciarEmbarazo(
 
 
 
-    const embarazoActivo =
+
+    const existe =
     datos.embarazos.find(
 
         e =>
@@ -180,11 +210,16 @@ function iniciarEmbarazo(
 
 
 
-    if(embarazoActivo){
+    if(existe){
+
+        console.log(
+            "Ya existe un embarazo activo."
+        );
 
         return null;
 
     }
+
 
 
 
@@ -208,6 +243,8 @@ function iniciarEmbarazo(
         padre_id,
 
 
+        familia_id,
+
 
         dia_inicio:
 
@@ -223,7 +260,7 @@ function iniciarEmbarazo(
 
         duracion:
 
-        90,
+        DURACION_EMBARAZO,
 
 
 
@@ -255,6 +292,7 @@ function iniciarEmbarazo(
         bebe_id:null
 
 
+
     };
 
 
@@ -271,7 +309,7 @@ function iniciarEmbarazo(
 
     crearEvento(
 
-        9,
+        "embarazo_iniciado",
 
         [
             madre_id,
@@ -279,8 +317,10 @@ function iniciarEmbarazo(
         ],
 
         {
-            tipo:
-            "embarazo_iniciado"
+
+            embarazo_id:
+            embarazo.id
+
         }
 
     );
@@ -314,15 +354,19 @@ function iniciarEmbarazo(
 
 
 
+
+
 // =================================
-// ACTUALIZAR CON DÍA MINECRAFT
+// ACTUALIZAR EMBARAZOS
 // =================================
 
 function actualizarEmbarazos(){
 
 
+
     const datos =
     cargarArchivo("../datos/embarazos.json");
+
 
 
     const tiempo =
@@ -338,6 +382,19 @@ function actualizarEmbarazos(){
         return null;
 
     }
+
+
+
+
+
+    if(
+        tiempo.tiempo.nuevo_dia_minecraft !== true
+    ){
+
+        return datos.embarazos;
+
+    }
+
 
 
 
@@ -359,7 +416,10 @@ function actualizarEmbarazos(){
 
 
 
+
+
             embarazo.dias_transcurridos++;
+
 
 
 
@@ -372,6 +432,7 @@ function actualizarEmbarazos(){
                 embarazo.etapa =
                 "primer_trimestre";
 
+
             }
 
             else if(
@@ -380,6 +441,7 @@ function actualizarEmbarazos(){
 
                 embarazo.etapa =
                 "segundo_trimestre";
+
 
             }
 
@@ -394,28 +456,91 @@ function actualizarEmbarazos(){
 
 
 
+
+
+
+            if(
+                embarazo.dias_transcurridos === 30
+            ){
+
+                crearEvento(
+
+                    "embarazo_segundo_trimestre",
+
+                    [
+                        embarazo.madre
+                    ],
+
+                    {}
+
+                );
+
+            }
+
+
+
+
+
+
+            if(
+                embarazo.dias_transcurridos ===60
+            ){
+
+                crearEvento(
+
+                    "embarazo_tercer_trimestre",
+
+                    [
+                        embarazo.madre
+                    ],
+
+                    {}
+
+                );
+
+            }
+
+
+
+
+
+
+
+
             if(
                 embarazo.dias_transcurridos >=
                 embarazo.duracion
             ){
 
 
+
                 registrarNacimiento(
 
                     embarazo.id,
 
-                    null,
+                    embarazo.familia_id,
 
                     {
+
                         nombre:
                         "Nuevo habitante"
+
 
                     }
 
                 );
 
 
+
+                embarazo.estado =
+                "finalizado";
+
+
+
             }
+
+
+
 
 
         }
@@ -424,9 +549,15 @@ function actualizarEmbarazos(){
 
 
 
+
+
+
     return datos.embarazos;
 
+
 }
+
+
 
 
 
