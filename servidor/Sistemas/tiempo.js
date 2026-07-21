@@ -1,305 +1,359 @@
-// Actualización de vida de habitantes con tiempo Minecraft
+// Sistema de vida de habitantes - Village Soul
 
-function actualizarVidaHabitantes() {
 
+const cargarArchivo =
+require("./cargador_datos.js");
 
-    console.log("=================================");
-    console.log(" ACTUALIZANDO VIDA HABITANTES ");
-    console.log("=================================");
 
+const crearMemoria =
+require("./memorias.js");
 
 
-    const almas =
-    cargarArchivo("../datos/almas.json");
+const crearEvento =
+require("./eventos.js");
 
 
+const {
+    actualizarEmbarazos
+}
+=
+require("./embarazo.js");
 
-    const tiempoDatos =
-    cargarArchivo("../datos/tiempo.json");
 
 
+const {
+    obtenerLugarTrabajo
+}
+=
+require("./lugares_trabajo.js");
 
-    if(!almas || !tiempoDatos){
 
 
-        console.log(
-            "No se pudieron cargar datos de vida."
-        );
 
+// =================================
+// ACTUALIZAR VIDA HABITANTES
+// =================================
 
-        return;
 
-    }
+function actualizarVidaHabitantes(){
 
 
+console.log("=================================");
+console.log(" ACTUALIZANDO VIDA HABITANTES ");
+console.log("=================================");
 
-    const tiempo =
-    tiempoDatos.tiempo;
 
 
+const almas =
+cargarArchivo("../datos/almas.json");
 
-    /*
-    Minecraft:
-    
-    1 día completo = 20 minutos
-    
-    0-5  amanecer
-    5-15 día
-    15-18 atardecer
-    18-20 noche
 
-    */
 
+const tiempoDatos =
+cargarArchivo("../datos/tiempo.json");
 
 
-    let periodo;
 
+if(
+!almas ||
+!tiempoDatos
+){
 
+console.log(
+"No se pudieron cargar datos de vida."
+);
 
-    if(tiempo.minuto < 5){
+return null;
 
-        periodo = "amanecer";
+}
 
-    }
 
-    else if(tiempo.minuto < 15){
 
-        periodo = "dia";
+const tiempo =
+tiempoDatos.tiempo;
 
-    }
 
-    else if(tiempo.minuto < 18){
 
-        periodo = "atardecer";
 
-    }
+// ================================
+// CICLO MINECRAFT
+// ================================
 
-    else{
 
-        periodo = "noche";
+let periodo;
 
-    }
 
 
+if(tiempo.minuto < 5){
 
+periodo="amanecer";
 
+}
 
-    console.log(
-        "Periodo Minecraft:",
-        periodo
-    );
+else if(tiempo.minuto < 15){
 
+periodo="dia";
 
+}
 
+else if(tiempo.minuto < 18){
 
+periodo="atardecer";
 
-    almas.almas.forEach((habitante)=>{
+}
 
+else{
 
+periodo="noche";
 
-        if(
-            habitante.estado !== "viviendo"
-        ){
+}
 
-            return;
 
-        }
 
 
+console.log(
+"Periodo:",
+periodo
+);
 
 
 
-        const profesion =
-        habitante.profesion;
 
 
 
-        if(!profesion){
 
-            return;
+almas.almas.forEach(
 
-        }
+habitante=>{
 
 
+if(
+habitante.estado !== "viviendo"
+){
 
+return;
 
+}
 
-        const lugarTrabajo =
-        obtenerLugarTrabajo(
-            habitante.id
-        );
 
 
 
+const profesion =
+habitante.profesion;
 
 
 
-        // =========================
-        // HORARIO DE TRABAJO
-        // =========================
+if(!profesion){
 
+return;
 
-        if(
-            periodo === "dia"
-            &&
-            lugarTrabajo
-        ){
+}
 
 
 
-            console.log(
 
-                habitante.nombre +
-                " está trabajando en " +
-                lugarTrabajo.nombre
+const trabajo =
+obtenerLugarTrabajo(
+habitante.id
+);
 
-            );
 
 
 
 
-            profesion.experiencia += 1;
 
+// ================================
+// TRABAJO
+// ================================
 
 
+if(
+periodo==="dia"
+&&
+trabajo
+){
 
-            crearMemoria(
 
-                habitante.id,
+console.log(
 
-                "trabajo",
+habitante.nombre+
+" trabaja en "+
+trabajo.nombre
 
-                "Trabajó como " +
-                profesion.nombre,
+);
 
-                "media"
 
-            );
 
+if(
+!profesion.ultimo_trabajo
+||
+profesion.ultimo_trabajo !== tiempo.hora
+){
 
 
 
+profesion.experiencia += 1;
 
-            if(
-                profesion.experiencia >= 100
-            ){
 
+profesion.ultimo_trabajo =
+tiempo.hora;
 
-                profesion.nivel++;
 
 
-                profesion.experiencia = 0;
+crearMemoria(
 
+habitante.id,
 
+"trabajo",
 
-                crearEvento(
+"Trabajó como "+
+profesion.nombre,
 
-                    "subida_nivel_profesion",
+"media"
 
-                    [
-                        habitante.id
-                    ],
+);
 
-                    {
-
-                        profesion:
-                        profesion.nombre,
-
-                        nivel:
-                        profesion.nivel
-
-                    }
-
-                );
-
-
-            }
-
-
-
-        }
-
-
-
-
-
-        // =========================
-        // DESCANSO
-        // =========================
-
-
-        if(
-            periodo === "noche"
-        ){
-
-
-
-            console.log(
-
-                habitante.nombre +
-                " está descansando."
-
-            );
-
-
-
-            if(
-                habitante.emociones
-            ){
-
-
-                habitante.emociones.calma += 1;
-
-
-                if(
-                    habitante.emociones.calma > 100
-                ){
-
-                    habitante.emociones.calma = 100;
-
-                }
-
-            }
-
-
-
-        }
-
-
-
-
-
-
-        // =========================
-        // NECESIDADES FUTURAS
-        // =========================
-
-
-        /*
-        
-        Próximas conexiones:
-
-        - hambre
-        - energía
-        - embarazo
-        - cumpleaños
-        - relaciones
-        - hijos
-        - envejecimiento opcional
-        - eventos
-        
-        */
-
-
-
-    });
-
-
-
-
-    console.log(
-        "Vida actualizada correctamente."
-    );
 
 
 }
+
+
+
+
+if(
+profesion.experiencia >= 100
+){
+
+
+profesion.nivel++;
+
+
+profesion.experiencia=0;
+
+
+
+crearEvento(
+
+"subida_nivel_profesion",
+
+[habitante.id],
+
+{
+
+profesion:
+profesion.nombre,
+
+nivel:
+profesion.nivel
+
+}
+
+);
+
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+
+// ================================
+// DESCANSO
+// ================================
+
+
+if(
+periodo==="noche"
+){
+
+
+console.log(
+
+habitante.nombre+
+" está descansando."
+
+);
+
+
+
+if(
+habitante.emociones
+){
+
+
+habitante.emociones.calma++;
+
+
+
+if(
+habitante.emociones.calma > 100
+){
+
+habitante.emociones.calma=100;
+
+}
+
+
+}
+
+
+}
+
+
+
+
+}
+
+);
+
+
+
+
+
+// ================================
+// ACTUALIZAR EMBARAZOS
+// ================================
+
+
+if(
+periodo==="amanecer"
+){
+
+actualizarEmbarazos();
+
+}
+
+
+
+
+
+
+console.log(
+"Vida actualizada correctamente."
+);
+
+
+
+return almas;
+
+
+
+}
+
+
+
+
+
+
+module.exports={
+
+actualizarVidaHabitantes
+
+};
