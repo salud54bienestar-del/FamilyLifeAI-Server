@@ -74,6 +74,55 @@
         "aprender_habilidad"
       ],
       "recompensa": "nuevo_rango"
+    },
+
+    {
+      "id": 6,
+      "habitante_id": 2,
+      "titulo": "Descubrir nuevos territorios",
+      "descripcion": "Explorar zonas desconocidas y registrar nuevos lugares del mundo.",
+      "tipo": "aventura",
+      "progreso": 0,
+      "estado": "activo",
+      "prioridad": "alta",
+      "requisitos": [
+        "explorar",
+        "caminar",
+        "descubrir_lugares"
+      ],
+      "recompensa": "experiencia_exploracion"
+    },
+
+    {
+      "id": 7,
+      "habitante_id": 2,
+      "titulo": "Ayudar a la comunidad",
+      "descripcion": "Encontrar recursos y aportar nuevos conocimientos a la aldea.",
+      "tipo": "social",
+      "progreso": 0,
+      "estado": "activo",
+      "prioridad": "media",
+      "requisitos": [
+        "encontrar_recursos",
+        "compartir"
+      ],
+      "recompensa": "aumento_reputacion"
+    },
+
+    {
+      "id": 8,
+      "habitante_id": 2,
+      "titulo": "Crear un mapa del mundo",
+      "descripcion": "Registrar lugares descubiertos para crear una historia del territorio.",
+      "tipo": "conocimiento",
+      "progreso": 0,
+      "estado": "activo",
+      "prioridad": "media",
+      "requisitos": [
+        "explorar",
+        "observar"
+      ],
+      "recompensa": "nuevo_conocimiento"
     }
   ]
 }
