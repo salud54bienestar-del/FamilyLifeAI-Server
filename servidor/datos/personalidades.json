@@ -1,191 +1,43 @@
-// Inteligencia artificial de almas - Village Soul
-
-const cargarArchivo = require("../Sistemas/cargador_datos.js");
-const procesarDecision = require("../Sistemas/decisiones.js");
-
-
-function pensarAlma(habitante_id) {
-
-
-    const almas = cargarArchivo("../datos/almas.json");
-    const emociones = cargarArchivo("../datos/emociones.json");
-    const objetivos = cargarArchivo("../datos/objetivos.json");
-    const relaciones = cargarArchivo("../datos/relaciones.json");
-    const familias = cargarArchivo("../datos/familias.json");
-    const personalidades = cargarArchivo("../datos/personalidades.json");
-
-
-    if (
-        !almas ||
-        !emociones ||
-        !objetivos ||
-        !relaciones ||
-        !familias ||
-        !personalidades
-    ) {
-
-        console.log("No se pudieron cargar los datos de la IA.");
-
-        return null;
+{
+  "personalidades": [
+    {
+      "id": 1,
+      "nombre": "amable",
+      "rasgos": [
+        "ayuda a otros",
+        "confía fácilmente",
+        "evita conflictos"
+      ],
+      "curiosidad": 50,
+      "valentia": 40,
+      "sociabilidad": 90,
+      "paciencia": 80
+    },
+    {
+      "id": 2,
+      "nombre": "curiosa",
+      "rasgos": [
+        "explora lugares nuevos",
+        "busca aprender",
+        "acepta desafíos"
+      ],
+      "curiosidad": 90,
+      "valentia": 75,
+      "sociabilidad": 65,
+      "paciencia": 50
+    },
+    {
+      "id": 3,
+      "nombre": "protectora",
+      "rasgos": [
+        "cuida a otros",
+        "piensa antes de actuar",
+        "defiende a sus amigos"
+      ],
+      "curiosidad": 60,
+      "valentia": 90,
+      "sociabilidad": 70,
+      "paciencia": 75
     }
-
-
-
-    const alma = almas.almas.find(
-        a => a.id === habitante_id
-    );
-
-
-    if (!alma) {
-
-        console.log(
-            "No existe el habitante:",
-            habitante_id
-        );
-
-        return null;
-    }
-
-
-
-    console.log(
-        "Pensando alma:",
-        alma.nombre
-    );
-
-
-
-    const personalidad =
-        personalidades.personalidades.find(
-            p => p.id === alma.personalidad_id
-        );
-
-
-
-    console.log(
-        "Personalidad:",
-        personalidad?.nombre || "desconocida"
-    );
-
-
-
-    const emocionActual =
-        emociones.emociones.find(
-            e => e.habitante_id === habitante_id
-        );
-
-
-
-    const objetivoActual =
-        alma.objetivos?.[0] ||
-        "explorar el mundo";
-
-
-
-    const tieneFamilia =
-        alma.familia &&
-        alma.familia.length > 0;
-
-
-
-    const contexto = {
-
-
-        emocion:
-            emocionActual?.estado_actual ||
-            "neutral",
-
-
-
-        emociones_secundarias:
-            emocionActual?.emociones_secundarias ||
-            {},
-
-
-
-        familia:
-            tieneFamilia,
-
-
-
-        objetivo:
-            objetivoActual,
-
-
-
-        personalidad:
-            personalidad?.nombre ||
-            "desconocida",
-
-
-
-        rasgos:
-            personalidad?.rasgos ||
-            []
-
-    };
-
-
-
-    const decision =
-        procesarDecision(
-            habitante_id,
-            contexto
-        );
-
-
-
-    return {
-
-
-        habitante_id:
-
-
-            habitante_id,
-
-
-
-        nombre:
-
-
-            alma.nombre,
-
-
-
-        estado:
-
-
-            "pensando",
-
-
-
-        personalidad:
-
-
-            personalidad,
-
-
-
-        contexto:
-
-
-            contexto,
-
-
-
-        decision:
-
-
-            decision
-
-    };
-
+  ]
 }
-
-
-
-module.exports = {
-
-    pensarAlma
-
-};
