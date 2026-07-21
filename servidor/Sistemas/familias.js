@@ -6,7 +6,6 @@ const crearMemoria = require("./memorias.js");
 
 
 
-
 // =================================
 // CREAR FAMILIA
 // =================================
@@ -16,10 +15,8 @@ function crearFamilia(
     tipo = "nuclear"
 ){
 
-
     const datos =
     cargarArchivo("../datos/familias.json");
-
 
 
     if(!datos){
@@ -27,8 +24,6 @@ function crearFamilia(
         return null;
 
     }
-
-
 
 
 
@@ -49,14 +44,10 @@ function crearFamilia(
 
 
 
-
-
-
     const familia = {
 
 
-        id:
-        nuevoId,
+        id:nuevoId,
 
 
         apellido,
@@ -74,12 +65,10 @@ function crearFamilia(
         generacion:1,
 
 
-        tipo_familia:
-        tipo,
+        tipo_familia:tipo,
 
 
-        estado:
-        "activa",
+        estado:"activa",
 
 
 
@@ -88,6 +77,18 @@ function crearFamilia(
 
 
         hogar:null,
+
+
+
+        estabilidad:{
+
+            confianza:0,
+
+            felicidad:50,
+
+            recursos:0
+
+        },
 
 
 
@@ -123,12 +124,7 @@ function crearFamilia(
 
 
 
-
-    datos.familias.push(
-        familia
-    );
-
-
+    datos.familias.push(familia);
 
 
 
@@ -144,8 +140,7 @@ function crearFamilia(
 
             accion:"crear_familia",
 
-            familia_id:
-            familia.id
+            familia_id:familia.id
 
         }
 
@@ -155,9 +150,95 @@ function crearFamilia(
 
     return familia;
 
-
 }
 
+
+
+
+
+
+
+// =================================
+// CREAR FAMILIA POR MATRIMONIO
+// =================================
+
+function crearFamiliaMatrimonio(
+    habitante_a,
+    habitante_b,
+    apellido=""
+){
+
+
+
+    const datos =
+    cargarArchivo("../datos/familias.json");
+
+
+
+    if(!datos){
+
+        return null;
+
+    }
+
+
+
+    const existente =
+    datos.familias.find(
+
+        f=>
+
+        f.miembros.includes(habitante_a)
+
+        &&
+
+        f.miembros.includes(habitante_b)
+
+    );
+
+
+
+    if(existente){
+
+        return existente;
+
+    }
+
+
+
+    const familia =
+    crearFamilia(
+        apellido,
+        "matrimonio"
+    );
+
+
+
+    agregarMiembro(
+        familia.id,
+        habitante_a,
+        "padre"
+    );
+
+
+
+    agregarMiembro(
+        familia.id,
+        habitante_b,
+        "madre"
+    );
+
+
+
+    familia.historial.push(
+        "Familia creada por matrimonio"
+    );
+
+
+
+    return familia;
+
+}
 
 
 
@@ -179,7 +260,6 @@ function agregarMiembro(
     cargarArchivo("../datos/familias.json");
 
 
-
     if(!datos){
 
         return null;
@@ -188,12 +268,9 @@ function agregarMiembro(
 
 
 
-
     const familia =
     datos.familias.find(
-
         f=>f.id===idFamilia
-
     );
 
 
@@ -203,7 +280,6 @@ function agregarMiembro(
         return null;
 
     }
-
 
 
 
@@ -223,9 +299,6 @@ function agregarMiembro(
 
 
 
-
-
-
     if(
         rol==="padre"
         ||
@@ -235,18 +308,14 @@ function agregarMiembro(
 
         familia.padres.push({
 
-
             habitante_id,
 
-
             rol
-
 
         });
 
 
     }
-
 
 
 
@@ -259,11 +328,7 @@ function agregarMiembro(
 
         "Se integró a una familia.",
 
-        "alta",
-
-        familia.miembros,
-
-        "amor"
+        "alta"
 
     );
 
@@ -271,9 +336,7 @@ function agregarMiembro(
 
     return familia;
 
-
 }
-
 
 
 
@@ -306,9 +369,7 @@ function agregarHijo(
 
     const familia =
     datos.familias.find(
-
         f=>f.id===idFamilia
-
     );
 
 
@@ -321,71 +382,36 @@ function agregarHijo(
 
 
 
-
-
     familia.hijos.push({
 
-
-        habitante_id:
-        hijo_id,
-
+        habitante_id:hijo_id,
 
         tipo,
 
-
         fecha:
         new Date().toISOString()
-
 
     });
 
 
 
-
-
     if(
-        !familia.miembros.includes(
-            hijo_id
-        )
+        !familia.miembros.includes(hijo_id)
     ){
 
-        familia.miembros.push(
-            hijo_id
-        );
+        familia.miembros.push(hijo_id);
 
     }
 
 
 
 
-
-
-
-    familia.relaciones_familiares.push({
-
-        persona:
-        hijo_id,
-
-
-        parentesco:
-        "hijo_" + tipo
-
-
-    });
-
-
-
-
-
     familia.historial.push(
 
-        "Nuevo hijo: "
+        "Nuevo hijo agregado mediante "
         + tipo
 
     );
-
-
-
 
 
 
@@ -397,11 +423,9 @@ function agregarHijo(
 
         {
 
-            accion:
-            "nuevo_hijo",
+            accion:"nuevo_hijo",
 
             tipo
-
 
         }
 
@@ -411,10 +435,7 @@ function agregarHijo(
 
     return familia;
 
-
 }
-
-
 
 
 
@@ -436,11 +457,17 @@ function asignarHogar(
 
 
 
+    if(!datos){
+
+        return null;
+
+    }
+
+
+
     const familia =
     datos.familias.find(
-
         f=>f.id===idFamilia
-
     );
 
 
@@ -459,7 +486,6 @@ function asignarHogar(
 
     return familia;
 
-
 }
 
 
@@ -467,73 +493,7 @@ function asignarHogar(
 
 
 
-// =================================
-// ELIMINAR MIEMBRO
-// =================================
-
-function eliminarMiembro(
-    idFamilia,
-    habitante_id
-){
-
-
-    const datos =
-    cargarArchivo("../datos/familias.json");
-
-
-
-    const familia =
-    datos.familias.find(
-
-        f=>f.id===idFamilia
-
-    );
-
-
-
-    if(!familia){
-
-        return null;
-
-    }
-
-
-
-    familia.miembros =
-    familia.miembros.filter(
-
-        id=>id!==habitante_id
-
-    );
-
-
-
-    familia.padres =
-    familia.padres.filter(
-
-        p=>p.habitante_id!==habitante_id
-
-    );
-
-
-
-    return familia;
-
-
-}
-
-
-
-
-
-
-// =================================
-// OBTENER FAMILIA
-// =================================
-
-function obtenerFamilia(
-    habitante_id
-){
+function obtenerFamilia(habitante_id){
 
 
     const datos =
@@ -551,11 +511,8 @@ function obtenerFamilia(
 
     return datos.familias.find(
 
-        familia =>
-
-        familia.miembros.includes(
-            habitante_id
-        )
+        f=>
+        f.miembros.includes(habitante_id)
 
     );
 
@@ -565,20 +522,18 @@ function obtenerFamilia(
 
 
 
-
-
 module.exports={
 
 
     crearFamilia,
+
+    crearFamiliaMatrimonio,
 
     agregarMiembro,
 
     agregarHijo,
 
     asignarHogar,
-
-    eliminarMiembro,
 
     obtenerFamilia
 
