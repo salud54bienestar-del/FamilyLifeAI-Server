@@ -46,9 +46,62 @@
         },
         "descansar": {
           "texto": "Luna toma un descanso para recuperar energía.",
-          "emocion": "tranquilidad",
+          "emocion": "calma",
           "memoria": "Descansó después de una actividad intensa.",
           "experiencia": 3
+        }
+      }
+    },
+
+    {
+      "id": 2,
+      "habitante_id": 2,
+      "situacion": "Maya encuentra una zona desconocida cerca de la aldea.",
+      "opciones": [
+        "investigar_zona",
+        "buscar_recursos",
+        "invitar_a_alguien",
+        "crear_un_mapa",
+        "regresar_a_casa",
+        "descansar"
+      ],
+      "eleccion_inicial": "investigar_zona",
+      "resultados": {
+        "investigar_zona": {
+          "texto": "Maya explora la zona y descubre algo interesante.",
+          "emocion": "curiosidad",
+          "memoria": "Descubrió un lugar nuevo durante una exploración.",
+          "experiencia": 15
+        },
+        "buscar_recursos": {
+          "texto": "Maya encuentra materiales útiles para la comunidad.",
+          "emocion": "felicidad",
+          "memoria": "Encontró recursos para ayudar a otros.",
+          "experiencia": 10
+        },
+        "invitar_a_alguien": {
+          "texto": "Maya decide compartir su descubrimiento con otro habitante.",
+          "emocion": "confianza",
+          "memoria": "Compartió una aventura con otro habitante.",
+          "experiencia": 8
+        },
+        "crear_un_mapa": {
+          "texto": "Maya registra el territorio para futuras exploraciones.",
+          "emocion": "orgullo",
+          "memoria": "Creó un mapa de una nueva zona.",
+          "experiencia": 12
+        },
+        "regresar_a_casa": {
+          "texto": "Maya vuelve tranquila después de explorar.",
+          "emocion": "calma",
+          "memoria": "Regresó después de una exploración segura.",
+          "experiencia": 3
+        },
+        "descansar": {
+          "texto": "Maya descansa y recupera energía.",
+          "emocion": "tranquilidad",
+          "memoria": "Tomó un descanso después de explorar.",
+          "experiencia": 2
         }
       }
     }
