@@ -1,32 +1,47 @@
 {
   "tiempo": {
 
-    "dia": 1,
-    "mes": 1,
-    "año": 1,
+    "dia":1,
+    "mes":1,
+    "año":1,
 
-    "hora": 8,
-    "minuto": 0,
+    "dias_totales":1,
 
-    "dias_totales": 1,
+    "hora":8,
+    "minuto":0,
 
-    "contador_vida": 0,
+    "periodo_actual":"mañana",
 
-    "velocidad": "normal",
+    "velocidad":"normal",
 
-    "estacion": "primavera",
 
-    "ciclo_vida": {
+    "configuracion":{
+      "dias_por_mes":30,
+      "meses_por_año":12
+    },
 
-      "crecimiento_habitantes": true,
 
-      "cumpleaños": true,
+    "estacion":"primavera",
 
-      "envejecimiento": true
+
+    "clima":{
+      "actual":"soleado",
+      "temperatura":20
+    },
+
+
+    "ciclo_vida":{
+
+      "crecimiento_habitantes":true,
+
+      "cumpleaños":true,
+
+      "envejecimiento":true
 
     },
 
-    "eventos_programados": []
+
+    "eventos_programados":[]
 
   }
 }
