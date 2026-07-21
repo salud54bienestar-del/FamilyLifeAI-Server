@@ -1,7 +1,8 @@
-// Sistema de necesidades de Village Soul
+// Sistema avanzado de necesidades de Village Soul
 
 const cargarArchivo = require("./cargador_datos.js");
 const crearMemoria = require("./memorias.js");
+const cambiarEmocion = require("./emociones.js");
 
 
 
@@ -16,11 +17,10 @@ function obtenerNecesidades(habitante_id){
     cargarArchivo("../datos/necesidades.json");
 
 
-
     if(!datos){
 
         console.log(
-            "No se pudieron cargar las necesidades."
+            "No se pudieron cargar necesidades."
         );
 
         return null;
@@ -42,6 +42,7 @@ function obtenerNecesidades(habitante_id){
 
 
 
+
 // =================================
 // CREAR NECESIDADES
 // =================================
@@ -51,7 +52,6 @@ function crearNecesidades(habitante_id){
 
     const datos =
     cargarArchivo("../datos/necesidades.json");
-
 
 
     if(!datos){
@@ -76,24 +76,25 @@ function crearNecesidades(habitante_id){
 
         diversion:100,
 
+
         estres:0,
 
 
-        estado:"estable"
+        estado:"estable",
+
+
+        ultima_actualizacion:0
 
 
     };
 
 
 
-    datos.necesidades.push(
-        nueva
-    );
+    datos.necesidades.push(nueva);
 
 
 
     return nueva;
-
 
 }
 
@@ -102,11 +103,16 @@ function crearNecesidades(habitante_id){
 
 
 
+
 // =================================
 // ACTUALIZAR NECESIDADES
+// Tiempo Village Soul
 // =================================
 
-function actualizarNecesidades(habitante_id){
+function actualizarNecesidades(
+    habitante_id,
+    ciclo = 1
+){
 
 
     const necesidad =
@@ -124,53 +130,28 @@ function actualizarNecesidades(habitante_id){
 
 
 
+    /*
+    
+    Un ciclo representa una actualización
+    del mundo, no un día real.
 
-    // El tiempo reduce necesidades
-
-
-    necesidad.hambre -= 5;
-
-    necesidad.energia -= 4;
-
-    necesidad.higiene -= 2;
-
-    necesidad.diversion -= 3;
+    */
 
 
+    necesidad.hambre -= 2 * ciclo;
 
+    necesidad.energia -= 1 * ciclo;
 
-    if(necesidad.hambre < 0){
+    necesidad.higiene -= 1 * ciclo;
 
-        necesidad.hambre = 0;
-
-    }
-
-
-    if(necesidad.energia < 0){
-
-        necesidad.energia = 0;
-
-    }
-
-
-    if(necesidad.higiene < 0){
-
-        necesidad.higiene = 0;
-
-    }
-
-
-    if(necesidad.diversion < 0){
-
-        necesidad.diversion = 0;
-
-    }
+    necesidad.diversion -= 1 * ciclo;
 
 
 
 
+    limitar(necesidad);
 
-    // Estrés automático
+
 
 
     if(
@@ -178,25 +159,18 @@ function actualizarNecesidades(habitante_id){
         necesidad.energia < 30
     ){
 
-        necesidad.estres += 10;
-
-    }
-
-
-
-    if(necesidad.estres > 100){
-
-        necesidad.estres = 100;
+        necesidad.estres += 5;
 
     }
 
 
 
 
+    limitar(necesidad);
 
-    actualizarEstado(
-        necesidad
-    );
+
+
+    actualizarEstado(necesidad);
 
 
 
@@ -204,6 +178,54 @@ function actualizarNecesidades(habitante_id){
 
 
 }
+
+
+
+
+
+
+
+// =================================
+// LIMITAR VALORES
+// =================================
+
+function limitar(necesidad){
+
+
+    const valores = [
+
+        "hambre",
+        "energia",
+        "higiene",
+        "diversion",
+        "estres"
+
+    ];
+
+
+
+    valores.forEach(v=>{
+
+
+        if(necesidad[v] > 100){
+
+            necesidad[v]=100;
+
+        }
+
+
+        if(necesidad[v] < 0){
+
+            necesidad[v]=0;
+
+        }
+
+
+    });
+
+
+}
+
 
 
 
@@ -224,40 +246,41 @@ function actualizarEstado(necesidad){
         necesidad.energia +
         necesidad.higiene +
         necesidad.diversion
+
     ) / 4;
 
 
 
 
-    if(promedio >= 80){
+    if(promedio >=80){
 
-        necesidad.estado = "feliz";
-
-    }
-
-    else if(promedio >= 50){
-
-        necesidad.estado = "normal";
+        necesidad.estado="feliz";
 
     }
 
-    else if(promedio >= 25){
+    else if(promedio >=50){
 
-        necesidad.estado = "preocupado";
+        necesidad.estado="normal";
+
+    }
+
+    else if(promedio >=25){
+
+        necesidad.estado="preocupado";
 
     }
 
     else{
 
-        necesidad.estado = "critico";
+        necesidad.estado="critico";
 
     }
 
 
     return necesidad;
 
-
 }
+
 
 
 
@@ -290,32 +313,43 @@ function satisfacerNecesidad(
 
 
 
-    if(tipo === "comida"){
+    switch(tipo){
 
-        necesidad.hambre = 100;
+
+        case "comida":
+
+            necesidad.hambre=100;
+
+        break;
+
+
+
+        case "dormir":
+
+            necesidad.energia=100;
+
+        break;
+
+
+
+        case "baño":
+
+            necesidad.higiene=100;
+
+        break;
+
+
+
+        case "diversion":
+
+            necesidad.diversion=100;
+
+        break;
+
 
     }
 
 
-    if(tipo === "dormir"){
-
-        necesidad.energia = 100;
-
-    }
-
-
-    if(tipo === "baño"){
-
-        necesidad.higiene = 100;
-
-    }
-
-
-    if(tipo === "diversion"){
-
-        necesidad.diversion = 100;
-
-    }
 
 
 
@@ -325,7 +359,7 @@ function satisfacerNecesidad(
 
         "necesidad",
 
-        "Satisfizo una necesidad: " + tipo,
+        "Satisfizo la necesidad de " + tipo,
 
         "baja"
 
@@ -333,9 +367,8 @@ function satisfacerNecesidad(
 
 
 
-    actualizarEstado(
-        necesidad
-    );
+
+    actualizarEstado(necesidad);
 
 
 
@@ -349,7 +382,7 @@ function satisfacerNecesidad(
 
 
 
-module.exports = {
+module.exports={
 
 
     obtenerNecesidades,
