@@ -1,20 +1,38 @@
 // Sistema de crecimiento de habitantes - Village Soul
 
-const cargarArchivo = require("./cargador_datos.js");
-const crearEvento = require("./eventos.js");
-const crearMemoria = require("./memorias.js");
+
+const cargarArchivo =
+require("./cargador_datos.js");
+
+
+const crearEvento =
+require("./eventos.js");
+
+
+const crearMemoria =
+require("./memorias.js");
+
+
 
 const {
     actualizarEtapa
-} = require("./etapas.js");
+}
+=
+require("./etapas.js");
+
 
 
 
 // =================================
-// CONFIGURACIÓN DE TIEMPO
+// CONFIGURACIÓN DE VIDA
 // =================================
+
+
+// 20 días Minecraft = 1 año Village Soul
 
 const DIAS_MINECRAFT_POR_AÑO = 20;
+
+
 
 
 
@@ -26,12 +44,15 @@ const DIAS_MINECRAFT_POR_AÑO = 20;
 function actualizarCrecimiento(){
 
 
+
     const almas =
     cargarArchivo("../datos/almas.json");
 
 
+
     const tiempoDatos =
     cargarArchivo("../datos/tiempo.json");
+
 
 
 
@@ -50,14 +71,15 @@ function actualizarCrecimiento(){
 
 
 
-    const ciclo =
-    tiempoDatos.tiempo.ciclo_vida;
+
+    const tiempo =
+    tiempoDatos.tiempo;
 
 
 
 
     if(
-        !ciclo.crecimiento_habitantes
+        !tiempo.ciclo_vida.crecimiento_habitantes
     ){
 
         return null;
@@ -86,7 +108,6 @@ function actualizarCrecimiento(){
 
 
 
-
             if(
                 habitante.contador_vida === undefined
             ){
@@ -101,13 +122,24 @@ function actualizarCrecimiento(){
 
 
 
-            habitante.contador_vida++;
+            // Solo aumenta si comienza un nuevo día Minecraft
+
+
+            if(
+                tiempo.nuevo_dia_minecraft === true
+            ){
+
+
+                habitante.contador_vida++;
+
+            }
 
 
 
 
 
 
+            // Cumpleaños
 
 
             if(
@@ -119,7 +151,8 @@ function actualizarCrecimiento(){
 
                 habitante.edad++;
 
-                habitante.contador_vida=0;
+                habitante.contador_vida = 0;
+
 
 
 
@@ -136,11 +169,13 @@ function actualizarCrecimiento(){
 
                     {
 
-                        edad:
-                        habitante.edad,
-
                         nombre:
-                        habitante.nombre
+                        habitante.nombre,
+
+
+                        edad:
+                        habitante.edad
+
 
                     }
 
@@ -159,7 +194,7 @@ function actualizarCrecimiento(){
 
                     "crecimiento",
 
-                    "Ahora tiene " +
+                    "Cumplió " +
                     habitante.edad +
                     " años.",
 
@@ -183,10 +218,11 @@ function actualizarCrecimiento(){
 
 
 
+
                 console.log(
 
                     habitante.nombre +
-                    " cumplió " +
+                    " ahora tiene " +
                     habitante.edad +
                     " años."
 
@@ -198,11 +234,10 @@ function actualizarCrecimiento(){
 
 
 
-
-
         }
 
     );
+
 
 
 
@@ -217,8 +252,10 @@ function actualizarCrecimiento(){
 
 
 
-module.exports={
+module.exports = {
+
 
     actualizarCrecimiento
+
 
 };
