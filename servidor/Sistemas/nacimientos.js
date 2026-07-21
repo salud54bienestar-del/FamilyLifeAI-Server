@@ -16,9 +16,11 @@ const {
 
 
 
+
 // =================================
-// CREAR NACIMIENTO
+// REGISTRAR NACIMIENTO
 // =================================
+
 
 function registrarNacimiento(
     embarazo_id,
@@ -32,10 +34,15 @@ function registrarNacimiento(
 
 
 
-    if(!embarazos){
+    const tiempo =
+    cargarArchivo("../datos/tiempo.json");
+
+
+
+    if(!embarazos || !tiempo){
 
         console.log(
-            "No se pudieron cargar embarazos."
+            "No se pudieron cargar datos."
         );
 
         return null;
@@ -45,13 +52,14 @@ function registrarNacimiento(
 
 
 
-    const embarazo =
 
+    const embarazo =
     embarazos.embarazos.find(
 
-        e => e.id === embarazo_id
+        e=>e.id===embarazo_id
 
     );
+
 
 
 
@@ -69,12 +77,14 @@ function registrarNacimiento(
 
 
 
+
+
     if(
         embarazo.estado === "finalizado"
     ){
 
         console.log(
-            "Este embarazo ya terminó."
+            "El nacimiento ya fue registrado."
         );
 
         return null;
@@ -86,15 +96,20 @@ function registrarNacimiento(
 
 
 
-    // ==============================
-    // CREAR NUEVA ALMA
-    // ==============================
+
+    // =============================
+    // CREAR BEBÉ
+    // =============================
 
 
-    const bebe = crearAlma({
+
+    const bebe =
+    crearAlma({
 
         nombre:
-        datosBebe.nombre ||
+
+        datosBebe.nombre
+        ||
         "Bebé Village Soul",
 
 
@@ -103,13 +118,17 @@ function registrarNacimiento(
 
 
 
-        personalidad_id:
-        null,
+        etapa:
+
+        "bebe",
 
 
 
-        tipo:
-        "habitante",
+        personalidad_id:null,
+
+
+
+        tipo:"habitante",
 
 
 
@@ -119,7 +138,7 @@ function registrarNacimiento(
 
             "aprender",
 
-            "conocer el mundo"
+            "formar personalidad"
 
         ],
 
@@ -129,13 +148,26 @@ function registrarNacimiento(
 
             nombre:"bebé",
 
+            categoria:"infancia",
+
             nivel:0,
 
             experiencia:0,
 
             estado:"inactivo"
 
-        }
+        },
+
+
+
+        padres:[
+
+            embarazo.madre,
+
+            embarazo.padre
+
+        ]
+
 
 
     });
@@ -157,9 +189,10 @@ function registrarNacimiento(
 
 
 
-    // ==============================
-    // AGREGAR A FAMILIA
-    // ==============================
+    // =============================
+    // FAMILIA
+    // =============================
+
 
 
     if(familia_id){
@@ -183,17 +216,20 @@ function registrarNacimiento(
 
 
 
-    // ==============================
-    // FINALIZAR EMBARAZO
-    // ==============================
+
+    // =============================
+    // ACTUALIZAR EMBARAZO
+    // =============================
 
 
     embarazo.estado =
     "finalizado";
 
 
+
     embarazo.estado_final =
     "nacimiento";
+
 
 
     embarazo.bebe_id =
@@ -201,8 +237,27 @@ function registrarNacimiento(
 
 
 
+    embarazo.fecha_nacimiento =
+    {
+
+        dia:
+        tiempo.tiempo.dia,
+
+        hora:
+        tiempo.tiempo.hora
+
+    };
 
 
+
+
+
+
+
+
+    // =============================
+    // EVENTO MUNDO
+    // =============================
 
 
 
@@ -238,13 +293,21 @@ function registrarNacimiento(
 
 
 
+
+    // =============================
+    // MEMORIAS
+    // =============================
+
+
+
     crearMemoria(
 
         embarazo.madre,
 
         "nacimiento",
 
-        "Tuvo un bebé llamado " + bebe.nombre,
+        "Nació su bebé: "
+        + bebe.nombre,
 
         "alta",
 
@@ -268,7 +331,8 @@ function registrarNacimiento(
 
         "nacimiento",
 
-        "Su hijo nació: " + bebe.nombre,
+        "Su hijo nació: "
+        + bebe.nombre,
 
         "alta",
 
@@ -306,8 +370,9 @@ function registrarNacimiento(
 
 
 
+
     console.log(
-        "Nacimiento registrado:"
+        "Nuevo nacimiento:"
     );
 
 
@@ -325,12 +390,8 @@ function registrarNacimiento(
 
 
 
-
-
 module.exports={
 
-
     registrarNacimiento
-
 
 };
