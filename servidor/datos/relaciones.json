@@ -7,13 +7,13 @@
 
       "habitante_b": 2,
 
-      "tipo": "amistad",
+      "tipo": "desconocidos",
 
-      "nivel": "amigos",
+      "nivel": "nuevo",
 
-      "confianza": 50,
+      "confianza": 0,
 
-      "afinidad": 60,
+      "afinidad": 50,
 
       "romance": 0,
 
@@ -33,7 +33,13 @@
         "motivo_bloqueo": null
       },
 
-      "eventos_importantes": []
+      "eventos_importantes": [
+        {
+          "evento": "primer_encuentro",
+          "fecha": null,
+          "impacto": "moderado"
+        }
+      ]
     }
   ]
 }
