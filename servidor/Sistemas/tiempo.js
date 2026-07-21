@@ -1,30 +1,11 @@
-// Actualización diaria de vida de habitantes
-
-const cargarArchivo = require("./cargador_datos.js");
-const obtenerLugarTrabajo = require("./profesiones.js").obtenerLugarTrabajo;
-
-const {
-    avanzarEmbarazos
-} = require("./embarazo.js");
-
-
+// Actualización de vida de habitantes con tiempo Minecraft
 
 function actualizarVidaHabitantes() {
 
 
-    console.log(
-        "================================="
-    );
-
-    console.log(
-        " ACTUALIZANDO VIDA HABITANTES "
-    );
-
-    console.log(
-        "================================="
-    );
-
-
+    console.log("=================================");
+    console.log(" ACTUALIZANDO VIDA HABITANTES ");
+    console.log("=================================");
 
 
 
@@ -33,21 +14,69 @@ function actualizarVidaHabitantes() {
 
 
 
-    const tiempo =
+    const tiempoDatos =
     cargarArchivo("../datos/tiempo.json");
 
 
 
-    if(
-        !almas ||
-        !tiempo
-    ){
+    if(!almas || !tiempoDatos){
+
 
         console.log(
-            "No se pudieron cargar los datos."
+            "No se pudieron cargar datos de vida."
         );
 
-        return null;
+
+        return;
+
+    }
+
+
+
+    const tiempo =
+    tiempoDatos.tiempo;
+
+
+
+    /*
+    Minecraft:
+    
+    1 día completo = 20 minutos
+    
+    0-5  amanecer
+    5-15 día
+    15-18 atardecer
+    18-20 noche
+
+    */
+
+
+
+    let periodo;
+
+
+
+    if(tiempo.minuto < 5){
+
+        periodo = "amanecer";
+
+    }
+
+    else if(tiempo.minuto < 15){
+
+        periodo = "dia";
+
+    }
+
+    else if(tiempo.minuto < 18){
+
+        periodo = "atardecer";
+
+    }
+
+    else{
+
+        periodo = "noche";
 
     }
 
@@ -55,126 +84,222 @@ function actualizarVidaHabitantes() {
 
 
 
+    console.log(
+        "Periodo Minecraft:",
+        periodo
+    );
 
-    almas.almas.forEach(
 
-        habitante => {
+
+
+
+    almas.almas.forEach((habitante)=>{
+
+
+
+        if(
+            habitante.estado !== "viviendo"
+        ){
+
+            return;
+
+        }
+
+
+
+
+
+        const profesion =
+        habitante.profesion;
+
+
+
+        if(!profesion){
+
+            return;
+
+        }
+
+
+
+
+
+        const lugarTrabajo =
+        obtenerLugarTrabajo(
+            habitante.id
+        );
+
+
+
+
+
+
+        // =========================
+        // HORARIO DE TRABAJO
+        // =========================
+
+
+        if(
+            periodo === "dia"
+            &&
+            lugarTrabajo
+        ){
+
+
+
+            console.log(
+
+                habitante.nombre +
+                " está trabajando en " +
+                lugarTrabajo.nombre
+
+            );
+
+
+
+
+            profesion.experiencia += 1;
+
+
+
+
+            crearMemoria(
+
+                habitante.id,
+
+                "trabajo",
+
+                "Trabajó como " +
+                profesion.nombre,
+
+                "media"
+
+            );
+
+
 
 
 
             if(
-                habitante.estado !== "viviendo"
-            ){
-
-                return;
-
-            }
-
-
-
-
-
-
-            // ==========================
-            // PROFESIONES
-            // ==========================
-
-
-            if(
-                habitante.profesion
+                profesion.experiencia >= 100
             ){
 
 
-                const trabajo =
-                obtenerLugarTrabajo(
-                    habitante.profesion.nombre
+                profesion.nivel++;
+
+
+                profesion.experiencia = 0;
+
+
+
+                crearEvento(
+
+                    "subida_nivel_profesion",
+
+                    [
+                        habitante.id
+                    ],
+
+                    {
+
+                        profesion:
+                        profesion.nombre,
+
+                        nivel:
+                        profesion.nivel
+
+                    }
+
                 );
 
 
-
-                if(trabajo){
-
-
-                    console.log(
-
-                        habitante.nombre +
-
-                        " trabaja en " +
-
-                        trabajo.nombre
-
-                    );
-
-
-
-                    // Futuro:
-                    // ganar experiencia
-                    // realizar tareas
-                    // recibir salario
-                    // relacionarse con compañeros
-
-
-                }
-
-
             }
-
-
-
-
-
-
-            // ==========================
-            // NECESIDADES
-            // ==========================
-
-
-            // Futuro:
-            // hambre
-            // energía
-            // diversión
-            // relaciones
-            // emociones
-
-
 
 
 
         }
 
-    );
+
+
+
+
+        // =========================
+        // DESCANSO
+        // =========================
+
+
+        if(
+            periodo === "noche"
+        ){
+
+
+
+            console.log(
+
+                habitante.nombre +
+                " está descansando."
+
+            );
+
+
+
+            if(
+                habitante.emociones
+            ){
+
+
+                habitante.emociones.calma += 1;
+
+
+                if(
+                    habitante.emociones.calma > 100
+                ){
+
+                    habitante.emociones.calma = 100;
+
+                }
+
+            }
+
+
+
+        }
 
 
 
 
 
-    // ==========================
-    // EMBARAZOS
-    // ==========================
+
+        // =========================
+        // NECESIDADES FUTURAS
+        // =========================
 
 
-    avanzarEmbarazos();
+        /*
+        
+        Próximas conexiones:
+
+        - hambre
+        - energía
+        - embarazo
+        - cumpleaños
+        - relaciones
+        - hijos
+        - envejecimiento opcional
+        - eventos
+        
+        */
 
 
+
+    });
 
 
 
 
     console.log(
-
-        "Día Village Soul:",
-
-        tiempo.tiempo.dia_mundo
-
+        "Vida actualizada correctamente."
     );
 
 
-
 }
-
-
-
-
-
-
-module.exports = actualizarVidaHabitantes;
