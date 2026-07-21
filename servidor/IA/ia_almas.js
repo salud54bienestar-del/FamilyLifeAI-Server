@@ -12,6 +12,7 @@ function pensarAlma(habitante_id) {
     const objetivos = cargarArchivo("../datos/objetivos.json");
     const relaciones = cargarArchivo("../datos/relaciones.json");
     const familias = cargarArchivo("../datos/familias.json");
+    const personalidades = cargarArchivo("../datos/personalidades.json");
 
 
     if (
@@ -19,7 +20,8 @@ function pensarAlma(habitante_id) {
         !emociones ||
         !objetivos ||
         !relaciones ||
-        !familias
+        !familias ||
+        !personalidades
     ) {
 
         console.log("No se pudieron cargar los datos de la IA.");
@@ -47,13 +49,31 @@ function pensarAlma(habitante_id) {
 
 
 
+    const personalidad = personalidades.personalidades.find(
+        p => p.id === alma.personalidad_id
+    );
+
+
+
+    if (personalidad) {
+
+        console.log("Personalidad:", personalidad.nombre);
+
+    } else {
+
+        console.log("Personalidad no encontrada.");
+
+    }
+
+
+
     const emocionActual = emociones.emociones.find(
         e => e.habitante_id === habitante_id
     );
 
 
 
-    const objetivoActual = alma.objetivos[0] || "explorar el mundo";
+    const objetivoActual = alma.objetivos?.[0] || "explorar el mundo";
 
 
 
@@ -76,7 +96,15 @@ function pensarAlma(habitante_id) {
 
 
         objetivo:
-            objetivoActual
+            objetivoActual,
+
+
+        personalidad:
+            personalidad?.nombre || "desconocida",
+
+
+        rasgos:
+            personalidad?.rasgos || []
 
     };
 
@@ -96,6 +124,8 @@ function pensarAlma(habitante_id) {
         nombre: alma.nombre,
 
         estado: "pensando",
+
+        personalidad: personalidad,
 
         contexto: contexto,
 
