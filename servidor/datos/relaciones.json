@@ -4,7 +4,6 @@
       "id": 1,
 
       "habitante_a": 1,
-
       "habitante_b": 2,
 
       "tipo": "desconocidos",
@@ -15,23 +14,40 @@
 
       "afinidad": 50,
 
+      "respeto": 50,
+
+      "amistad": 0,
+
       "romance": 0,
+
+      "compromiso": 0,
 
       "estado_pareja": "ninguno",
 
-      "historial": [
-        "Primer encuentro"
-      ],
+      "fecha_inicio": null,
+
+      "fecha_matrimonio": null,
+
+      "conviven": false,
 
       "familia": {
         "parentesco": false,
         "tipo": null
       },
 
+      "adopcion": {
+        "pueden_adoptar": false,
+        "solicitud": "ninguna"
+      },
+
       "limites": {
         "relacion_permitida": true,
         "motivo_bloqueo": null
       },
+
+      "historial": [
+        "Primer encuentro"
+      ],
 
       "eventos_importantes": [
         {
