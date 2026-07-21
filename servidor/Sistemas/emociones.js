@@ -1,141 +1,290 @@
-// Sistema emocional de Village Soul
+// Sistema emocional avanzado de Village Soul
 
 const cargarArchivo = require("./cargador_datos.js");
 const crearMemoria = require("./memorias.js");
 
 
+
+
+// =================================
+// OBTENER EMOCIONES
+// =================================
+
+function obtenerEmocion(habitante_id){
+
+
+    const datos =
+    cargarArchivo("../datos/emociones.json");
+
+
+
+    if(!datos){
+
+        console.log(
+            "No se pudieron cargar las emociones."
+        );
+
+        return null;
+
+    }
+
+
+
+    return datos.emociones.find(
+
+        e => e.habitante_id === habitante_id
+
+    ) || null;
+
+
+}
+
+
+
+
+
+
+// =================================
+// CAMBIAR EMOCIÓN
+// =================================
+
 function cambiarEmocion(
     habitante_id,
     emocion,
     cantidad,
-    motivo = "evento"
-) {
-
-    const datos = cargarArchivo("../datos/emociones.json");
+    motivo="evento"
+){
 
 
-    if (!datos) {
-
-        console.log("No se pudieron cargar las emociones.");
-
-        return null;
-
-    }
-
-
-    const estado = datos.emociones.find(
-        (e) => e.habitante_id === habitante_id
+    const estado =
+    obtenerEmocion(
+        habitante_id
     );
 
 
-    if (!estado) {
 
-        console.log("Habitante emocional no encontrado.");
+    if(!estado){
+
+        console.log(
+            "Estado emocional no encontrado."
+        );
 
         return null;
 
     }
 
 
-    if (estado[emocion] !== undefined) {
+
+
+    // Emociones principales
+
+    if(
+        estado[emocion] !== undefined
+    ){
 
         estado[emocion] += cantidad;
 
     }
 
-    else if (
-        estado.emociones_secundarias &&
-        estado.emociones_secundarias[emocion] !== undefined
-    ) {
+
+
+    // Emociones secundarias
+
+    else {
+
+
+        if(
+            !estado.emociones_secundarias
+        ){
+
+            estado.emociones_secundarias = {};
+
+        }
+
+
+
+        if(
+            estado.emociones_secundarias[emocion] === undefined
+        ){
+
+            estado.emociones_secundarias[emocion] = 0;
+
+        }
+
+
 
         estado.emociones_secundarias[emocion] += cantidad;
+
 
     }
 
 
-    limitarValores(estado);
+
+
+    limitarValores(
+        estado
+    );
+
 
 
     estado.ultima_emocion_importante = {
 
-        evento: motivo,
 
-        fecha: new Date().toISOString()
+        evento:
+        motivo,
+
+
+        fecha:
+        new Date().toISOString()
+
 
     };
 
 
-    actualizarEstadoActual(estado);
 
-
-    crearMemoria(
-        habitante_id,
-        "emocion",
-        "Su emoción cambió por: " + motivo,
-        "media",
-        [],
-        emocion
+    actualizarEstadoActual(
+        estado
     );
 
 
-    console.log("Emoción actualizada:");
 
-    console.log(estado);
+    crearMemoria(
+
+        habitante_id,
+
+        "emocion",
+
+        "Cambió su estado emocional por: " + motivo,
+
+        "media",
+
+        [],
+
+        emocion
+
+    );
+
 
 
     return estado;
 
+
 }
 
 
 
 
-function limitarValores(estado) {
 
 
-    Object.keys(estado).forEach((clave) => {
 
-        if (typeof estado[clave] === "number") {
+// =================================
+// LIMITAR VALORES
+// =================================
 
-            if (estado[clave] > 100) {
+function limitarValores(estado){
 
-                estado[clave] = 100;
+
+
+    const emocionesPrincipales = [
+
+        "felicidad",
+
+        "confianza",
+
+        "miedo",
+
+        "tristeza",
+
+        "ira",
+
+        "calma"
+
+    ];
+
+
+
+
+    emocionesPrincipales.forEach(
+
+        emocion => {
+
+
+            if(
+                estado[emocion] !== undefined
+            ){
+
+
+                if(
+                    estado[emocion] > 100
+                ){
+
+                    estado[emocion] = 100;
+
+                }
+
+
+
+                if(
+                    estado[emocion] < 0
+                ){
+
+                    estado[emocion] = 0;
+
+                }
+
 
             }
 
-
-            if (estado[clave] < 0) {
-
-                estado[clave] = 0;
-
-            }
 
         }
 
-    });
+    );
 
 
 
-    if (estado.emociones_secundarias) {
 
-        Object.keys(estado.emociones_secundarias).forEach((clave) => {
 
-            if (estado.emociones_secundarias[clave] > 100) {
 
-                estado.emociones_secundarias[clave] = 100;
+    if(
+        estado.emociones_secundarias
+    ){
+
+
+        Object.keys(
+            estado.emociones_secundarias
+        )
+        .forEach(
+
+            emocion => {
+
+
+                if(
+                    estado.emociones_secundarias[emocion] > 100
+                ){
+
+                    estado.emociones_secundarias[emocion] = 100;
+
+                }
+
+
+
+                if(
+                    estado.emociones_secundarias[emocion] < 0
+                ){
+
+                    estado.emociones_secundarias[emocion] = 0;
+
+                }
+
 
             }
 
+        );
 
-            if (estado.emociones_secundarias[clave] < 0) {
-
-                estado.emociones_secundarias[clave] = 0;
-
-            }
-
-        });
 
     }
+
+
 
 }
 
@@ -143,219 +292,349 @@ function limitarValores(estado) {
 
 
 
-function actualizarEstadoActual(estado) {
 
 
-    if (estado.tristeza > 60) {
 
-        estado.estado_actual = "triste";
+// =================================
+// ACTUALIZAR ESTADO GENERAL
+// =================================
 
-    }
+function actualizarEstadoActual(
+    estado
+){
 
-    else if (estado.miedo > 60) {
 
-        estado.estado_actual = "asustado";
 
-    }
+    const secundarias =
+    estado.emociones_secundarias || {};
 
-    else if (estado.ira > 60) {
 
-        estado.estado_actual = "enojado";
 
-    }
 
-    else if (estado.felicidad > 70) {
 
-        estado.estado_actual = "feliz";
+    if(
+        estado.tristeza > 60
+    ){
 
-    }
-
-    else if (estado.calma > 70) {
-
-        estado.estado_actual = "tranquila";
+        estado.estado_actual =
+        "triste";
 
     }
 
-    else {
 
-        estado.estado_actual = "neutral";
+
+    else if(
+        estado.miedo > 60
+    ){
+
+        estado.estado_actual =
+        "asustado";
 
     }
+
+
+
+    else if(
+        estado.ira > 60
+    ){
+
+        estado.estado_actual =
+        "enojado";
+
+    }
+
+
+
+    else if(
+        secundarias.soledad > 60
+    ){
+
+        estado.estado_actual =
+        "solo";
+
+    }
+
+
+
+    else if(
+        estado.felicidad > 70
+    ){
+
+        estado.estado_actual =
+        "feliz";
+
+    }
+
+
+
+    else if(
+        estado.calma > 70
+    ){
+
+        estado.estado_actual =
+        "tranquilo";
+
+    }
+
+
+
+    else{
+
+        estado.estado_actual =
+        "neutral";
+
+    }
+
+
 
 }
 
 
 
 
+
+
+
+
+// =================================
+// NECESIDADES → EMOCIONES
+// =================================
+
+function actualizarEmocionesPorNecesidades(
+    habitante_id,
+    necesidades
+){
+
+
+
+    if(!necesidades){
+
+        return null;
+
+    }
+
+
+
+
+    if(
+        necesidades.hambre < 30
+    ){
+
+        cambiarEmocion(
+
+            habitante_id,
+
+            "tristeza",
+
+            5,
+
+            "hambre"
+
+        );
+
+    }
+
+
+
+
+
+    if(
+        necesidades.energia < 30
+    ){
+
+        cambiarEmocion(
+
+            habitante_id,
+
+            "estres",
+
+            5,
+
+            "cansancio"
+
+        );
+
+    }
+
+
+
+
+
+    if(
+        necesidades.diversion < 30
+    ){
+
+        cambiarEmocion(
+
+            habitante_id,
+
+            "aburrimiento",
+
+            5,
+
+            "falta de diversión"
+
+        );
+
+    }
+
+
+
+}
+
+
+
+
+
+
+
+
+// =================================
+// EVENTOS IMPORTANTES
+// =================================
 
 function aplicarEventoEmocional(
     habitante_id,
     evento
-) {
-
-
-    switch(evento) {
-
-
-        case "primer_encuentro":
-
-            cambiarEmocion(
-                habitante_id,
-                "felicidad",
-                5,
-                "primer encuentro"
-            );
-
-            cambiarEmocion(
-                habitante_id,
-                "confianza",
-                5,
-                "primer encuentro"
-            );
-
-        break;
+){
 
 
 
-        case "amistad":
+    const eventos = {
 
-            cambiarEmocion(
-                habitante_id,
-                "felicidad",
-                10,
-                "amistad"
-            );
 
-            cambiarEmocion(
-                habitante_id,
-                "confianza",
-                10,
-                "amistad"
-            );
+        primer_encuentro: [
 
-        break;
+            ["felicidad",5],
+
+            ["confianza",5]
+
+        ],
 
 
 
-        case "nacimiento":
+        amistad:[
 
-            cambiarEmocion(
-                habitante_id,
-                "felicidad",
-                20,
-                "nacimiento"
-            );
+            ["felicidad",10],
 
-            cambiarEmocion(
-                habitante_id,
-                "amor",
-                20,
-                "nacimiento"
-            );
+            ["confianza",10]
 
-            cambiarEmocion(
-                habitante_id,
-                "orgullo",
-                10,
-                "nacimiento"
-            );
-
-        break;
+        ],
 
 
 
-        case "boda":
+        nacimiento:[
 
-            cambiarEmocion(
-                habitante_id,
-                "felicidad",
-                20,
-                "boda"
-            );
+            ["felicidad",20],
 
-            cambiarEmocion(
-                habitante_id,
-                "amor",
-                20,
-                "boda"
-            );
+            ["amor",20],
 
-        break;
+            ["orgullo",10]
+
+        ],
 
 
 
-        case "divorcio":
+        boda:[
 
-            cambiarEmocion(
-                habitante_id,
-                "tristeza",
-                20,
-                "divorcio"
-            );
+            ["felicidad",20],
 
-            cambiarEmocion(
-                habitante_id,
-                "soledad",
-                10,
-                "divorcio"
-            );
+            ["amor",20]
 
-        break;
+        ],
 
 
 
-        case "conflicto":
+        divorcio:[
 
-            cambiarEmocion(
-                habitante_id,
-                "tristeza",
-                15,
-                "conflicto"
-            );
+            ["tristeza",20],
 
-            cambiarEmocion(
-                habitante_id,
-                "ira",
-                10,
-                "conflicto"
-            );
+            ["soledad",10]
 
-        break;
+        ],
 
 
 
-        case "familia":
+        conflicto:[
 
-            cambiarEmocion(
-                habitante_id,
-                "confianza",
-                15,
-                "familia"
-            );
+            ["tristeza",15],
 
-        break;
+            ["ira",10]
+
+        ],
 
 
 
-        default:
+        familia:[
 
-            console.log(
-                "Evento emocional sin efecto definido: " + evento
-            );
+            ["confianza",15]
 
-        break;
+        ]
+
+    };
+
+
+
+
+
+    const cambios =
+    eventos[evento];
+
+
+
+    if(!cambios){
+
+        return null;
 
     }
 
+
+
+
+
+    cambios.forEach(
+
+        cambio => {
+
+
+            cambiarEmocion(
+
+                habitante_id,
+
+                cambio[0],
+
+                cambio[1],
+
+                evento
+
+            );
+
+
+        }
+
+    );
+
+
+
 }
+
+
+
+
 
 
 
 
 module.exports = {
 
+
+    obtenerEmocion,
+
     cambiarEmocion,
 
+    actualizarEmocionesPorNecesidades,
+
     aplicarEventoEmocional
+
 
 };
