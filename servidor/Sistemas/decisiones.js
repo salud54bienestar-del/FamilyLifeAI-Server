@@ -11,20 +11,20 @@ require("./eventos.js");
 
 
 
-
-
 // =================================
 // PROCESAR DECISIÓN
 // =================================
 
+
 function procesarDecision(
-habitante_id,
-contexto={}
+    habitante_id,
+    contexto={}
 ){
 
 
 
     const decision =
+
     analizarContexto(
         contexto
     );
@@ -36,6 +36,7 @@ contexto={}
         return null;
 
     }
+
 
 
 
@@ -58,14 +59,23 @@ contexto={}
         habitante_id,
 
 
-        decision:decision.accion,
+        accion:
+        decision.accion,
 
 
-        motivo:decision.motivo,
+
+        motivo:
+        decision.motivo,
 
 
-        destino:decision.destino || null
 
+        prioridad:
+        decision.prioridad,
+
+
+
+        destino:
+        decision.destino || null
 
 
     };
@@ -85,9 +95,11 @@ contexto={}
 // ANALIZAR CONTEXTO
 // =================================
 
+
 function analizarContexto(
-contexto
+    contexto
 ){
+
 
 
     let opciones=[];
@@ -96,47 +108,28 @@ contexto
 
 
 
+    // ============================
+    // INTENCIÓN DEL ALMA
+    // ============================
 
 
-// ===============================
-// NECESIDADES
-// ===============================
-
-
-if(contexto.necesidades){
-
-
-    const n =
-    contexto.necesidades;
-
-
-
-    if(n.hambre <30){
-
-        opciones.push({
-
-            accion:"buscar_comida",
-
-            motivo:"Tiene hambre",
-
-            prioridad:100
-
-        });
-
-    }
-
-
-
-    if(n.energia <25){
+    if(contexto.intencion){
 
 
         opciones.push({
 
-            accion:"dormir",
 
-            motivo:"Necesita descansar",
+            accion:
+            contexto.intencion.accion,
 
-            prioridad:100
+
+            motivo:
+            contexto.intencion.motivo,
+
+
+            prioridad:
+            contexto.intencion.urgencia || 50
+
 
         });
 
@@ -145,75 +138,165 @@ if(contexto.necesidades){
 
 
 
-    if(n.social <30){
-
-
-        opciones.push({
-
-            accion:"socializar",
-
-            motivo:"Necesita compañía",
-
-            prioridad:60
-
-        });
-
-
-    }
-
-
-}
 
 
 
 
+    // ============================
+    // NECESIDADES
+    // ============================
+
+
+    if(contexto.necesidades){
 
 
 
-
-
-// ===============================
-// RUTINA
-// ===============================
-
-
-if(contexto.rutina){
-
-
-    switch(
-        contexto.rutina.actividad_actual
-    ){
+        const n =
+        contexto.necesidades;
 
 
 
-        case "trabajar":
+        if(n.hambre <30){
 
 
             opciones.push({
 
-                accion:"ir_al_trabajo",
+                accion:"buscar_comida",
 
-                motivo:"Horario laboral",
+                motivo:"Tiene hambre",
 
-                destino:"trabajo",
+                prioridad:100
 
-                prioridad:90
 
             });
 
 
-        break;
+        }
 
 
 
-        case "familia":
+
+
+        if(n.energia <25){
 
 
             opciones.push({
 
-                accion:"visitar_familia",
+                accion:"dormir",
 
-                motivo:"Tiempo familiar",
+                motivo:"Necesita descansar",
+
+                destino:"hogar",
+
+                prioridad:100
+
+
+            });
+
+
+        }
+
+
+
+
+
+        if(n.social <30){
+
+
+            opciones.push({
+
+                accion:"socializar",
+
+                motivo:"Necesita compañía",
+
+                prioridad:60
+
+
+            });
+
+
+        }
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+    // ============================
+    // PROFESIÓN
+    // ============================
+
+
+    if(contexto.profesion &&
+       contexto.profesion !== "ninguna"){
+
+
+
+        opciones.push({
+
+
+            accion:
+
+            obtenerAccionProfesion(
+
+                contexto.profesion
+
+            ),
+
+
+
+            motivo:
+
+            "Debe cumplir su trabajo",
+
+
+
+            destino:"trabajo",
+
+
+
+            prioridad:70
+
+
+        });
+
+
+    }
+
+
+
+
+
+
+
+
+
+    // ============================
+    // EMOCIONES
+    // ============================
+
+
+    switch(
+        contexto.emocion
+    ){
+
+
+
+        case "tristeza":
+
+
+            opciones.push({
+
+                accion:"buscar_apoyo",
+
+                motivo:"Busca apoyo emocional",
 
                 prioridad:70
 
@@ -224,18 +307,40 @@ if(contexto.rutina){
 
 
 
-        case "dormir":
+
+
+
+        case "miedo":
 
 
             opciones.push({
 
-                accion:"ir_a_casa",
+                accion:"buscar_refugio",
 
-                motivo:"Hora de dormir",
+                motivo:"Busca seguridad",
 
-                destino:"hogar",
+                prioridad:100
 
-                prioridad:90
+            });
+
+
+        break;
+
+
+
+
+
+
+        case "felicidad":
+
+
+            opciones.push({
+
+                accion:"compartir_momento",
+
+                motivo:"Quiere compartir",
+
+                prioridad:40
 
             });
 
@@ -247,7 +352,6 @@ if(contexto.rutina){
     }
 
 
-}
 
 
 
@@ -255,284 +359,161 @@ if(contexto.rutina){
 
 
 
+    // ============================
+    // PERSONALIDAD
+    // ============================
 
 
-// ===============================
-// PROFESIÓN
-// ===============================
+    switch(
+        contexto.personalidad
+    ){
 
 
-if(contexto.profesion){
 
+        case "curioso":
 
-    opciones.push({
 
-        accion:
-        obtenerAccionProfesion(
-            contexto.profesion
-        ),
+            opciones.push({
 
+                accion:"explorar",
 
-        motivo:
-        "Responsabilidad laboral",
+                motivo:"Desea descubrir",
 
+                prioridad:50
 
-        destino:"trabajo",
+            });
 
 
-        prioridad:70
+        break;
 
 
-    });
 
 
-}
 
+        case "protector":
 
 
+            opciones.push({
 
+                accion:"proteger_comunidad",
 
+                motivo:"Desea proteger",
 
+                prioridad:70
 
+            });
 
 
-// ===============================
-// EMOCIONES
-// ===============================
+        break;
 
 
-if(contexto.emocion){
 
 
 
-switch(contexto.emocion){
+        case "amable":
 
 
+            opciones.push({
 
-case "tristeza":
+                accion:"ayudar",
 
+                motivo:"Quiere ayudar",
 
-opciones.push({
+                prioridad:50
 
-    accion:"buscar_apoyo",
+            });
 
-    motivo:"Busca compañía",
 
-    prioridad:70
+        break;
 
-});
 
 
-break;
+    }
 
 
 
-case "miedo":
 
 
-opciones.push({
 
-    accion:"buscar_refugio",
 
-    motivo:"Busca seguridad",
 
-    prioridad:100
 
-});
+    // ============================
+    // FAMILIA
+    // ============================
 
 
-break;
+    if(contexto.hijos > 0){
 
 
+        opciones.push({
 
-case "felicidad":
+            accion:"cuidar_hijos",
 
+            motivo:"Cuidado familiar",
 
-opciones.push({
+            prioridad:90
 
-    accion:"compartir_momento",
 
-    motivo:"Quiere socializar",
+        });
 
-    prioridad:40
 
-});
+    }
 
 
-break;
 
 
 
-}
 
 
 
-}
 
+    // ============================
+    // SIN ACCIÓN
+    // ============================
 
 
+    if(opciones.length===0){
 
 
+        return {
 
 
+            accion:"descansar",
 
 
-// ===============================
-// PERSONALIDAD
-// ===============================
+            motivo:"No hay necesidades urgentes",
 
 
-if(contexto.personalidad){
+            prioridad:10
 
 
+        };
 
-switch(contexto.personalidad){
 
+    }
 
 
-case "curioso":
 
 
-opciones.push({
 
-accion:"explorar",
 
-motivo:"Desea descubrir",
 
-prioridad:50
 
-});
+    opciones.sort(
 
+        (a,b)=>
 
-break;
+        b.prioridad-a.prioridad
 
+    );
 
 
-case "protector":
 
 
-opciones.push({
 
-accion:"proteger_comunidad",
 
-motivo:"Protege a otros",
-
-prioridad:70
-
-});
-
-
-break;
-
-
-
-case "amable":
-
-
-opciones.push({
-
-accion:"ayudar",
-
-motivo:"Quiere ayudar",
-
-prioridad:50
-
-});
-
-
-break;
-
-
-
-}
-
-
-}
-
-
-
-
-
-
-
-
-
-// ===============================
-// FAMILIA
-// ===============================
-
-
-if(contexto.hijos){
-
-
-opciones.push({
-
-accion:"cuidar_hijos",
-
-motivo:"Responsabilidad familiar",
-
-prioridad:90
-
-});
-
-
-}
-
-
-
-
-
-
-
-
-
-
-
-// SI NO TIENE NADA QUE HACER
-
-
-if(opciones.length===0){
-
-
-return {
-
-
-accion:"descansar",
-
-motivo:"No tiene necesidades urgentes",
-
-prioridad:10
-
-
-};
-
-
-}
-
-
-
-
-
-
-
-
-// ORDENAR
-
-
-opciones.sort(
-
-(a,b)=>
-
-b.prioridad-a.prioridad
-
-);
-
-
-
-
-
-return opciones[0];
-
+    return opciones[0];
 
 
 }
@@ -551,43 +532,44 @@ return opciones[0];
 
 
 function obtenerAccionProfesion(
-profesion
+    profesion
 ){
 
 
-
-const trabajos={
-
-
-agricultor:
-"trabajar_campo",
+    const trabajos={
 
 
-herrero:
-"forjar_objetos",
+        agricultor:
+        "trabajar_campo",
 
 
-cocinero:
-"preparar_comida",
+        herrero:
+        "forjar_objetos",
 
 
-medico:
-"atender_pacientes",
+        cocinero:
+        "preparar_comida",
 
 
-maestro:
-"enseñar",
+        medico:
+        "atender_pacientes",
 
 
-guardia:
-"patrullar"
+        maestro:
+        "enseñar",
 
 
-};
+        guardia:
+        "patrullar"
+
+
+    };
 
 
 
-return trabajos[profesion] || "trabajar";
+    return trabajos[profesion]
+    ||
+    "trabajar";
 
 
 }
@@ -601,40 +583,59 @@ return trabajos[profesion] || "trabajar";
 
 
 // =================================
-// GUARDAR
+// GUARDAR DECISIÓN
 // =================================
 
 
 function guardarDecision(
-habitante_id,
-decision
+    habitante_id,
+    decision
 ){
 
 
-crearMemoria(
 
-habitante_id,
+    crearMemoria(
 
-"decision",
+        habitante_id,
 
-"Decidió: "+decision.accion+
-" porque "+decision.motivo,
+        "decision",
 
-"media"
+        "Decidió: "
 
-);
+        +
+
+        decision.accion
+
+        +
+
+        " porque "
+
+        +
+
+        decision.motivo,
+
+        "media"
+
+    );
 
 
 
-crearEvento(
 
-"decision_habitante",
 
-[habitante_id],
 
-decision
+    crearEvento(
 
-);
+        "decision_habitante",
+
+        [
+
+            habitante_id
+
+        ],
+
+        decision
+
+    );
 
 
 
@@ -650,9 +651,10 @@ decision
 module.exports={
 
 
-procesarDecision,
+    procesarDecision,
 
-analizarContexto
+
+    analizarContexto
 
 
 };
