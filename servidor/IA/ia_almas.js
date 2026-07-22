@@ -1,35 +1,66 @@
-// Inteligencia artificial de almas - Village Soul
-
-const cargarArchivo = require("../Sistemas/cargador_datos.js");
-const procesarDecision = require("../Sistemas/decisiones.js");
+// Inteligencia artificial avanzada de almas - Village Soul
 
 
-function pensarAlma(habitante_id) {
+const cargarArchivo =
+require("../sistemas/cargador_datos.js");
 
 
-    const almas = cargarArchivo("../datos/almas.json");
-    const emociones = cargarArchivo("../datos/emociones.json");
-    const objetivos = cargarArchivo("../datos/objetivos.json");
-    const relaciones = cargarArchivo("../datos/relaciones.json");
-    const familias = cargarArchivo("../datos/familias.json");
-    const personalidades = cargarArchivo("../datos/personalidades.json");
-    const lugaresTrabajo = cargarArchivo("../datos/lugares_trabajo.json");
+const {
+    procesarDecision
+}
+=
+require("../sistemas/decisiones.js");
 
 
 
-    if (
-        !almas ||
-        !emociones ||
-        !objetivos ||
-        !relaciones ||
-        !familias ||
-        !personalidades ||
-        !lugaresTrabajo
-    ) {
 
-        console.log(
-            "No se pudieron cargar los datos de la IA."
-        );
+
+const {
+    obtenerMemorias
+}
+=
+require("../sistemas/memorias.js");
+
+
+
+
+
+function pensarAlma(habitante_id){
+
+
+
+    const almas =
+    cargarArchivo("../datos/almas.json");
+
+
+    const emociones =
+    cargarArchivo("../datos/emociones.json");
+
+
+    const habilidades =
+    cargarArchivo("../datos/habilidades.json");
+
+
+    const necesidades =
+    cargarArchivo("../datos/necesidades.json");
+
+
+    const personalidades =
+    cargarArchivo("../datos/personalidades.json");
+
+
+    const relaciones =
+    cargarArchivo("../datos/relaciones.json");
+
+
+    const familias =
+    cargarArchivo("../datos/familias.json");
+
+
+
+
+
+    if(!almas){
 
         return null;
 
@@ -37,18 +68,20 @@ function pensarAlma(habitante_id) {
 
 
 
-    const alma = almas.almas.find(
-        a => a.id === habitante_id
+
+
+    const alma =
+    almas.almas.find(
+
+        a=>a.id===habitante_id
+
     );
 
 
 
-    if (!alma) {
 
-        console.log(
-            "No existe el habitante:",
-            habitante_id
-        );
+
+    if(!alma){
 
         return null;
 
@@ -56,70 +89,45 @@ function pensarAlma(habitante_id) {
 
 
 
-    console.log(
-        "Pensando alma:",
-        alma.nombre
+
+
+
+
+    // =============================
+    // DATOS INTERNOS
+    // =============================
+
+
+
+    const emocion =
+
+    emociones?.emociones.find(
+
+        e=>e.habitante_id===habitante_id
+
     );
 
 
 
-    // ==============================
-    // ALMAS ESPECIALES
-    // ==============================
 
 
-    if (alma.tipo === "guia") {
+    const necesidad =
 
+    necesidades?.necesidades.find(
 
-        return {
+        n=>n.habitante_id===habitante_id
 
-            habitante_id: alma.id,
-
-            nombre: alma.nombre,
-
-            tipo: "guia",
-
-            estado: "asistiendo",
-
-            funcion:
-            "Ayudar al jugador y explicar el mundo de Village Soul",
-
-            objetivos:
-            alma.objetivos
-
-        };
-
-    }
+    );
 
 
 
-
-
-    // ==============================
-    // PERSONALIDAD
-    // ==============================
 
 
     const personalidad =
-    personalidades.personalidades.find(
 
-        p => p.id === alma.personalidad_id
+    personalidades?.personalidades.find(
 
-    );
-
-
-
-
-
-    // ==============================
-    // EMOCIONES
-    // ==============================
-
-
-    const emocionActual =
-    emociones.emociones.find(
-
-        e => e.habitante_id === habitante_id
+        p=>p.id===alma.personalidad_id
 
     );
 
@@ -127,51 +135,27 @@ function pensarAlma(habitante_id) {
 
 
 
-    // ==============================
-    // PROFESIÓN Y TRABAJO
-    // ==============================
 
+    const memoria =
 
-    const profesionActual =
-    alma.profesion || null;
+    obtenerMemorias(
 
+        habitante_id
 
-
-    let lugarTrabajo = null;
-
-
-
-    if(profesionActual){
-
-
-        lugarTrabajo =
-        lugaresTrabajo.lugares_trabajo.find(
-
-            lugar =>
-
-            lugar.profesiones.includes(
-                profesionActual.nombre
-            )
-
-        );
-
-    }
+    );
 
 
 
 
 
-    // ==============================
-    // SISTEMA FAMILIAR
-    // ==============================
 
 
-    const familiaActual =
-    familias.familias.find(
+    const familia =
 
-        familia =>
+    familias?.familias.find(
 
-        familia.miembros.includes(
+        f=>
+        f.miembros.includes(
             habitante_id
         )
 
@@ -179,66 +163,55 @@ function pensarAlma(habitante_id) {
 
 
 
-    const tieneFamilia =
-    familiaActual ? true : false;
 
 
 
-    const tieneHijos =
-    familiaActual &&
-    familiaActual.hijos &&
-    familiaActual.hijos.length > 0;
+    // =============================
+    // ANALIZAR ESTADO
+    // =============================
 
 
 
-    let pareja = null;
+    let prioridad =
+    "vida_normal";
 
 
 
-    const relacionPareja =
-    relaciones.relaciones.find(
 
-        r =>
+    if(
+        necesidad &&
+        necesidad.hambre < 30
+    ){
 
-        (
+        prioridad =
+        "buscar_comida";
 
-            r.habitante_a === habitante_id ||
-
-            r.habitante_b === habitante_id
-
-        )
-
-        &&
-
-        (
-
-            r.estado_pareja === "casado"
-
-            ||
-
-            r.tipo === "pareja"
-
-        )
-
-    );
+    }
 
 
 
-    if(relacionPareja){
+    else if(
+
+        emocion &&
+        emocion.estado_actual==="tristeza"
+
+    ){
+
+        prioridad =
+        "buscar_apoyo";
+
+    }
 
 
-        pareja =
 
-        relacionPareja.habitante_a === habitante_id
 
-        ?
+    else if(
+        familia &&
+        familia.hijos.length>0
+    ){
 
-        relacionPareja.habitante_b
-
-        :
-
-        relacionPareja.habitante_a;
-
+        prioridad =
+        "cuidar_familia";
 
     }
 
@@ -247,28 +220,10 @@ function pensarAlma(habitante_id) {
 
 
 
-    // ==============================
-    // OBJETIVO ACTUAL
-    // ==============================
+    // =============================
+    // CONTEXTO IA
+    // =============================
 
-
-    const objetivoActual =
-
-    alma.objetivos?.[0]
-
-    ||
-
-    "explorar el mundo";
-
-
-
-
-
-
-
-    // ==============================
-    // CONTEXTO DE DECISIÓN
-    // ==============================
 
 
     const contexto = {
@@ -276,155 +231,75 @@ function pensarAlma(habitante_id) {
 
         emocion:
 
-        emocionActual?.estado_actual
-
+        emocion?.estado_actual
         ||
-
         "neutral",
-
-
-
-        emociones_secundarias:
-
-        emocionActual?.emociones_secundarias
-
-        ||
-
-        {},
-
-
-
-        estabilidad_emocional:
-
-        emocionActual?.estabilidad_emocional
-
-        ||
-
-        50,
-
-
-
-        familia:
-
-        tieneFamilia,
-
-
-
-        estado_pareja:
-
-        pareja ? "casado" : "soltero",
-
-
-
-        pareja:
-
-        pareja,
-
-
-
-        tiene_hijos:
-
-        tieneHijos,
-
-
-
-        cantidad_hijos:
-
-        familiaActual?.hijos?.length || 0,
-
-
-
-        vivienda:
-
-        familiaActual?.hogar ? true : false,
-
-
-
-        objetivo:
-
-        objetivoActual,
 
 
 
         personalidad:
 
         personalidad?.nombre
-
         ||
+        "normal",
 
-        "desconocida",
 
 
 
         rasgos:
 
         personalidad?.rasgos
-
         ||
-
         [],
 
 
 
 
-        // PROFESIONES
+        prioridad,
+
+
+
+        familia:
+
+        !!familia,
+
+
+
+        hijos:
+
+        familia?.hijos.length || 0,
+
 
 
         profesion:
 
-        profesionActual?.nombre
-
+        alma.profesion?.nombre
         ||
-
-        "sin_profesion",
-
+        "ninguna",
 
 
-        nivel_profesion:
 
-        profesionActual?.nivel
+        habilidades:
 
+        habilidades?.habilidades.filter(
+
+            h=>h.habitante_id===habitante_id
+
+        )
         ||
-
-        1,
-
-
-
-        lugar_trabajo:
-
-        lugarTrabajo?.nombre
-
-        ||
-
-        "sin_lugar",
-
-
-
-        tareas_trabajo:
-
-        lugarTrabajo?.servicios
-
-        ||
-
         [],
 
 
 
-        puede_iniciar_adopcion:
 
-        (
+        recuerdos_importantes:
 
-            pareja &&
+        memoria.filter(
 
-            familiaActual?.hogar &&
-
-            emocionActual?.estabilidad_emocional >= 70
+            m=>m.importancia==="alta"
 
         )
 
-        ? true
-
-        : false
 
 
     };
@@ -433,10 +308,6 @@ function pensarAlma(habitante_id) {
 
 
 
-
-    // ==============================
-    // DECISIÓN DE IA
-    // ==============================
 
 
     const decision =
@@ -458,78 +329,32 @@ function pensarAlma(habitante_id) {
     return {
 
 
-        habitante_id:
-
-
         habitante_id,
 
 
-
         nombre:
-
-
         alma.nombre,
 
 
-
-        tipo:
-
-
-        alma.tipo ||
-
-        "habitante",
-
-
-
         estado:
-
-
         "pensando",
 
 
 
-        personalidad:
+        prioridad,
 
-
-        personalidad,
-
-
-
-        profesion:
-
-
-        profesionActual,
-
-
-
-        lugar_trabajo:
-
-
-        lugarTrabajo,
-
-
-
-        familia:
-
-
-        familiaActual,
-
-
-
-        contexto:
 
 
         contexto,
 
 
 
-        decision:
-
-
         decision
 
 
+
     };
+
 
 
 }
@@ -538,8 +363,12 @@ function pensarAlma(habitante_id) {
 
 
 
-module.exports = {
+
+
+module.exports={
+
 
     pensarAlma
+
 
 };
