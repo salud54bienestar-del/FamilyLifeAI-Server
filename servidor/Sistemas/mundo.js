@@ -1,6 +1,17 @@
 // Sistema del mundo de Village Soul
 
-const cargarArchivo = require("./cargador_datos.js");
+
+const cargarArchivo =
+require("./cargador_datos.js");
+
+
+const guardarArchivo =
+require("./guardador_datos.js");
+
+
+const crearEvento =
+require("./eventos.js");
+
 
 
 
@@ -11,8 +22,10 @@ const cargarArchivo = require("./cargador_datos.js");
 
 function obtenerMundo(){
 
+
     const datos =
     cargarArchivo("../datos/mundo.json");
+
 
 
     if(!datos){
@@ -26,9 +39,36 @@ function obtenerMundo(){
     }
 
 
+
     return datos;
 
+
 }
+
+
+
+
+
+
+
+// =================================
+// GUARDAR MUNDO
+// =================================
+
+function guardarMundo(
+    mundo
+){
+
+    guardarArchivo(
+
+        "../datos/mundo.json",
+
+        mundo
+
+    );
+
+}
+
 
 
 
@@ -59,10 +99,34 @@ function avanzarDia(){
 
 
 
+    guardarMundo(
+        mundo
+    );
+
+
+
+    crearEvento(
+
+        2,
+
+        [],
+
+        {
+
+            dia:
+            mundo.dia_actual
+
+        }
+
+    );
+
+
+
     return mundo;
 
 
 }
+
 
 
 
@@ -96,10 +160,17 @@ function cambiarEstacion(
 
 
 
+    guardarMundo(
+        mundo
+    );
+
+
+
     return mundo;
 
 
 }
+
 
 
 
@@ -133,10 +204,17 @@ function cambiarEstado(
 
 
 
+    guardarMundo(
+        mundo
+    );
+
+
+
     return mundo;
 
 
 }
+
 
 
 
@@ -186,13 +264,18 @@ function agregarLugar(
 
     const lugar = {
 
+
         id:nuevoId,
+
 
         nombre,
 
+
         tipo,
 
+
         descubierto:false
+
 
     };
 
@@ -204,10 +287,17 @@ function agregarLugar(
 
 
 
+    guardarMundo(
+        mundo
+    );
+
+
+
     return lugar;
 
 
 }
+
 
 
 
@@ -255,9 +345,15 @@ function modificarRecurso(
         mundo.recursos[recurso] < 0
     ){
 
-        mundo.recursos[recurso] = 0;
+        mundo.recursos[recurso]=0;
 
     }
+
+
+
+    guardarMundo(
+        mundo
+    );
 
 
 
@@ -265,6 +361,7 @@ function modificarRecurso(
 
 
 }
+
 
 
 
