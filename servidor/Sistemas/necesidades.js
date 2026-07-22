@@ -28,7 +28,7 @@ const {
 obtenerEtapaHabitante
 }
 =
-require("./etapas_vida.js");
+require("./etapas.js");
 
 
 
@@ -40,7 +40,6 @@ require("./etapas_vida.js");
 // OBTENER NECESIDADES
 // =================================
 
-
 function obtenerNecesidades(
 habitante_id
 ){
@@ -51,7 +50,10 @@ cargarArchivo("../datos/necesidades.json");
 
 
 
-if(!datos){
+if(
+!datos ||
+!datos.necesidades
+){
 
 return null;
 
@@ -99,6 +101,13 @@ return null;
 
 
 
+if(!datos.necesidades){
+
+datos.necesidades=[];
+
+}
+
+
 
 const existente =
 obtenerNecesidades(
@@ -125,33 +134,23 @@ habitante_id,
 
 hambre:100,
 
-
 energia:100,
-
 
 higiene:100,
 
-
 diversion:80,
-
 
 social:70,
 
-
 carino:80,
-
 
 seguridad:100,
 
-
 descanso:100,
-
 
 estres:0,
 
-
 estado:"estable",
-
 
 ultima_actualizacion:null
 
@@ -218,6 +217,7 @@ return null;
 
 
 
+
 const almas =
 cargarArchivo("../datos/almas.json");
 
@@ -240,10 +240,11 @@ let consumo=1;
 
 
 
-// Profesiones cansan más
+// Profesión
 
 if(
-alma?.profesion
+alma?.profesion &&
+alma.profesion.nombre!=="ninguna"
 ){
 
 consumo+=1;
@@ -254,33 +255,53 @@ consumo+=1;
 
 
 
+
+
 // Etapa de vida
 
 const etapa =
-obtenerEtapaHabitante(
-habitante_id
-);
+alma
+?
+obtenerEtapaHabitante(alma)
+:
+null;
 
 
 
-if(etapa==="bebe"){
+
+
+if(etapa){
+
+
+switch(etapa.nombre){
+
+
+case "bebe":
 
 consumo=0.5;
 
-}
+break;
 
 
-if(etapa==="niño"){
+
+case "niño":
 
 consumo=0.8;
 
+break;
+
+
+
+case "adulto_mayor":
+
+consumo=1.2;
+
+break;
+
+
 }
 
 
-
-if(etapa==="adulto_mayor"){
-
-consumo=1.2;
 
 }
 
@@ -522,6 +543,7 @@ break;
 case "dormir":
 
 necesidad.energia=100;
+
 necesidad.descanso=100;
 
 break;
@@ -531,6 +553,7 @@ break;
 case "familia":
 
 necesidad.social=100;
+
 necesidad.carino=100;
 
 break;
