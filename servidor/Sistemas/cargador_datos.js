@@ -1,7 +1,10 @@
-// Cargador de datos de Village Soul
+// Cargador avanzado de datos - Village Soul
+
 
 const fs = require("fs");
+
 const path = require("path");
+
 
 
 
@@ -10,22 +13,43 @@ const path = require("path");
 // CARGAR ARCHIVO JSON
 // =================================
 
-function cargarArchivo(
-    nombre
-){
+
+function cargarArchivo(nombre){
+
 
     try{
 
 
-        // Eliminar ./ o ../ del inicio
 
-        nombre = nombre.replace(
+        if(!nombre){
+
+            console.log(
+                "Nombre de archivo inválido."
+            );
+
+            return null;
+
+        }
+
+
+
+
+
+
+        // Limpiar rutas iniciales
+
+
+        nombre =
+        nombre.replace(
 
             /^(\.\.\/|\.\/)+/,
 
             ""
 
         );
+
+
+
 
 
 
@@ -44,18 +68,32 @@ function cargarArchivo(
 
 
 
+
+
+
+        // Verificar existencia
+
+
         if(
             !fs.existsSync(rutaCompleta)
         ){
 
+
             console.log(
+
                 "Archivo no encontrado:",
-                rutaCompleta
+
+                nombre
+
             );
+
 
             return null;
 
+
         }
+
+
 
 
 
@@ -76,9 +114,41 @@ function cargarArchivo(
 
 
 
+
+
+        // Archivo vacío
+
+
+        if(
+            !contenido.trim()
+        ){
+
+
+            console.log(
+
+                "Archivo vacío:",
+
+                nombre
+
+            );
+
+
+            return null;
+
+
+        }
+
+
+
+
+
+
+
         return JSON.parse(
             contenido
         );
+
+
 
 
 
@@ -87,15 +157,6 @@ function cargarArchivo(
     catch(error){
 
 
-        console.log(
-            "==============================="
-        );
-
-
-        console.log(
-            "ERROR CARGANDO ARCHIVO"
-        );
-
 
         console.log(
             "==============================="
@@ -103,14 +164,32 @@ function cargarArchivo(
 
 
         console.log(
+            " ERROR CARGANDO DATOS "
+        );
+
+
+        console.log(
+            "==============================="
+        );
+
+
+
+        console.log(
+
             "Archivo:",
+
             nombre
+
         );
 
 
+
         console.log(
-            "Motivo:",
+
+            "Error:",
+
             error.message
+
         );
 
 
@@ -127,4 +206,59 @@ function cargarArchivo(
 
 
 
-module.exports = cargarArchivo;
+
+
+
+// =================================
+// VERIFICAR ARCHIVO
+// =================================
+
+
+function existeArchivo(nombre){
+
+
+    nombre =
+    nombre.replace(
+
+        /^(\.\.\/|\.\/)+/,
+
+        ""
+
+    );
+
+
+
+    const ruta = path.join(
+
+        __dirname,
+
+        "..",
+
+        nombre
+
+    );
+
+
+
+    return fs.existsSync(ruta);
+
+
+}
+
+
+
+
+
+
+
+
+module.exports = {
+
+
+    cargarArchivo,
+
+
+    existeArchivo
+
+
+};
