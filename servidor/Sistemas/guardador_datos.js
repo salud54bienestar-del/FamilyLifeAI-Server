@@ -1,7 +1,12 @@
-// Guardador de datos de Village Soul
+// Guardador avanzado de datos - Village Soul
+
 
 const fs = require("fs");
+
 const path = require("path");
+
+
+
 
 
 
@@ -10,26 +15,66 @@ const path = require("path");
 // GUARDAR ARCHIVO JSON
 // =================================
 
+
 function guardarArchivo(
     nombre,
     datos
 ){
 
+
+
     try{
 
 
-        // Quitar ./ o ../ del inicio
 
-        nombre = nombre.replace(
+        if(!nombre){
+
+            console.log(
+                "Nombre inválido."
+            );
+
+            return false;
+
+        }
+
+
+
+
+
+        if(datos === undefined){
+
+            console.log(
+                "Datos inválidos:",
+                nombre
+            );
+
+            return false;
+
+        }
+
+
+
+
+
+
+
+        nombre =
+        nombre.replace(
+
             /^(\.\.\/|\.\/)+/,
+
             ""
+
         );
 
 
 
 
 
-        const rutaCompleta = path.join(
+
+
+        const rutaCompleta =
+        path.join(
 
             __dirname,
 
@@ -43,17 +88,23 @@ function guardarArchivo(
 
 
 
-        // Crear carpetas si no existen
 
-        const carpeta = path.dirname(
+
+
+        const carpeta =
+        path.dirname(
             rutaCompleta
         );
+
+
+
 
 
 
         if(
             !fs.existsSync(carpeta)
         ){
+
 
             fs.mkdirSync(
 
@@ -65,6 +116,7 @@ function guardarArchivo(
 
             );
 
+
         }
 
 
@@ -73,23 +125,62 @@ function guardarArchivo(
 
 
 
+        const contenido =
+
+        JSON.stringify(
+
+            datos,
+
+            null,
+
+            2
+
+        );
+
+
+
+
+
+
+
+
+
+        // Guardado seguro temporal
+
+
+        const temporal =
+
+        rutaCompleta +
+        ".temp";
+
+
+
+
+
         fs.writeFileSync(
 
-            rutaCompleta,
+            temporal,
 
-            JSON.stringify(
-
-                datos,
-
-                null,
-
-                2
-
-            ),
+            contenido,
 
             "utf8"
 
         );
+
+
+
+
+
+        fs.renameSync(
+
+            temporal,
+
+            rutaCompleta
+
+        );
+
+
+
 
 
 
@@ -112,7 +203,7 @@ function guardarArchivo(
 
 
         console.log(
-            "ERROR GUARDANDO DATOS"
+            " ERROR GUARDANDO DATOS "
         );
 
 
@@ -121,15 +212,23 @@ function guardarArchivo(
         );
 
 
+
         console.log(
+
             "Archivo:",
+
             nombre
+
         );
 
 
+
         console.log(
-            "Motivo:",
+
+            "Error:",
+
             error.message
+
         );
 
 
@@ -146,4 +245,107 @@ function guardarArchivo(
 
 
 
-module.exports = guardarArchivo;
+
+
+
+// =================================
+// CREAR COPIA DE SEGURIDAD
+// =================================
+
+
+function crearBackup(nombre){
+
+
+
+    try{
+
+
+
+        nombre =
+        nombre.replace(
+
+            /^(\.\.\/|\.\/)+/,
+
+            ""
+
+        );
+
+
+
+        const origen =
+        path.join(
+
+            __dirname,
+
+            "..",
+
+            nombre
+
+        );
+
+
+
+        if(
+            !fs.existsSync(origen)
+        ){
+
+            return false;
+
+        }
+
+
+
+        const copia =
+
+        origen +
+
+        ".backup";
+
+
+
+
+        fs.copyFileSync(
+
+            origen,
+
+            copia
+
+        );
+
+
+
+
+        return true;
+
+
+
+    }
+
+    catch(error){
+
+
+        return false;
+
+
+    }
+
+
+}
+
+
+
+
+
+
+
+
+module.exports={
+
+
+    guardarArchivo,
+
+
+    crearBackup
+
+
+};
