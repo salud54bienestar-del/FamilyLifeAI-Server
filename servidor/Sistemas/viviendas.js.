@@ -1,0 +1,342 @@
+// Sistema de viviendas de Village Soul
+
+const cargarArchivo = require("./cargador_datos.js");
+const crearEvento = require("./eventos.js");
+const crearMemoria = require("./memorias.js");
+
+
+
+// =================================
+// OBTENER VIVIENDA
+// =================================
+
+function obtenerVivienda(id){
+
+    const datos =
+    cargarArchivo("../datos/viviendas.json");
+
+    if(!datos){
+
+        console.log(
+            "No se pudieron cargar las viviendas."
+        );
+
+        return null;
+
+    }
+
+    return datos.viviendas.find(
+
+        vivienda => vivienda.id === id
+
+    ) || null;
+
+}
+
+
+
+
+
+// =================================
+// LISTAR VIVIENDAS
+// =================================
+
+function listarViviendas(){
+
+    const datos =
+    cargarArchivo("../datos/viviendas.json");
+
+    if(!datos){
+
+        return [];
+
+    }
+
+    return datos.viviendas;
+
+}
+
+
+
+
+
+// =================================
+// CREAR VIVIENDA
+// =================================
+
+function crearVivienda(
+    nombre,
+    tipo = "casa"
+){
+
+    const datos =
+    cargarArchivo("../datos/viviendas.json");
+
+    if(!datos){
+
+        return null;
+
+    }
+
+    const nuevoId =
+
+    datos.viviendas.length > 0
+
+    ?
+
+    Math.max(
+        ...datos.viviendas.map(
+            v => v.id
+        )
+    ) + 1
+
+    :
+
+    1;
+
+    const vivienda = {
+
+        id: nuevoId,
+
+        nombre,
+
+        tipo,
+
+        estado: "desocupada",
+
+        familia_id: null,
+
+        habitantes: [],
+
+        ubicacion:{
+
+            dimension:"overworld",
+
+            x:0,
+
+            y:64,
+
+            z:0
+
+        },
+
+        habitaciones:{
+
+            dormitorios:1,
+
+            baños:1,
+
+            cocina:1,
+
+            sala:1
+
+        },
+
+        camas:2,
+
+        capacidad:2,
+
+        inventario:{
+
+            alimentos:0,
+
+            agua:0,
+
+            herramientas:[],
+
+            materiales:[]
+
+        },
+
+        nivel:1,
+
+        seguridad:100,
+
+        limpieza:100,
+
+        energia:100
+
+    };
+
+    datos.viviendas.push(
+        vivienda
+    );
+
+    crearEvento(
+
+        2,
+
+        [],
+
+        {
+
+            sistema:"viviendas",
+
+            accion:"crear_vivienda",
+
+            vivienda_id:nuevoId
+
+        }
+
+    );
+
+    return vivienda;
+
+}
+
+
+
+
+
+// =================================
+// ASIGNAR FAMILIA
+// =================================
+
+function asignarFamilia(
+    vivienda_id,
+    familia_id
+){
+
+    const vivienda =
+    obtenerVivienda(
+        vivienda_id
+    );
+
+    if(!vivienda){
+
+        return null;
+
+    }
+
+    vivienda.familia_id =
+    familia_id;
+
+    vivienda.estado =
+    "habitada";
+
+    return vivienda;
+
+}
+
+
+
+
+
+// =================================
+// AGREGAR HABITANTE
+// =================================
+
+function agregarHabitante(
+    vivienda_id,
+    habitante_id
+){
+
+    const vivienda =
+    obtenerVivienda(
+        vivienda_id
+    );
+
+    if(!vivienda){
+
+        return null;
+
+    }
+
+    if(
+        vivienda.habitantes.includes(
+            habitante_id
+        )
+    ){
+
+        return vivienda;
+
+    }
+
+    if(
+        vivienda.habitantes.length >=
+        vivienda.capacidad
+    ){
+
+        console.log(
+            "La vivienda está llena."
+        );
+
+        return null;
+
+    }
+
+    vivienda.habitantes.push(
+        habitante_id
+    );
+
+    crearMemoria(
+
+        habitante_id,
+
+        "vivienda",
+
+        "Ahora vive en " +
+        vivienda.nombre,
+
+        "media"
+
+    );
+
+    return vivienda;
+
+}
+
+
+
+
+
+// =================================
+// QUITAR HABITANTE
+// =================================
+
+function quitarHabitante(
+    vivienda_id,
+    habitante_id
+){
+
+    const vivienda =
+    obtenerVivienda(
+        vivienda_id
+    );
+
+    if(!vivienda){
+
+        return null;
+
+    }
+
+    vivienda.habitantes =
+    vivienda.habitantes.filter(
+
+        id => id !== habitante_id
+
+    );
+
+    return vivienda;
+
+}
+
+
+
+
+
+module.exports = {
+
+    obtenerVivienda,
+
+    listarViviendas,
+
+    crearVivienda,
+
+    asignarFamilia,
+
+    agregarHabitante,
+
+    quitarHabitante
+
+};
