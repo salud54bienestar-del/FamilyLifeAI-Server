@@ -1,8 +1,20 @@
-// Sistema de decisiones avanzado de Village Soul
+// Sistema avanzado de decisiones - Village Soul
 
-const cargarArchivo = require("./cargador_datos.js");
-const crearMemoria = require("./memorias.js");
-const crearEvento = require("./eventos.js");
+
+const cargarArchivo =
+require("./cargador_datos.js");
+
+
+const crearMemoria =
+require("./memorias.js");
+
+
+const crearEvento =
+require("./eventos.js");
+
+
+
+
 
 
 
@@ -12,22 +24,21 @@ const crearEvento = require("./eventos.js");
 // ==================================
 
 function procesarDecision(
-    id,
-    contexto = {}
+    habitante_id,
+    contexto={}
 ){
 
 
 
-    const datos =
-    cargarArchivo("../datos/decisiones.json");
+    const decision =
+    analizarContexto(
+        habitante_id,
+        contexto
+    );
 
 
 
-    if(!datos){
-
-        console.log(
-            "No se pudieron cargar las decisiones."
-        );
+    if(!decision){
 
         return null;
 
@@ -36,23 +47,144 @@ function procesarDecision(
 
 
 
-    const decision =
-    datos.decisiones.find(
 
-        d=>d.id===id
+
+    guardarDecision(
+
+        habitante_id,
+
+        decision
 
     );
 
 
 
 
-    if(!decision){
 
-        console.log(
-            "Decisión no encontrada."
-        );
 
-        return null;
+    return {
+
+
+        habitante_id,
+
+
+        decision,
+
+
+        contexto
+
+
+
+    };
+
+
+}
+
+
+
+
+
+
+
+
+
+// ==================================
+// ANALIZAR CONTEXTO
+// ==================================
+
+function analizarContexto(
+habitante_id,
+contexto
+){
+
+
+
+    const opciones=[];
+
+
+
+
+
+
+    // ==============================
+    // NECESIDADES
+    // ==============================
+
+
+    if(contexto.necesidades){
+
+
+
+        if(
+            contexto.necesidades.hambre < 30
+        ){
+
+            opciones.push({
+
+                accion:"buscar_comida",
+
+                prioridad:100
+
+            });
+
+        }
+
+
+
+
+
+        if(
+            contexto.necesidades.energia < 30
+        ){
+
+            opciones.push({
+
+                accion:"dormir",
+
+                prioridad:100
+
+            });
+
+        }
+
+
+
+
+
+
+        if(
+            contexto.necesidades.social < 30
+        ){
+
+            opciones.push({
+
+                accion:"buscar_compañia",
+
+                prioridad:60
+
+            });
+
+        }
+
+
+
+
+
+
+        if(
+            contexto.necesidades.seguridad <30
+        ){
+
+            opciones.push({
+
+                accion:"buscar_refugio",
+
+                prioridad:100
+
+            });
+
+        }
+
 
     }
 
@@ -60,199 +192,91 @@ function procesarDecision(
 
 
 
-    let eleccion =
-    decision.eleccion;
 
 
 
 
-
-
-    // ==================================
+    // ==============================
     // EMOCIONES
-    // ==================================
+    // ==============================
 
 
-    switch(contexto.emocion){
+    if(contexto.emocion){
 
 
-        case "tristeza":
 
-            eleccion="buscar_apoyo";
+        switch(contexto.emocion){
 
-        break;
 
 
-        case "miedo":
+            case "tristeza":
 
-        case "asustado":
 
-            eleccion="buscar_refugio";
+                opciones.push({
 
-        break;
+                    accion:"buscar_apoyo",
 
+                    prioridad:70
 
-        case "ira":
+                });
 
-        case "enojado":
-
-            eleccion="calmarse";
-
-        break;
-
-
-        case "feliz":
-
-            eleccion="compartir_momento";
-
-        break;
-
-
-    }
-
-
-
-
-
-
-
-
-    // ==================================
-    // PERSONALIDAD
-    // ==================================
-
-
-    let personalidad =
-    contexto.personalidad;
-
-
-
-    if(
-        typeof personalidad === "object"
-    ){
-
-        personalidad =
-        personalidad.nombre;
-
-    }
-
-
-
-
-
-    switch(personalidad){
-
-
-        case "amable":
-
-            eleccion =
-            contexto.familia
-            ?
-            "proteger_familia"
-            :
-            "ayudar_habitante";
-
-        break;
-
-
-
-        case "curiosa":
-
-            eleccion =
-            "explorar_el_mundo";
-
-        break;
-
-
-
-        case "protectora":
-
-            eleccion =
-            "ayudar_comunidad";
-
-        break;
-
-
-    }
-
-
-
-
-
-
-
-
-    // ==================================
-    // FAMILIA
-    // ==================================
-
-
-    if(
-        contexto.tiene_hijos
-    ){
-
-        eleccion =
-        "cuidar_hijos";
-
-    }
-
-
-
-
-    if(
-        contexto.estado_pareja==="casado"
-        &&
-        contexto.desea_hijos
-    ){
-
-        eleccion =
-        "formar_familia";
-
-    }
-
-
-
-
-
-
-
-    // ==================================
-    // PROFESIÓN
-    // ==================================
-
-
-    if(contexto.profesion){
-
-
-        switch(contexto.profesion){
-
-
-            case "medico":
-
-                eleccion="atender_pacientes";
 
             break;
 
 
-            case "cocinero":
 
-                eleccion="preparar_comida";
+
+
+            case "miedo":
+
+
+                opciones.push({
+
+                    accion:"protegerse",
+
+                    prioridad:90
+
+                });
+
+
+            break;
+
+
+
+
+
+            case "ira":
+
+
+                opciones.push({
+
+                    accion:"calmarse",
+
+                    prioridad:70
+
+                });
+
 
             break;
 
 
-            case "guardia":
 
-                eleccion="patrullar_comunidad";
+
+
+            case "feliz":
+
+
+                opciones.push({
+
+                    accion:"compartir_momento",
+
+                    prioridad:40
+
+                });
+
 
             break;
 
-
-            case "maestro":
-
-                eleccion="enseñar";
-
-            break;
 
 
         }
@@ -267,96 +291,198 @@ function procesarDecision(
 
 
 
-    // ==================================
-    // RESULTADO
-    // ==================================
+
+    // ==============================
+    // OBJETIVOS
+    // ==============================
 
 
-    let resultadoTexto =
-    "Sin resultado definido.";
+    if(contexto.objetivo){
+
+
+
+        opciones.push({
+
+
+            accion:
+
+            contexto.objetivo.accion
+
+            ||
+
+            "trabajar_objetivo",
+
+
+
+            prioridad:80
+
+
+
+        });
+
+
+    }
+
+
+
+
+
+
+
+
+    // ==============================
+    // PERSONALIDAD
+    // ==============================
+
+
+    if(contexto.personalidad){
+
+
+
+        const personalidad =
+
+        typeof contexto.personalidad === "object"
+
+        ?
+
+        contexto.personalidad.nombre
+
+        :
+
+        contexto.personalidad;
+
+
+
+
+
+
+
+        switch(personalidad){
+
+
+
+            case "amable":
+
+
+                opciones.push({
+
+                    accion:"ayudar_habitante",
+
+                    prioridad:50
+
+                });
+
+
+            break;
+
+
+
+
+
+            case "curioso":
+
+
+                opciones.push({
+
+                    accion:"explorar",
+
+                    prioridad:50
+
+                });
+
+
+            break;
+
+
+
+
+
+            case "protector":
+
+
+                opciones.push({
+
+                    accion:"proteger_comunidad",
+
+                    prioridad:70
+
+                });
+
+
+            break;
+
+
+
+
+
+            case "aventurero":
+
+
+                opciones.push({
+
+                    accion:"viajar",
+
+                    prioridad:50
+
+                });
+
+
+            break;
+
+
+
+        }
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+    // ==============================
+    // FAMILIA
+    // ==============================
+
+
+    if(
+        contexto.tiene_familia
+    ){
+
+
+        opciones.push({
+
+            accion:"visitar_familia",
+
+            prioridad:40
+
+        });
+
+
+    }
+
 
 
 
 
 
     if(
-        decision.resultados &&
-        decision.resultados[eleccion]
+        contexto.tiene_hijos
     ){
 
-        resultadoTexto =
-        decision.resultados[eleccion];
 
-    }
+        opciones.push({
 
+            accion:"cuidar_hijos",
 
+            prioridad:90
 
-
-
-    const resultado = {
-
-
-        habitante_id:
-        decision.habitante_id,
-
-
-        situacion:
-        decision.situacion,
-
-
-        eleccion,
-
-
-        resultado:
-        resultadoTexto,
-
-
-        contexto
-
-
-    };
-
-
-
-
-
-
-    // ==================================
-    // MEMORIA Y EVENTO
-    // ==================================
-
-
-    if(decision.habitante_id){
-
-
-        crearMemoria(
-
-            decision.habitante_id,
-
-            "decision",
-
-            "Tomó la decisión: "
-            + eleccion,
-
-            "media"
-
-        );
-
-
-
-        crearEvento(
-
-            "decision_habitante",
-
-            [
-                decision.habitante_id
-            ],
-
-            {
-                decision:eleccion
-            }
-
-        );
+        });
 
 
     }
@@ -367,14 +493,66 @@ function procesarDecision(
 
 
 
-    console.log(
-        "Decisión:",
-        eleccion
+
+
+    // ==============================
+    // PROFESIÓN
+    // ==============================
+
+
+    if(
+        contexto.profesion
+    ){
+
+
+        opciones.push({
+
+            accion:
+            obtenerAccionProfesion(
+                contexto.profesion
+            ),
+
+            prioridad:60
+
+        });
+
+
+    }
+
+
+
+
+
+
+
+    if(
+        opciones.length===0
+    ){
+
+        return "descansar";
+
+    }
+
+
+
+
+
+
+
+    opciones.sort(
+
+        (a,b)=>
+
+        b.prioridad-a.prioridad
+
     );
 
 
 
-    return resultado;
+
+
+
+    return opciones[0].accion;
 
 
 }
@@ -384,8 +562,130 @@ function procesarDecision(
 
 
 
+
+
+
+// ==================================
+// ACCIONES DE PROFESIÓN
+// ==================================
+
+function obtenerAccionProfesion(
+profesion
+){
+
+
+
+    const acciones={
+
+
+        agricultor:
+        "trabajar_campo",
+
+
+        herrero:
+        "forjar_objetos",
+
+
+        cocinero:
+        "preparar_comida",
+
+
+        medico:
+        "atender_enfermos",
+
+
+        maestro:
+        "enseñar",
+
+
+        guardia:
+        "patrullar"
+
+
+    };
+
+
+
+
+
+    return acciones[profesion]
+
+    ||
+
+    "trabajar";
+
+
+}
+
+
+
+
+
+
+
+
+
+// ==================================
+// GUARDAR DECISIÓN
+// ==================================
+
+function guardarDecision(
+habitante_id,
+decision
+){
+
+
+
+    crearMemoria(
+
+        habitante_id,
+
+        "decision",
+
+        "Decidió realizar: "+decision,
+
+        "media"
+
+    );
+
+
+
+
+
+    crearEvento(
+
+        "decision_habitante",
+
+        [
+
+            habitante_id
+
+        ],
+
+        {
+
+            decision
+
+        }
+
+    );
+
+
+}
+
+
+
+
+
+
+
+
 module.exports={
 
-    procesarDecision
+
+    procesarDecision,
+
+    analizarContexto
+
 
 };
