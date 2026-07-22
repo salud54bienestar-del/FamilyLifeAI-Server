@@ -1,33 +1,43 @@
-// Sistema avanzado de almas de Village Soul
-
+// Sistema avanzado de almas - Village Soul
 
 const cargarArchivo =
 require("./cargador_datos.js");
 
-
 const guardarArchivo =
 require("./guardador_datos.js");
-
 
 const crearMemoria =
 require("./memorias.js");
 
-
 const {
-    crearNecesidades
+crearNecesidades
 }
 =
 require("./necesidades.js");
 
-
 const {
-    obtenerEtapaHabitante
+crearEmocion
 }
 =
-require("./etapas_vida.js");
+require("./emociones.js");
 
+const {
+crearUbicaciones
+}
+=
+require("./ubicaciones.js");
 
+const {
+crearMovimiento
+}
+=
+require("./movimiento.js");
 
+const {
+crearRutina
+}
+=
+require("./rutinas.js");
 
 
 
@@ -38,24 +48,22 @@ require("./etapas_vida.js");
 
 function obtenerAlma(id){
 
-
-    const datos =
-    cargarArchivo("../datos/almas.json");
-
-
-    if(!datos){
-
-        return null;
-
-    }
+const datos =
+cargarArchivo("../datos/almas.json");
 
 
-    return datos.almas.find(
+if(!datos){
 
-        alma=>alma.id===id
+return null;
 
-    ) || null;
+}
 
+
+return datos.almas.find(
+
+a=>a.id===id
+
+)||null;
 
 }
 
@@ -72,385 +80,245 @@ function obtenerAlma(id){
 // =================================
 
 function crearAlma(
-    nuevaAlma
+datosNueva
 ){
 
 
-    const datos =
-    cargarArchivo("../datos/almas.json");
+const datos =
+cargarArchivo("../datos/almas.json");
 
 
-    if(!datos){
+if(!datos){
 
-        return null;
+return null;
 
-    }
+}
 
 
 
+if(!datos.almas){
 
+datos.almas=[];
 
+}
 
-    const nuevoId =
 
 
-    datos.almas.length > 0
 
+const id =
 
-    ?
+datos.almas.length>0
 
+?
 
-    Math.max(
+Math.max(
+...datos.almas.map(
+a=>a.id
+)
+)+1
 
-        ...datos.almas.map(
+:
 
-            a=>a.id
+1;
 
-        )
 
-    ) + 1
 
+const edad =
+datosNueva.edad || 0;
 
-    :
 
 
-    1;
+const alma={
 
 
+id,
 
 
+nombre:
+datosNueva.nombre || "Sin nombre",
 
 
 
-    const edad =
-    nuevaAlma.edad || 0;
+sexo:
+datosNueva.sexo || "desconocido",
 
 
 
+edad,
 
 
+etapa_vida:
+obtenerEtapaPorEdad(edad),
 
-    const nueva = {
 
 
-        id:nuevoId,
+personalidad:
+datosNueva.personalidad || null,
 
 
 
-        nombre:
+rasgos:
 
-        nuevaAlma.nombre ||
-        "Sin nombre",
 
+datosNueva.rasgos || [],
 
 
 
+gustos:{
 
-        sexo:
 
-        nuevaAlma.sexo ||
-        "desconocido",
+comida:[],
 
+animales:[],
 
+colores:[],
 
+actividades:[]
 
+},
 
-        edad,
 
 
+habilidades:{
 
 
+social:0,
 
-        etapa_vida:
+trabajo:0,
 
-        obtenerEtapaPorEdad(
-            edad
-        ),
+creatividad:0
 
+},
 
 
 
+profesion:{
 
 
-        temperamento:
+nombre:"ninguna",
 
-        nuevaAlma.temperamento ||
-        "neutral",
+nivel:0,
 
+experiencia:0,
 
+estado:"inactivo"
 
+},
 
 
-        rasgos_iniciales:
 
-        nuevaAlma.rasgos_iniciales ||
-        [],
+familia:null,
 
 
+padres:
+datosNueva.padres || [],
 
 
 
-        padres:
+objetivos:
+obtenerObjetivosIniciales(edad),
 
-        nuevaAlma.padres ||
-        [],
 
 
+origen:
+datosNueva.origen || "nacido_en_el_mundo",
 
 
 
-        fecha_nacimiento:
+historia:[
 
-        nuevaAlma.fecha_nacimiento ||
-        null,
+{
 
+evento:"nacimiento",
 
+fecha:new Date().toISOString()
 
+}
 
+],
 
 
 
-        personalidad:
+estado:"viviendo"
 
-        nuevaAlma.personalidad ||
-        null,
 
+};
 
 
-        personalidad_id:
 
-        nuevaAlma.personalidad_id ||
-        null,
 
 
 
+datos.almas.push(
+alma
+);
 
 
 
+guardarArchivo(
 
-        tipo:
+"../datos/almas.json",
 
-        nuevaAlma.tipo ||
-        "habitante",
+datos
 
+);
 
 
 
 
 
+// Crear sistemas relacionados
 
-        emociones:
+crearNecesidades(
 
-        nuevaAlma.emociones ||
+id,
 
-        {
+alma.etapa_vida
 
+);
 
-            felicidad:50,
 
-            confianza:0,
+crearEmocion(
+id
+);
 
-            miedo:0,
 
-            tristeza:0,
+crearUbicaciones(
+id
+);
 
-            ira:0,
 
-            calma:50,
+crearMovimiento(
+id
+);
 
 
+crearRutina(
+id,
+alma.etapa_vida
+);
 
-            emociones_secundarias:{
 
 
-                amor:0,
 
-                soledad:0,
 
-                orgullo:0,
+crearMemoria(
 
-                estres:0,
+id,
 
-                aburrimiento:0
+"origen",
 
+"Una nueva alma apareció en Village Soul.",
 
-            }
+"alta"
 
+);
 
-        },
 
 
 
 
-
-
-
-        memorias:[],
-
-
-
-        relaciones:[],
-
-
-
-
-        objetivos:
-
-
-        nuevaAlma.objetivos ||
-
-        obtenerObjetivosIniciales(
-            edad
-        ),
-
-
-
-
-
-
-
-        profesion:
-
-
-        nuevaAlma.profesion ||
-
-        {
-
-
-            nombre:"ninguna",
-
-            nivel:0,
-
-            experiencia:0,
-
-            estado:"inactivo"
-
-
-        },
-
-
-
-
-
-
-
-
-        familia:
-
-        nuevaAlma.familia ||
-
-        null,
-
-
-
-
-
-
-
-        origen:
-
-
-        nuevaAlma.origen ||
-
-        "nacido_en_el_mundo",
-
-
-
-
-
-
-
-        historia:[
-
-            {
-
-                evento:
-                "nacimiento",
-
-                fecha:
-                nuevaAlma.fecha_nacimiento
-
-            }
-
-        ],
-
-
-
-
-
-
-        estado:
-
-        "viviendo"
-
-
-    };
-
-
-
-
-
-
-
-    datos.almas.push(
-        nueva
-    );
-
-
-
-
-
-
-
-    guardarArchivo(
-
-        "../datos/almas.json",
-
-        datos
-
-    );
-
-
-
-
-
-
-
-    crearMemoria(
-
-        nueva.id,
-
-        "origen",
-
-        obtenerMensajeOrigen(nueva),
-
-        "alta"
-
-    );
-
-
-
-
-
-
-
-    // Crear necesidades solamente si no existen
-
-    crearNecesidades(
-
-        nueva.id,
-
-        nueva.etapa_vida
-
-    );
-
-
-
-
-
-
-
-    return nueva;
+return alma;
 
 
 }
@@ -464,7 +332,7 @@ function crearAlma(
 
 
 // =================================
-// OBTENER ETAPA POR EDAD
+// EDAD
 // =================================
 
 function obtenerEtapaPorEdad(
@@ -472,43 +340,27 @@ edad
 ){
 
 
-    const datos = {
+if(edad<=2)
 
-        edad
-
-    };
+return "bebe";
 
 
+if(edad<=12)
 
-    if(edad<=2){
-
-        return "bebe";
-
-    }
+return "niño";
 
 
-    if(edad<=12){
+if(edad<=17)
 
-        return "niño";
-
-    }
+return "adolescente";
 
 
-    if(edad<=17){
+if(edad<=59)
 
-        return "adolescente";
-
-    }
+return "adulto";
 
 
-    if(edad<=59){
-
-        return "adulto";
-
-    }
-
-
-    return "adulto_mayor";
+return "adulto_mayor";
 
 
 }
@@ -522,7 +374,7 @@ edad
 
 
 // =================================
-// OBJETIVOS INICIALES
+// OBJETIVOS
 // =================================
 
 function obtenerObjetivosIniciales(
@@ -530,62 +382,41 @@ edad
 ){
 
 
-    if(edad<=2){
+if(edad<=12)
 
-        return [
+return [
 
-            "crecer",
+"aprender",
 
-            "crear vínculos"
+"jugar",
 
-        ];
+"explorar"
 
-    }
-
-
-
-    if(edad<=12){
-
-        return [
-
-            "aprender",
-
-            "jugar",
-
-            "explorar"
-
-        ];
-
-    }
+];
 
 
 
+if(edad<=17)
 
-    if(edad<=17){
+return [
 
-        return [
+"desarrollar habilidades",
 
-            "desarrollar habilidades",
+"crear identidad"
 
-            "descubrir identidad"
-
-        ];
-
-    }
+];
 
 
 
+return [
 
+"trabajar",
 
-    return [
+"crear vínculos",
 
-        "trabajar",
+"formar familia"
 
-        "crear familia",
-
-        "participar comunidad"
-
-    ];
+];
 
 
 }
@@ -599,71 +430,58 @@ edad
 
 
 // =================================
-// CRECER
+// AUMENTAR EDAD
 // =================================
 
-function aumentarEdad(
-id
-){
+function aumentarEdad(id){
 
 
-    const alma =
-    obtenerAlma(id);
-
-
-
-    if(!alma){
-
-        return null;
-
-    }
+const alma =
+obtenerAlma(id);
 
 
 
-    alma.edad++;
+if(!alma){
+
+return null;
+
+}
 
 
 
-
-    alma.etapa_vida =
-    obtenerEtapaPorEdad(
-        alma.edad
-    );
+alma.edad++;
 
 
-
-
-    alma.historia.push({
-
-        evento:
-        "cumpleaños",
-
-        edad:
-        alma.edad
-
-    });
+alma.etapa_vida =
+obtenerEtapaPorEdad(
+alma.edad
+);
 
 
 
+alma.historia.push({
+
+evento:"cumpleaños",
+
+edad:alma.edad,
+
+fecha:new Date().toISOString()
+
+});
 
 
 
-    const datos =
-    cargarArchivo("../datos/almas.json");
+actualizarAlma(
+
+id,
+
+alma
+
+);
 
 
 
-    guardarArchivo(
-
-        "../datos/almas.json",
-
-        datos
-
-    );
-
-
-
-    return alma;
+return alma;
 
 
 }
@@ -677,7 +495,7 @@ id
 
 
 // =================================
-// ACTUALIZAR ALMA
+// ACTUALIZAR
 // =================================
 
 function actualizarAlma(
@@ -686,48 +504,48 @@ cambios
 ){
 
 
-    const alma =
-    obtenerAlma(id);
+const datos =
+cargarArchivo("../datos/almas.json");
+
+
+const index =
+datos.almas.findIndex(
+
+a=>a.id===id
+
+);
 
 
 
-    if(!alma){
+if(index===-1){
 
-        return null;
+return null;
 
-    }
-
-
-
-    Object.assign(
-
-        alma,
-
-        cambios
-
-    );
+}
 
 
 
+datos.almas[index]={
 
+...datos.almas[index],
 
-    const datos =
-    cargarArchivo("../datos/almas.json");
+...cambios
 
-
-
-    guardarArchivo(
-
-        "../datos/almas.json",
-
-        datos
-
-    );
+};
 
 
 
-    return alma;
+guardarArchivo(
 
+"../datos/almas.json",
+
+datos
+
+);
+
+
+
+return datos.almas[index];
 
 }
 
@@ -740,108 +558,19 @@ cambios
 
 
 // =================================
-// ACTUALIZAR ETAPA
-// =================================
-
-function actualizarEtapaAlma(
-alma
-){
-
-
-    if(!alma){
-
-        return null;
-
-    }
-
-
-
-    alma.etapa_vida =
-
-    obtenerEtapaPorEdad(
-
-        alma.edad
-
-    );
-
-
-
-    return alma;
-
-
-}
-
-
-
-
-
-
-
-
-
-// =================================
-// LISTAR ALMAS
+// LISTAR
 // =================================
 
 function listarAlmas(){
 
 
-    const datos =
-    cargarArchivo("../datos/almas.json");
+const datos =
+cargarArchivo("../datos/almas.json");
 
 
-
-    if(!datos){
-
-        return [];
-
-    }
-
-
-
-    return datos.almas;
-
+return datos?.almas || [];
 
 }
-
-
-
-
-
-
-
-
-
-// =================================
-// ORIGEN
-// =================================
-
-function obtenerMensajeOrigen(
-alma
-){
-
-
-    switch(alma.origen){
-
-
-        case "adopcion":
-
-            return "Llegó a una familia mediante adopción.";
-
-
-        case "nacimiento":
-
-            return "Nació dentro del mundo de Village Soul.";
-
-
-        default:
-
-            return "Una nueva alma apareció en el mundo.";
-
-    }
-
-}
-
 
 
 
@@ -852,17 +581,14 @@ alma
 module.exports={
 
 
-    obtenerAlma,
+obtenerAlma,
 
-    crearAlma,
+crearAlma,
 
-    actualizarAlma,
+actualizarAlma,
 
-    actualizarEtapaAlma,
+aumentarEdad,
 
-    aumentarEdad,
-
-    listarAlmas
-
+listarAlmas
 
 };
