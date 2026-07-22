@@ -1,10 +1,11 @@
 // Sistema avanzado de reloj del mundo - Village Soul
-// Este archivo SOLO consulta el tiempo.
-// El control del tiempo pertenece a tiempo.js
+// Este sistema SOLO consulta el tiempo.
+// El control pertenece a tiempo.js
 
 
 const cargarArchivo =
 require("./cargador_datos.js");
+
 
 
 
@@ -32,7 +33,6 @@ function obtenerTiempo(){
 
 
     if(!datos.tiempo){
-
 
         return {
 
@@ -66,6 +66,7 @@ function obtenerTiempo(){
 
 
 
+
 // =================================
 // OBTENER HORA
 // =================================
@@ -78,15 +79,11 @@ function obtenerHora(){
 
 
 
-    if(!tiempo){
-
-        return null;
-
-    }
-
-
-
-    return tiempo.hora;
+    return tiempo
+    ?
+    tiempo.hora
+    :
+    null;
 
 
 }
@@ -98,8 +95,38 @@ function obtenerHora(){
 
 
 
+
 // =================================
-// OBTENER MOMENTO DEL DÍA
+// OBTENER MINUTO
+// =================================
+
+function obtenerMinuto(){
+
+
+    const tiempo =
+    obtenerTiempo();
+
+
+
+    return tiempo
+    ?
+    tiempo.minuto
+    :
+    null;
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// MOMENTO DEL DÍA
 // =================================
 
 function obtenerMomentoDia(){
@@ -126,8 +153,8 @@ function obtenerMomentoDia(){
 
 
     if(
-        hora >= 0 &&
-        hora < 6
+        hora>=0 &&
+        hora<6
     ){
 
         return "madrugada";
@@ -139,8 +166,8 @@ function obtenerMomentoDia(){
 
 
     if(
-        hora >= 6 &&
-        hora < 12
+        hora>=6 &&
+        hora<12
     ){
 
         return "mañana";
@@ -153,8 +180,8 @@ function obtenerMomentoDia(){
 
 
     if(
-        hora >=12 &&
-        hora <18
+        hora>=12 &&
+        hora<18
     ){
 
         return "tarde";
@@ -166,15 +193,7 @@ function obtenerMomentoDia(){
 
 
 
-    if(
-        hora >=18 &&
-        hora <24
-    ){
-
-        return "noche";
-
-    }
-
+    return "noche";
 
 
 }
@@ -188,7 +207,7 @@ function obtenerMomentoDia(){
 
 
 // =================================
-// ES DE DÍA
+// ESTADO DEL DÍA
 // =================================
 
 function esDia(){
@@ -217,12 +236,6 @@ function esDia(){
 
 
 
-
-
-
-// =================================
-// ES DE NOCHE
-// =================================
 
 function esNoche(){
 
@@ -254,7 +267,126 @@ function esNoche(){
 
 
 // =================================
-// OBTENER FECHA COMPLETA
+// HORARIOS DE VIDA
+// =================================
+
+function esHoraDormir(){
+
+
+    const hora =
+    obtenerHora();
+
+
+
+    if(hora===null){
+
+        return false;
+
+    }
+
+
+
+    return (
+
+        hora>=22
+
+        ||
+
+        hora<6
+
+    );
+
+
+}
+
+
+
+
+
+
+
+
+
+function esHoraTrabajo(){
+
+
+    const hora =
+    obtenerHora();
+
+
+
+    if(hora===null){
+
+        return false;
+
+    }
+
+
+
+    return (
+
+        hora>=8
+
+        &&
+
+        hora<17
+
+    );
+
+
+}
+
+
+
+
+
+
+
+
+
+function esHoraComer(){
+
+
+    const hora =
+    obtenerHora();
+
+
+
+    if(hora===null){
+
+        return false;
+
+    }
+
+
+
+    return (
+
+        hora===7
+
+        ||
+
+        hora===12
+
+        ||
+
+        hora===19
+
+    );
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// FECHA
 // =================================
 
 function obtenerFecha(){
@@ -306,7 +438,7 @@ function obtenerFecha(){
 
 
 // =================================
-// TEXTO DE FECHA
+// FECHA EN TEXTO
 // =================================
 
 function obtenerFechaTexto(){
@@ -362,22 +494,44 @@ function obtenerFechaTexto(){
 
 
 
+// =================================
+// EXPORTAR
+// =================================
+
 module.exports={
 
 
     obtenerTiempo,
 
+
     obtenerHora,
+
+
+    obtenerMinuto,
+
 
     obtenerMomentoDia,
 
+
     obtenerFecha,
+
 
     obtenerFechaTexto,
 
+
     esDia,
 
-    esNoche
+
+    esNoche,
+
+
+    esHoraDormir,
+
+
+    esHoraTrabajo,
+
+
+    esHoraComer
 
 
 };
