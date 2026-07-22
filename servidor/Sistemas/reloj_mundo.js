@@ -1,27 +1,25 @@
 // Sistema avanzado de reloj del mundo - Village Soul
+// Este archivo SOLO consulta el tiempo.
+// El control del tiempo pertenece a tiempo.js
 
 
 const cargarArchivo =
 require("./cargador_datos.js");
 
 
-const guardarArchivo =
-require("./guardador_datos.js");
-
-
-const crearEvento =
-require("./eventos.js");
 
 
 // =================================
-// OBTENER TIEMPO
+// OBTENER TIEMPO ACTUAL
 // =================================
 
 function obtenerTiempo(){
 
 
     const datos =
-    cargarArchivo("../datos/tiempo.json");
+    cargarArchivo(
+        "../datos/tiempo.json"
+    );
 
 
 
@@ -36,9 +34,11 @@ function obtenerTiempo(){
     if(!datos.tiempo){
 
 
-        datos.tiempo={
+        return {
 
             hora:6,
+
+            minuto:0,
 
             dia:1,
 
@@ -49,9 +49,6 @@ function obtenerTiempo(){
             estacion:"primavera"
 
         };
-
-
-        guardarTiempo(datos);
 
     }
 
@@ -68,362 +65,12 @@ function obtenerTiempo(){
 
 
 
-// =================================
-// GUARDAR TIEMPO
-// =================================
-
-function guardarTiempo(
-datos
-){
-
-
-    guardarArchivo(
-
-        "../datos/tiempo.json",
-
-        datos
-
-    );
-
-
-}
-
-
-
-
-
-
-
-
 
 // =================================
-// AVANZAR HORA
+// OBTENER HORA
 // =================================
 
-function avanzarHora(
-cantidad=1
-){
-
-
-
-    const datos =
-    cargarArchivo("../datos/tiempo.json");
-
-
-
-    if(!datos){
-
-        return null;
-
-    }
-
-
-
-    if(!datos.tiempo){
-
-
-        datos.tiempo={
-
-            hora:6,
-
-            dia:1,
-
-            mes:1,
-
-            año:1,
-
-            estacion:"primavera"
-
-        };
-
-    }
-
-
-
-
-
-    datos.tiempo.hora += cantidad;
-
-
-
-
-
-    if(datos.tiempo.hora >=24){
-
-
-        datos.tiempo.hora=0;
-
-
-        avanzarDiaInterno(datos);
-
-
-    }
-
-
-
-
-
-    guardarTiempo(datos);
-
-
-
-
-    crearEvento(
-
-        "avance_tiempo",
-
-        [],
-
-        {
-
-            hora:
-            datos.tiempo.hora,
-
-            dia:
-            datos.tiempo.dia
-
-        }
-
-    );
-
-
-
-
-
-    return datos.tiempo;
-
-
-}
-
-
-
-
-
-
-
-
-
-// =================================
-// AVANZAR DÍA
-// =================================
-
-function avanzarDiaInterno(
-datos
-){
-
-
-    datos.tiempo.dia++;
-
-
-
-
-
-    crearEvento(
-
-        "nuevo_dia",
-
-        [],
-
-        {
-
-            dia:
-            datos.tiempo.dia
-
-        }
-
-    );
-
-
-
-
-
-    if(datos.tiempo.dia >30){
-
-
-        datos.tiempo.dia=1;
-
-
-        avanzarMes(datos);
-
-
-    }
-
-
-
-}
-
-
-
-
-
-
-
-
-
-// =================================
-// AVANZAR MES
-// =================================
-
-function avanzarMes(
-datos
-){
-
-
-
-    datos.tiempo.mes++;
-
-
-
-
-
-    if(datos.tiempo.mes>12){
-
-
-        datos.tiempo.mes=1;
-
-
-        datos.tiempo.año++;
-
-
-        crearEvento(
-
-            "nuevo_año",
-
-            [],
-
-            {
-
-                año:
-                datos.tiempo.año
-
-            }
-
-        );
-
-
-    }
-
-
-
-
-
-    actualizarEstacion(datos);
-
-
-
-}
-
-
-
-
-
-
-
-
-
-// =================================
-// CAMBIO DE ESTACIÓN
-// =================================
-
-function actualizarEstacion(
-datos
-){
-
-
-
-    let nuevaEstacion;
-
-
-
-    if(
-        datos.tiempo.mes>=3 &&
-        datos.tiempo.mes<=5
-    ){
-
-        nuevaEstacion="primavera";
-
-    }
-
-
-    else if(
-        datos.tiempo.mes>=6 &&
-        datos.tiempo.mes<=8
-    ){
-
-        nuevaEstacion="verano";
-
-    }
-
-
-    else if(
-        datos.tiempo.mes>=9 &&
-        datos.tiempo.mes<=11
-    ){
-
-        nuevaEstacion="otoño";
-
-    }
-
-
-    else{
-
-
-        nuevaEstacion="invierno";
-
-
-    }
-
-
-
-
-
-
-    if(
-        datos.tiempo.estacion !== nuevaEstacion
-    ){
-
-
-        datos.tiempo.estacion =
-        nuevaEstacion;
-
-
-
-        crearEvento(
-
-            "cambio_estacion",
-
-            [],
-
-            {
-
-                estacion:
-                nuevaEstacion
-
-            }
-
-        );
-
-
-    }
-
-
-
-}
-
-
-
-
-
-
-
-
-
-// =================================
-// OBTENER MOMENTO DEL DÍA
-// =================================
-
-function obtenerMomentoDia(){
-
+function obtenerHora(){
 
 
     const tiempo =
@@ -439,11 +86,61 @@ function obtenerMomentoDia(){
 
 
 
+    return tiempo.hora;
+
+
+}
+
+
+
+
+
+
+
+
+// =================================
+// OBTENER MOMENTO DEL DÍA
+// =================================
+
+function obtenerMomentoDia(){
+
+
+    const tiempo =
+    obtenerTiempo();
+
+
+
+    if(!tiempo){
+
+        return null;
+
+    }
+
+
+
+    const hora =
+    tiempo.hora;
+
+
+
 
 
     if(
-        tiempo.hora>=6 &&
-        tiempo.hora<12
+        hora >= 0 &&
+        hora < 6
+    ){
+
+        return "madrugada";
+
+    }
+
+
+
+
+
+    if(
+        hora >= 6 &&
+        hora < 12
     ){
 
         return "mañana";
@@ -452,9 +149,12 @@ function obtenerMomentoDia(){
 
 
 
+
+
+
     if(
-        tiempo.hora>=12 &&
-        tiempo.hora<18
+        hora >=12 &&
+        hora <18
     ){
 
         return "tarde";
@@ -463,9 +163,12 @@ function obtenerMomentoDia(){
 
 
 
+
+
+
     if(
-        tiempo.hora>=18 &&
-        tiempo.hora<24
+        hora >=18 &&
+        hora <24
     ){
 
         return "noche";
@@ -474,10 +177,74 @@ function obtenerMomentoDia(){
 
 
 
-    return "madrugada";
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// ES DE DÍA
+// =================================
+
+function esDia(){
+
+
+    const momento =
+    obtenerMomentoDia();
+
+
+
+    return (
+
+        momento==="mañana"
+
+        ||
+
+        momento==="tarde"
+
+    );
 
 
 }
+
+
+
+
+
+
+
+
+
+// =================================
+// ES DE NOCHE
+// =================================
+
+function esNoche(){
+
+
+    const momento =
+    obtenerMomentoDia();
+
+
+
+    return (
+
+        momento==="noche"
+
+        ||
+
+        momento==="madrugada"
+
+    );
+
+
+}
+
 
 
 
@@ -497,10 +264,96 @@ function obtenerFecha(){
     obtenerTiempo();
 
 
-    return tiempo;
+
+    if(!tiempo){
+
+        return null;
+
+    }
+
+
+
+    return {
+
+
+        dia:
+        tiempo.dia,
+
+
+        mes:
+        tiempo.mes,
+
+
+        año:
+        tiempo.año,
+
+
+        estacion:
+        tiempo.estacion
+
+
+    };
 
 
 }
+
+
+
+
+
+
+
+
+
+// =================================
+// TEXTO DE FECHA
+// =================================
+
+function obtenerFechaTexto(){
+
+
+    const fecha =
+    obtenerFecha();
+
+
+
+    if(!fecha){
+
+        return null;
+
+    }
+
+
+
+    return (
+
+        "Día "
+
+        +
+
+        fecha.dia
+
+        +
+
+        " de "
+
+        +
+
+        fecha.estacion
+
+        +
+
+        " del año "
+
+        +
+
+        fecha.año
+
+    );
+
+
+}
+
 
 
 
@@ -514,11 +367,17 @@ module.exports={
 
     obtenerTiempo,
 
-    avanzarHora,
+    obtenerHora,
 
     obtenerMomentoDia,
 
-    obtenerFecha
+    obtenerFecha,
+
+    obtenerFechaTexto,
+
+    esDia,
+
+    esNoche
 
 
 };
