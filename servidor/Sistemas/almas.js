@@ -1,72 +1,34 @@
-// Sistema avanzado de almas - Village Soul
+// Sistema avanzado de necesidades - Village Soul
+
 
 const cargarArchivo =
 require("./cargador_datos.js");
 
+
 const guardarArchivo =
 require("./guardador_datos.js");
+
 
 const crearMemoria =
 require("./memorias.js");
 
-const {
-crearNecesidades
-}
-=
-require("./necesidades.js");
+
+const crearEvento =
+require("./eventos.js");
+
 
 const {
-crearEmocion
+cambiarEmocion
 }
 =
 require("./emociones.js");
 
-const {
-crearUbicaciones
-}
-=
-require("./ubicaciones.js");
 
 const {
-crearMovimiento
+obtenerEtapaHabitante
 }
 =
-require("./movimiento.js");
-
-const {
-crearRutina
-}
-=
-require("./rutinas.js");
-
-
-
-
-// =================================
-// OBTENER ALMA
-// =================================
-
-function obtenerAlma(id){
-
-const datos =
-cargarArchivo("../datos/almas.json");
-
-
-if(!datos){
-
-return null;
-
-}
-
-
-return datos.almas.find(
-
-a=>a.id===id
-
-)||null;
-
-}
-
+require("./etapas.js");
 
 
 
@@ -76,16 +38,17 @@ a=>a.id===id
 
 
 // =================================
-// CREAR ALMA
+// OBTENER NECESIDADES
 // =================================
 
-function crearAlma(
-datosNueva
+
+function obtenerNecesidades(
+habitante_id
 ){
 
 
 const datos =
-cargarArchivo("../datos/almas.json");
+cargarArchivo("../datos/necesidades.json");
 
 
 if(!datos){
@@ -96,150 +59,113 @@ return null;
 
 
 
-if(!datos.almas){
+return datos.necesidades.find(
 
-datos.almas=[];
+n=>n.habitante_id===habitante_id
+
+)||null;
+
 
 }
 
 
 
 
-const id =
 
-datos.almas.length>0
 
-?
 
-Math.max(
-...datos.almas.map(
-a=>a.id
-)
-)+1
 
-:
 
-1;
+// =================================
+// CREAR NECESIDADES
+// =================================
 
 
+function crearNecesidades(
+habitante_id,
+etapa="adulto"
+){
 
-const edad =
-datosNueva.edad || 0;
 
+const datos =
+cargarArchivo("../datos/necesidades.json");
 
 
-const alma={
+if(!datos){
 
-
-id,
-
-
-nombre:
-datosNueva.nombre || "Sin nombre",
-
-
-
-sexo:
-datosNueva.sexo || "desconocido",
-
-
-
-edad,
-
-
-etapa_vida:
-obtenerEtapaPorEdad(edad),
-
-
-
-personalidad:
-datosNueva.personalidad || null,
-
-
-
-rasgos:
-
-
-datosNueva.rasgos || [],
-
-
-
-gustos:{
-
-
-comida:[],
-
-animales:[],
-
-colores:[],
-
-actividades:[]
-
-},
-
-
-
-habilidades:{
-
-
-social:0,
-
-trabajo:0,
-
-creatividad:0
-
-},
-
-
-
-profesion:{
-
-
-nombre:"ninguna",
-
-nivel:0,
-
-experiencia:0,
-
-estado:"inactivo"
-
-},
-
-
-
-familia:null,
-
-
-padres:
-datosNueva.padres || [],
-
-
-
-objetivos:
-obtenerObjetivosIniciales(edad),
-
-
-
-origen:
-datosNueva.origen || "nacido_en_el_mundo",
-
-
-
-historia:[
-
-{
-
-evento:"nacimiento",
-
-fecha:new Date().toISOString()
+return null;
 
 }
 
-],
+
+
+if(!datos.necesidades){
+
+datos.necesidades=[];
+
+}
 
 
 
-estado:"viviendo"
+
+const existente =
+obtenerNecesidades(
+habitante_id
+);
+
+
+
+if(existente){
+
+return existente;
+
+}
+
+
+
+
+
+
+const necesidad={
+
+
+habitante_id,
+
+
+hambre:100,
+
+
+energia:100,
+
+
+higiene:100,
+
+
+diversion:80,
+
+
+social:70,
+
+
+carino:80,
+
+
+seguridad:100,
+
+
+descanso:100,
+
+
+estres:0,
+
+
+estado:"estable",
+
+
+etapa,
+
+
+ultima_actualizacion:null
 
 
 };
@@ -249,15 +175,15 @@ estado:"viviendo"
 
 
 
-datos.almas.push(
-alma
+datos.necesidades.push(
+necesidad
 );
 
 
 
 guardarArchivo(
 
-"../datos/almas.json",
+"../datos/necesidades.json",
 
 datos
 
@@ -267,36 +193,486 @@ datos
 
 
 
-// Crear sistemas relacionados
+return necesidad;
 
-crearNecesidades(
 
-id,
+}
 
-alma.etapa_vida
+
+
+
+
+
+
+
+
+// =================================
+// ACTUALIZAR NECESIDADES
+// =================================
+
+
+function actualizarNecesidades(
+habitante_id,
+ciclo=1
+){
+
+
+const necesidad =
+obtenerNecesidades(
+habitante_id
+);
+
+
+
+if(!necesidad){
+
+return null;
+
+}
+
+
+
+
+
+
+const almas =
+cargarArchivo("../datos/almas.json");
+
+
+
+
+const habitante =
+almas?.almas.find(
+
+a=>a.id===habitante_id
 
 );
 
 
-crearEmocion(
-id
+
+
+if(!habitante){
+
+return null;
+
+}
+
+
+
+
+
+
+// Obtener etapa correctamente
+
+const etapa =
+obtenerEtapaHabitante(
+habitante
 );
 
 
-crearUbicaciones(
-id
+
+
+
+
+
+let consumo=1;
+
+
+
+
+
+
+
+// ===============================
+// EFECTOS POR EDAD
+// ===============================
+
+
+switch(etapa?.nombre){
+
+
+case "bebe":
+
+consumo=0.5;
+
+necesidad.carino-=1*ciclo;
+
+break;
+
+
+
+case "niño":
+
+consumo=0.8;
+
+necesidad.diversion-=0.5*ciclo;
+
+break;
+
+
+
+case "adolescente":
+
+consumo=1;
+
+necesidad.social-=1*ciclo;
+
+break;
+
+
+
+case "adulto":
+
+consumo=1.2;
+
+break;
+
+
+
+case "adulto_mayor":
+
+consumo=0.9;
+
+necesidad.descanso-=1*ciclo;
+
+break;
+
+
+}
+
+
+
+
+
+
+
+
+
+// ===============================
+// PROFESIÓN
+// ===============================
+
+
+if(
+habitante.profesion &&
+habitante.profesion.nombre!=="ninguna"
+){
+
+
+consumo+=0.5;
+
+
+necesidad.estres+=1*ciclo;
+
+
+}
+
+
+
+
+
+
+
+
+
+// ===============================
+// CONSUMO GENERAL
+// ===============================
+
+
+necesidad.hambre-=
+2*ciclo*consumo;
+
+
+necesidad.energia-=
+1*ciclo*consumo;
+
+
+necesidad.higiene-=
+1*ciclo;
+
+
+necesidad.diversion-=
+0.5*ciclo;
+
+
+necesidad.social-=
+0.5*ciclo;
+
+
+necesidad.descanso-=
+1*ciclo;
+
+
+
+
+
+
+
+
+limitar(
+necesidad
 );
 
 
-crearMovimiento(
-id
+
+
+revisarEstados(
+
+habitante_id,
+
+necesidad
+
 );
 
 
-crearRutina(
-id,
-alma.etapa_vida
+
+
+actualizarEstado(
+necesidad
 );
+
+
+
+
+
+necesidad.ultima_actualizacion =
+new Date().toISOString();
+
+
+
+
+
+
+guardarNecesidades();
+
+
+
+return necesidad;
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// REVISAR ESTADOS CRÍTICOS
+// =================================
+
+
+function revisarEstados(
+habitante_id,
+necesidad
+){
+
+
+
+if(
+necesidad.hambre<20
+){
+
+
+crearEvento(
+
+"hambre_critica",
+
+[habitante_id]
+
+);
+
+
+
+cambiarEmocion(
+
+habitante_id,
+
+"tristeza",
+
+10,
+
+"hambre"
+
+);
+
+
+}
+
+
+
+
+
+
+if(
+necesidad.energia<20
+){
+
+
+cambiarEmocion(
+
+habitante_id,
+
+"estres",
+
+10,
+
+"cansancio"
+
+);
+
+
+}
+
+
+
+
+
+
+
+if(
+necesidad.social<20
+){
+
+
+cambiarEmocion(
+
+habitante_id,
+
+"soledad",
+
+10,
+
+"aislamiento"
+
+);
+
+
+}
+
+
+
+
+
+
+if(
+necesidad.carino<20
+){
+
+
+cambiarEmocion(
+
+habitante_id,
+
+"soledad",
+
+5,
+
+"falta de cariño"
+
+);
+
+
+}
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// SATISFACER NECESIDAD
+// =================================
+
+
+function satisfacerNecesidad(
+habitante_id,
+tipo
+){
+
+
+const necesidad =
+obtenerNecesidades(
+habitante_id
+);
+
+
+
+if(!necesidad){
+
+return null;
+
+}
+
+
+
+
+
+
+switch(tipo){
+
+
+case "comida":
+
+necesidad.hambre=100;
+
+break;
+
+
+
+
+case "dormir":
+
+necesidad.energia=100;
+
+necesidad.descanso=100;
+
+break;
+
+
+
+
+case "familia":
+
+necesidad.social=100;
+
+necesidad.carino=100;
+
+break;
+
+
+
+
+case "diversion":
+
+necesidad.diversion=100;
+
+break;
+
+
+
+
+case "seguridad":
+
+necesidad.seguridad=100;
+
+break;
+
+
+
+}
+
+
 
 
 
@@ -304,13 +680,13 @@ alma.etapa_vida
 
 crearMemoria(
 
-id,
+habitante_id,
 
-"origen",
+"necesidad",
 
-"Una nueva alma apareció en Village Soul.",
+"Recuperó necesidad: "+tipo,
 
-"alta"
+"baja"
 
 );
 
@@ -318,7 +694,13 @@ id,
 
 
 
-return alma;
+
+
+guardarNecesidades();
+
+
+
+return necesidad;
 
 
 }
@@ -332,156 +714,47 @@ return alma;
 
 
 // =================================
-// EDAD
+// LIMITAR VALORES
 // =================================
 
-function obtenerEtapaPorEdad(
-edad
+
+function limitar(
+objeto
 ){
 
 
-if(edad<=2)
+Object.keys(objeto)
+.forEach(
 
-return "bebe";
-
-
-if(edad<=12)
-
-return "niño";
+key=>{
 
 
-if(edad<=17)
-
-return "adolescente";
-
-
-if(edad<=59)
-
-return "adulto";
-
-
-return "adulto_mayor";
-
-
-}
-
-
-
-
-
-
-
-
-
-// =================================
-// OBJETIVOS
-// =================================
-
-function obtenerObjetivosIniciales(
-edad
+if(
+typeof objeto[key]==="number"
 ){
 
 
-if(edad<=12)
+objeto[key]=Math.max(
 
-return [
+0,
 
-"aprender",
+Math.min(
 
-"jugar",
+100,
 
-"explorar"
+objeto[key]
 
-];
-
-
-
-if(edad<=17)
-
-return [
-
-"desarrollar habilidades",
-
-"crear identidad"
-
-];
-
-
-
-return [
-
-"trabajar",
-
-"crear vínculos",
-
-"formar familia"
-
-];
-
-
-}
-
-
-
-
-
-
-
-
-
-// =================================
-// AUMENTAR EDAD
-// =================================
-
-function aumentarEdad(id){
-
-
-const alma =
-obtenerAlma(id);
-
-
-
-if(!alma){
-
-return null;
-
-}
-
-
-
-alma.edad++;
-
-
-alma.etapa_vida =
-obtenerEtapaPorEdad(
-alma.edad
-);
-
-
-
-alma.historia.push({
-
-evento:"cumpleaños",
-
-edad:alma.edad,
-
-fecha:new Date().toISOString()
-
-});
-
-
-
-actualizarAlma(
-
-id,
-
-alma
+)
 
 );
 
 
+}
 
-return alma;
+
+}
+
+);
 
 
 }
@@ -495,82 +768,95 @@ return alma;
 
 
 // =================================
-// ACTUALIZAR
+// ESTADO GENERAL
 // =================================
 
-function actualizarAlma(
-id,
-cambios
+
+function actualizarEstado(
+n
 ){
+
+
+
+const promedio=
+
+(
+n.hambre+
+n.energia+
+n.higiene+
+n.diversion+
+n.social+
+n.seguridad
+)/6;
+
+
+
+
+
+
+if(promedio>=80)
+
+n.estado="feliz";
+
+
+
+else if(promedio>=50)
+
+n.estado="normal";
+
+
+
+else if(promedio>=25)
+
+n.estado="preocupado";
+
+
+
+else
+
+n.estado="critico";
+
+
+
+
+return n;
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// GUARDAR
+// =================================
+
+
+function guardarNecesidades(){
 
 
 const datos =
-cargarArchivo("../datos/almas.json");
-
-
-const index =
-datos.almas.findIndex(
-
-a=>a.id===id
-
-);
-
-
-
-if(index===-1){
-
-return null;
-
-}
-
-
-
-datos.almas[index]={
-
-...datos.almas[index],
-
-...cambios
-
-};
+cargarArchivo("../datos/necesidades.json");
 
 
 
 guardarArchivo(
 
-"../datos/almas.json",
+"../datos/necesidades.json",
 
 datos
 
 );
 
 
-
-return datos.almas[index];
-
 }
 
 
-
-
-
-
-
-
-
-// =================================
-// LISTAR
-// =================================
-
-function listarAlmas(){
-
-
-const datos =
-cargarArchivo("../datos/almas.json");
-
-
-return datos?.almas || [];
-
-}
 
 
 
@@ -581,14 +867,13 @@ return datos?.almas || [];
 module.exports={
 
 
-obtenerAlma,
+obtenerNecesidades,
 
-crearAlma,
+crearNecesidades,
 
-actualizarAlma,
+actualizarNecesidades,
 
-aumentarEdad,
+satisfacerNecesidad
 
-listarAlmas
 
 };
