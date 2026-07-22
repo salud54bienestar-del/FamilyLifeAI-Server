@@ -15,19 +15,16 @@ require("./eventos.js");
 
 
 
-
 // =================================
 // OBTENER ETAPA POR EDAD
 // =================================
 
-function obtenerEtapaPorEdad(
-    edad
-){
+function obtenerEtapaPorEdad(edad){
 
 
     const datos =
     cargarArchivo(
-        "../datos/etapas_vida.json"
+        "../datos/etapas.json"
     );
 
 
@@ -38,7 +35,8 @@ function obtenerEtapaPorEdad(
     ){
 
 
-        return datos.etapas.find(
+        const encontrada =
+        datos.etapas.find(
 
             etapa =>
 
@@ -46,14 +44,25 @@ function obtenerEtapaPorEdad(
 
             edad <= etapa.edad_maxima
 
-        ) || obtenerEtapaPredeterminada(edad);
+        );
+
+
+
+        if(encontrada){
+
+            return encontrada;
+
+        }
 
 
     }
 
 
 
-    return obtenerEtapaPredeterminada(edad);
+
+    return obtenerEtapaPredeterminada(
+        edad
+    );
 
 
 }
@@ -64,13 +73,13 @@ function obtenerEtapaPorEdad(
 
 
 
+
 // =================================
-// ETAPAS POR DEFECTO
+// ETAPAS PREDETERMINADAS
 // =================================
 
-function obtenerEtapaPredeterminada(
-edad
-){
+function obtenerEtapaPredeterminada(edad){
+
 
 
     if(edad <= 2){
@@ -78,10 +87,6 @@ edad
         return {
 
             nombre:"bebe",
-
-            edad_minima:0,
-
-            edad_maxima:2,
 
             puede:[
 
@@ -97,16 +102,11 @@ edad
 
 
 
-
-    if(edad <= 12){
+    if(edad <=12){
 
         return {
 
             nombre:"niño",
-
-            edad_minima:3,
-
-            edad_maxima:12,
 
             puede:[
 
@@ -125,16 +125,11 @@ edad
 
 
 
-
-    if(edad <= 17){
+    if(edad <=17){
 
         return {
 
             nombre:"adolescente",
-
-            edad_minima:13,
-
-            edad_maxima:17,
 
             puede:[
 
@@ -154,17 +149,11 @@ edad
 
 
 
-
-
-    if(edad <= 59){
+    if(edad <=59){
 
         return {
 
             nombre:"adulto",
-
-            edad_minima:18,
-
-            edad_maxima:59,
 
             puede:[
 
@@ -183,15 +172,9 @@ edad
 
 
 
-
-
     return {
 
         nombre:"adulto_mayor",
-
-        edad_minima:60,
-
-        edad_maxima:999,
 
         puede:[
 
@@ -221,7 +204,7 @@ edad
 // =================================
 
 function obtenerEtapaHabitante(
-    habitante
+habitante
 ){
 
 
@@ -230,6 +213,40 @@ function obtenerEtapaHabitante(
         return null;
 
     }
+
+
+
+
+    // Si recibe ID
+
+    if(typeof habitante === "number"){
+
+
+        const almas =
+        cargarArchivo(
+            "../datos/almas.json"
+        );
+
+
+
+        habitante =
+        almas?.almas.find(
+
+            a=>a.id===habitante
+
+        );
+
+
+
+        if(!habitante){
+
+            return null;
+
+        }
+
+    }
+
+
 
 
 
@@ -255,8 +272,9 @@ function obtenerEtapaHabitante(
 // =================================
 
 function actualizarEtapa(
-    habitante
+habitante
 ){
+
 
 
     if(!habitante){
@@ -268,7 +286,7 @@ function actualizarEtapa(
 
 
 
-    const etapaNueva =
+    const nueva =
 
     obtenerEtapaHabitante(
         habitante
@@ -276,13 +294,11 @@ function actualizarEtapa(
 
 
 
-    if(!etapaNueva){
+    if(!nueva){
 
         return habitante;
 
     }
-
-
 
 
 
@@ -294,11 +310,8 @@ function actualizarEtapa(
 
 
 
-
     habitante.etapa_vida =
-
-    etapaNueva.nombre;
-
+    nueva.nombre;
 
 
 
@@ -306,7 +319,7 @@ function actualizarEtapa(
 
 
     if(
-        anterior !== etapaNueva.nombre
+        anterior !== nueva.nombre
     ){
 
 
@@ -316,20 +329,22 @@ function actualizarEtapa(
             "cambio_etapa_vida",
 
             [
+
                 habitante.id
+
             ],
 
             {
 
                 anterior,
 
-                nueva:
-                etapaNueva.nombre
+                nueva:nueva.nombre,
+
+                edad:habitante.edad
 
             }
 
         );
-
 
 
 
@@ -342,45 +357,13 @@ function actualizarEtapa(
 
             "etapa_vida",
 
-            "Cambió a la etapa de "+
-            etapaNueva.nombre,
+            "Ahora pertenece a la etapa "+
+
+            nueva.nombre,
 
             "alta"
 
         );
-
-
-
-
-
-
-        // Desbloqueo de adultez
-
-        if(
-            etapaNueva.nombre==="adulto"
-        ){
-
-
-            crearEvento(
-
-                "mayoria_edad",
-
-                [
-                    habitante.id
-                ],
-
-                {
-
-                    edad:
-                    habitante.edad
-
-                }
-
-            );
-
-
-
-        }
 
 
 
@@ -405,12 +388,13 @@ function actualizarEtapa(
 
 
 // =================================
-// AUMENTAR EDAD
+// CUMPLIR AÑO
 // =================================
 
 function cumplirAño(
-    habitante
+habitante
 ){
+
 
 
     if(!habitante){
@@ -422,7 +406,7 @@ function cumplirAño(
 
 
     habitante.edad =
-    (habitante.edad || 0) + 1;
+    (habitante.edad || 0)+1;
 
 
 
@@ -430,7 +414,6 @@ function cumplirAño(
     actualizarEtapa(
         habitante
     );
-
 
 
 
@@ -448,11 +431,11 @@ function cumplirAño(
 
 
 // =================================
-// ACCIONES DISPONIBLES
+// ACCIONES
 // =================================
 
 function obtenerAccionesEtapa(
-    habitante
+habitante
 ){
 
 
@@ -465,15 +448,8 @@ function obtenerAccionesEtapa(
 
 
 
-    if(!etapa){
+    return etapa?.puede || [];
 
-        return [];
-
-    }
-
-
-
-    return etapa.puede || [];
 
 
 }
@@ -485,15 +461,11 @@ function obtenerAccionesEtapa(
 
 
 
-
-// =================================
-// VERIFICAR ACCIÓN
-// =================================
-
 function puedeRealizarAccion(
-    habitante,
-    accion
+habitante,
+accion
 ){
+
 
 
     return obtenerAccionesEtapa(
@@ -514,12 +486,8 @@ function puedeRealizarAccion(
 
 
 
-// =================================
-// VERIFICAR ADULTO
-// =================================
-
 function esAdulto(
-    habitante
+habitante
 ){
 
 
