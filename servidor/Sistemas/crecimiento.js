@@ -45,6 +45,7 @@ const CRECIMIENTO_ACTIVO = true;
 
 
 
+
 // =================================
 // ACTUALIZAR CRECIMIENTO
 // =================================
@@ -61,6 +62,8 @@ function actualizarCrecimiento(){
 
 
 
+
+
     const almas =
     cargarArchivo("../datos/almas.json");
 
@@ -72,10 +75,13 @@ function actualizarCrecimiento(){
 
 
 
+
+
     if(
         !almas ||
         !almas.almas ||
-        !tiempoDatos
+        !tiempoDatos ||
+        !tiempoDatos.tiempo
     ){
 
         return null;
@@ -86,19 +92,8 @@ function actualizarCrecimiento(){
 
 
 
-
     const tiempo =
     tiempoDatos.tiempo;
-
-
-
-
-
-    if(!tiempo){
-
-        return null;
-
-    }
 
 
 
@@ -114,6 +109,7 @@ function actualizarCrecimiento(){
         return almas.almas;
 
     }
+
 
 
 
@@ -141,12 +137,26 @@ function actualizarCrecimiento(){
 
 
             if(
+                habitante.edad === undefined
+            ){
+
+                habitante.edad = 0;
+
+            }
+
+
+
+
+
+
+            if(
                 habitante.contador_vida === undefined
             ){
 
                 habitante.contador_vida = 0;
 
             }
+
 
 
 
@@ -162,8 +172,10 @@ function actualizarCrecimiento(){
 
 
             if(
+
                 habitante.contador_vida >=
                 DIAS_MINECRAFT_POR_AÑO
+
             ){
 
 
@@ -174,19 +186,31 @@ function actualizarCrecimiento(){
 
 
 
+
                 const edadAnterior =
                 habitante.edad;
 
 
 
+                const etapaAnterior =
+                habitante.etapa_vida;
 
 
 
-                // Usa el sistema de etapas
+
+
+
+
+
+                // Aumentar edad usando sistema de etapas
 
                 cumplirAño(
+
                     habitante
+
                 );
+
+
 
 
 
@@ -199,7 +223,9 @@ function actualizarCrecimiento(){
                     "cumpleaños",
 
                     [
+
                         habitante.id
+
                     ],
 
                     {
@@ -214,6 +240,7 @@ function actualizarCrecimiento(){
                     }
 
                 );
+
 
 
 
@@ -256,13 +283,18 @@ function actualizarCrecimiento(){
 
 
 
-                // Cambio importante de etapa
+
+
+
+                // Detectar cambio real de etapa
 
                 if(
-                    edadAnterior !== habitante.edad
-                    &&
+
+                    etapaAnterior !==
                     habitante.etapa_vida
+
                 ){
+
 
 
                     crearMemoria(
@@ -271,7 +303,9 @@ function actualizarCrecimiento(){
 
                         "etapa_vida",
 
-                        "Ahora pertenece a la etapa "+
+                        "Cambió de etapa de vida: "+
+                        etapaAnterior+
+                        " → "+
                         habitante.etapa_vida,
 
                         "alta"
@@ -279,8 +313,36 @@ function actualizarCrecimiento(){
                     );
 
 
-                }
 
+
+
+
+                    crearEvento(
+
+                        "cambio_etapa_vida",
+
+                        [
+
+                            habitante.id
+
+                        ],
+
+                        {
+
+                            anterior:
+                            etapaAnterior,
+
+
+                            nueva:
+                            habitante.etapa_vida
+
+                        }
+
+                    );
+
+
+
+                }
 
 
 
@@ -295,6 +357,7 @@ function actualizarCrecimiento(){
         }
 
     );
+
 
 
 
@@ -329,7 +392,7 @@ function actualizarCrecimiento(){
 
 
 // =================================
-// OBTENER EDAD DE CRECIMIENTO
+// OBTENER PROGRESO DE CRECIMIENTO
 // =================================
 
 function obtenerProgresoCrecimiento(
@@ -337,11 +400,14 @@ habitante
 ){
 
 
+
     if(!habitante){
 
         return null;
 
     }
+
+
 
 
 
@@ -354,11 +420,29 @@ habitante
         habitante.edad || 0,
 
 
+
+        etapa:
+
+        habitante.etapa_vida || "bebe",
+
+
+
+
         dias_para_crecer:
 
-        DIAS_MINECRAFT_POR_AÑO -
-        (
-            habitante.contador_vida || 0
+
+        Math.max(
+
+            0,
+
+            DIAS_MINECRAFT_POR_AÑO -
+
+            (
+
+                habitante.contador_vida || 0
+
+            )
+
         )
 
 
@@ -366,6 +450,7 @@ habitante
 
 
 }
+
 
 
 
