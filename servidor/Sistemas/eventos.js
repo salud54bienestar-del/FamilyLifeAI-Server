@@ -1,8 +1,12 @@
-// Sistema de eventos de Village Soul
+// Sistema avanzado de eventos de Village Soul
 
 
 const cargarArchivo =
 require("./cargador_datos.js");
+
+
+const guardarArchivo =
+require("./guardador_datos.js");
 
 
 const crearMemoria =
@@ -11,6 +15,49 @@ require("./memorias.js");
 
 const emociones =
 require("./emociones.js");
+
+
+
+
+
+
+
+// =================================
+// BUSCAR EVENTO BASE
+// =================================
+
+function obtenerEventoBase(id){
+
+
+    const sistema =
+    cargarArchivo(
+        "../datos/sistema_eventos.json"
+    );
+
+
+
+    if(!sistema){
+
+        return null;
+
+    }
+
+
+
+    return sistema.eventos_disponibles.find(
+
+        evento =>
+
+        evento.id === id ||
+
+        evento.nombre === id
+
+    ) || null;
+
+
+}
+
+
 
 
 
@@ -30,36 +77,8 @@ function crearEvento(
 
 
 
-    const sistemaEventos =
-    cargarArchivo(
-        "../datos/sistema_eventos.json"
-    );
-
-
-
-    if(!sistemaEventos){
-
-        console.log(
-            "No se pudo cargar el sistema de eventos."
-        );
-
-        return null;
-
-    }
-
-
-
-
-
     const eventoBase =
-    sistemaEventos.eventos_disponibles.find(
-
-        evento =>
-        evento.id === id
-
-    );
-
-
+    obtenerEventoBase(id);
 
 
 
@@ -79,48 +98,98 @@ function crearEvento(
 
 
 
+    const datosEventos =
+    cargarArchivo(
+        "../datos/eventos.json"
+    );
+
+
+
+    if(!datosEventos){
+
+        return null;
+
+    }
+
+
+
+
+
+
+
+    if(!datosEventos.eventos){
+
+        datosEventos.eventos=[];
+
+    }
+
+
+
+
+
+
+
+    const nuevoId =
+
+
+    datosEventos.eventos.length > 0
+
+
+    ?
+
+
+    Math.max(
+        ...datosEventos.eventos.map(
+            e=>e.id
+        )
+    ) + 1
+
+
+    :
+
+
+    1;
+
+
+
+
+
+
+
 
 
     const evento = {
 
 
-
-        id,
-
+        id:nuevoId,
 
 
-        nombre:
-        eventoBase.nombre,
+        tipo:eventoBase.tipo,
 
 
-
-        descripcion:
-        eventoBase.descripcion,
+        nombre:eventoBase.nombre,
 
 
-
-        tipo:
-        eventoBase.tipo,
+        descripcion:eventoBase.descripcion,
 
 
+        importancia:
 
-        fecha:
-        new Date().toISOString(),
+        eventoBase.importancia ||
+        "media",
 
 
 
         participantes,
 
 
-
-        datos:
-        datosExtra,
+        datos:datosExtra,
 
 
 
-        importancia:
-        eventoBase.importancia ||
-        "media"
+        fecha:
+
+        new Date().toISOString()
 
 
 
@@ -131,10 +200,24 @@ function crearEvento(
 
 
 
-    console.log(
-        "Nuevo evento creado:",
-        evento.nombre
+
+
+    datosEventos.eventos.push(
+        evento
     );
+
+
+
+
+
+    guardarArchivo(
+
+        "../datos/eventos.json",
+
+        datosEventos
+
+    );
+
 
 
 
@@ -145,13 +228,8 @@ function crearEvento(
 
     participantes.forEach(
 
-        habitante_id => {
+        habitante_id=>{
 
-
-
-            // =========================
-            // MEMORIA
-            // =========================
 
 
             crearMemoria(
@@ -177,15 +255,7 @@ function crearEvento(
 
 
 
-
-            // =========================
-            // EMOCIONES
-            // =========================
-
-
-            if(
-                eventoBase.efectos
-            ){
+            if(eventoBase.efectos){
 
 
 
@@ -194,8 +264,7 @@ function crearEvento(
                 )
                 .forEach(
 
-                    emocion => {
-
+                    emocion=>{
 
 
                         emociones.cambiarEmocion(
@@ -216,10 +285,7 @@ function crearEvento(
                 );
 
 
-
             }
-
-
 
 
 
@@ -228,7 +294,6 @@ function crearEvento(
         }
 
     );
-
 
 
 
@@ -250,7 +315,7 @@ function crearEvento(
 
 
 // =================================
-// EVENTOS PERSONALIZADOS
+// EVENTO PERSONALIZADO
 // =================================
 
 function crearEventoPersonalizado(
@@ -262,28 +327,53 @@ function crearEventoPersonalizado(
 
 
 
-    const evento = {
+    const datos =
+    cargarArchivo(
+        "../datos/eventos.json"
+    );
+
+
+
+    if(!datos){
+
+        return null;
+
+    }
+
+
+
+
+
+    const evento={
+
+
+        id:
+
+        Date.now(),
+
+
+
+        tipo:"personalizado",
 
 
 
         nombre,
 
 
-
         descripcion,
-
 
 
         participantes,
 
 
 
+        importancia,
+
+
+
         fecha:
-        new Date().toISOString(),
 
-
-
-        importancia
+        new Date().toISOString()
 
 
 
@@ -293,10 +383,30 @@ function crearEventoPersonalizado(
 
 
 
+
+    datos.eventos.push(
+        evento
+    );
+
+
+
+
+    guardarArchivo(
+
+        "../datos/eventos.json",
+
+        datos
+
+    );
+
+
+
+
+
+
     participantes.forEach(
 
-        habitante_id => {
-
+        habitante_id=>{
 
 
             crearMemoria(
@@ -334,12 +444,46 @@ function crearEventoPersonalizado(
 
 
 
+// =================================
+// OBTENER HISTORIA DE EVENTOS
+// =================================
+
+function obtenerEventos(){
+
+
+    const datos =
+    cargarArchivo(
+        "../datos/eventos.json"
+    );
+
+
+    if(!datos){
+
+        return [];
+
+    }
+
+
+
+    return datos.eventos;
+
+
+}
+
+
+
+
+
+
+
 module.exports={
 
 
     crearEvento,
 
-    crearEventoPersonalizado
+    crearEventoPersonalizado,
+
+    obtenerEventos
 
 
 };
