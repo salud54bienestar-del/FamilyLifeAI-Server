@@ -6,24 +6,11 @@ require("./tiempo.js")
 .avanzarTiempo;
 
 
+
 const actualizarCrecimiento =
 require("./crecimiento.js")
 .actualizarCrecimiento;
 
-
-const actualizarEmbarazos =
-require("./embarazos.js")
-.actualizarEmbarazos;
-
-
-const actualizarEconomia =
-require("./recursos.js")
-.actualizarEconomia;
-
-
-const actualizarNecesidades =
-require("./necesidades.js")
-.actualizarNecesidades;
 
 
 const crearEvento =
@@ -31,10 +18,70 @@ require("./eventos.js");
 
 
 
-
 const obtenerMundo =
 require("./mundo.js")
 .obtenerMundo;
+
+
+
+// Sistemas opcionales
+
+let actualizarEmbarazos = null;
+
+try{
+
+    actualizarEmbarazos =
+    require("./embarazos.js")
+    .actualizarEmbarazos;
+
+}
+catch(e){}
+
+
+
+
+
+let actualizarEconomia = null;
+
+try{
+
+    actualizarEconomia =
+    require("./recursos.js")
+    .actualizarEconomia;
+
+}
+catch(e){}
+
+
+
+
+
+let actualizarNecesidades = null;
+
+try{
+
+    actualizarNecesidades =
+    require("./necesidades.js")
+    .actualizarNecesidades;
+
+}
+catch(e){}
+
+
+
+
+
+let ejecutarRutinas = null;
+
+try{
+
+    ejecutarRutinas =
+    require("./rutinas.js")
+    .ejecutarRutinas;
+
+}
+catch(e){}
+
 
 
 
@@ -46,45 +93,44 @@ require("./mundo.js")
 // EJECUTAR CICLO
 // =================================
 
+
 function ejecutarCiclo(){
 
 
-    console.log(
-        "=============================="
-    );
 
+console.log(
+"=============================="
+);
 
-    console.log(
-        "Ejecutando ciclo Village Soul"
-    );
 
+console.log(
+"Ciclo Village Soul"
+);
 
-    console.log(
-        "=============================="
-    );
 
+console.log(
+"=============================="
+);
 
 
 
 
 
-    // =============================
-    // TIEMPO
-    // =============================
 
+// Tiempo
 
-    const tiempo =
-    avanzarTiempo(1);
 
+const tiempo =
+avanzarTiempo(1);
 
 
 
+if(!tiempo){
 
-    if(!tiempo){
+return null;
 
-        return null;
+}
 
-    }
 
 
 
@@ -92,84 +138,114 @@ function ejecutarCiclo(){
 
 
 
-    // =============================
-    // NUEVO DÍA
-    // =============================
+// Rutinas diarias
 
 
-    if(
-        tiempo.nuevo_dia_minecraft
-        === true
-    ){
+if(ejecutarRutinas){
 
+    ejecutarRutinas();
 
-        actualizarCrecimiento();
+}
 
 
-        actualizarEmbarazos();
 
 
-        actualizarEconomia();
 
 
 
-        if(actualizarNecesidades){
 
-            actualizarNecesidades();
 
-        }
+// Nuevo día Minecraft
 
 
+if(
+tiempo.nuevo_dia_minecraft === true
+){
 
 
-        crearEvento(
 
-            "ciclo_diario",
+console.log(
+"Nuevo día del mundo."
+);
 
-            [],
 
-            {
 
-                dia:
-                tiempo.dia,
 
-                mes:
-                tiempo.mes,
 
-                año:
-                tiempo.año
+// Crecimiento
 
-            }
+actualizarCrecimiento();
 
-        );
 
 
-    }
 
 
 
+// Embarazos
 
+if(actualizarEmbarazos){
 
+actualizarEmbarazos();
 
-    const mundo =
-    obtenerMundo();
+}
 
 
 
 
 
 
+// Economía
 
-    return {
+if(actualizarEconomia){
 
+actualizarEconomia();
 
-        tiempo,
+}
 
 
-        mundo
 
 
-    };
+
+
+
+// Necesidades
+
+if(actualizarNecesidades){
+
+actualizarNecesidades();
+
+}
+
+
+
+
+
+
+
+crearEvento(
+
+"ciclo_diario",
+
+[],
+
+{
+
+dia:
+tiempo.dia,
+
+
+mes:
+tiempo.mes,
+
+
+año:
+tiempo.año
+
+
+}
+
+);
+
 
 
 }
@@ -182,41 +258,72 @@ function ejecutarCiclo(){
 
 
 
+const mundo =
+obtenerMundo();
+
+
+
+
+
+
+
+return {
+
+
+tiempo,
+
+
+mundo
+
+
+};
+
+
+
+}
+
+
+
+
+
+
+
+
 // =================================
-// EJECUTAR VARIOS CICLOS
+// VARIOS CICLOS
 // =================================
+
 
 function ejecutarDias(
 cantidad
 ){
 
 
-    let resultado=null;
+
+let resultado=null;
 
 
 
-    for(
-        let i=0;
-        i<cantidad;
-        i++
-    ){
+for(
+let i=0;
+i<cantidad;
+i++
+){
 
 
-        resultado =
-        ejecutarCiclo();
-
-
-    }
-
-
-
-
-
-    return resultado;
+resultado =
+ejecutarCiclo();
 
 
 }
 
+
+
+return resultado;
+
+
+
+}
 
 
 
@@ -228,9 +335,10 @@ cantidad
 module.exports={
 
 
-    ejecutarCiclo,
+ejecutarCiclo,
 
-    ejecutarDias
+
+ejecutarDias
 
 
 };
