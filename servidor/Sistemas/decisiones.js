@@ -1,10 +1,6 @@
 // Sistema avanzado de decisiones - Village Soul
 
 
-const cargarArchivo =
-require("./cargador_datos.js");
-
-
 const crearMemoria =
 require("./memorias.js");
 
@@ -17,22 +13,19 @@ require("./eventos.js");
 
 
 
-
-
-// ==================================
+// =================================
 // PROCESAR DECISIÓN
-// ==================================
+// =================================
 
 function procesarDecision(
-    habitante_id,
-    contexto={}
+habitante_id,
+contexto={}
 ){
 
 
 
     const decision =
     analizarContexto(
-        habitante_id,
         contexto
     );
 
@@ -43,8 +36,6 @@ function procesarDecision(
         return null;
 
     }
-
-
 
 
 
@@ -61,17 +52,19 @@ function procesarDecision(
 
 
 
-
     return {
 
 
         habitante_id,
 
 
-        decision,
+        decision:decision.accion,
 
 
-        contexto
+        motivo:decision.motivo,
+
+
+        destino:decision.destino || null
 
 
 
@@ -88,235 +81,62 @@ function procesarDecision(
 
 
 
-// ==================================
+// =================================
 // ANALIZAR CONTEXTO
-// ==================================
+// =================================
 
 function analizarContexto(
-habitante_id,
 contexto
 ){
 
 
-
-    const opciones=[];
-
-
-
-
-
-
-    // ==============================
-    // NECESIDADES
-    // ==============================
-
-
-    if(contexto.necesidades){
-
-
-
-        if(
-            contexto.necesidades.hambre < 30
-        ){
-
-            opciones.push({
-
-                accion:"buscar_comida",
-
-                prioridad:100
-
-            });
-
-        }
-
-
-
-
-
-        if(
-            contexto.necesidades.energia < 30
-        ){
-
-            opciones.push({
-
-                accion:"dormir",
-
-                prioridad:100
-
-            });
-
-        }
+    let opciones=[];
 
 
 
 
 
 
-        if(
-            contexto.necesidades.social < 30
-        ){
 
-            opciones.push({
+// ===============================
+// NECESIDADES
+// ===============================
 
-                accion:"buscar_compañia",
 
-                prioridad:60
+if(contexto.necesidades){
 
-            });
 
-        }
+    const n =
+    contexto.necesidades;
 
 
 
+    if(n.hambre <30){
 
+        opciones.push({
 
+            accion:"buscar_comida",
 
-        if(
-            contexto.necesidades.seguridad <30
-        ){
+            motivo:"Tiene hambre",
 
-            opciones.push({
+            prioridad:100
 
-                accion:"buscar_refugio",
-
-                prioridad:100
-
-            });
-
-        }
-
+        });
 
     }
 
 
 
-
-
-
-
-
-
-    // ==============================
-    // EMOCIONES
-    // ==============================
-
-
-    if(contexto.emocion){
-
-
-
-        switch(contexto.emocion){
-
-
-
-            case "tristeza":
-
-
-                opciones.push({
-
-                    accion:"buscar_apoyo",
-
-                    prioridad:70
-
-                });
-
-
-            break;
-
-
-
-
-
-            case "miedo":
-
-
-                opciones.push({
-
-                    accion:"protegerse",
-
-                    prioridad:90
-
-                });
-
-
-            break;
-
-
-
-
-
-            case "ira":
-
-
-                opciones.push({
-
-                    accion:"calmarse",
-
-                    prioridad:70
-
-                });
-
-
-            break;
-
-
-
-
-
-            case "feliz":
-
-
-                opciones.push({
-
-                    accion:"compartir_momento",
-
-                    prioridad:40
-
-                });
-
-
-            break;
-
-
-
-        }
-
-
-    }
-
-
-
-
-
-
-
-
-
-    // ==============================
-    // OBJETIVOS
-    // ==============================
-
-
-    if(contexto.objetivo){
-
+    if(n.energia <25){
 
 
         opciones.push({
 
+            accion:"dormir",
 
-            accion:
+            motivo:"Necesita descansar",
 
-            contexto.objetivo.accion
-
-            ||
-
-            "trabajar_objetivo",
-
-
-
-            prioridad:80
-
-
+            prioridad:100
 
         });
 
@@ -325,192 +145,14 @@ contexto
 
 
 
-
-
-
-
-
-    // ==============================
-    // PERSONALIDAD
-    // ==============================
-
-
-    if(contexto.personalidad){
-
-
-
-        const personalidad =
-
-        typeof contexto.personalidad === "object"
-
-        ?
-
-        contexto.personalidad.nombre
-
-        :
-
-        contexto.personalidad;
-
-
-
-
-
-
-
-        switch(personalidad){
-
-
-
-            case "amable":
-
-
-                opciones.push({
-
-                    accion:"ayudar_habitante",
-
-                    prioridad:50
-
-                });
-
-
-            break;
-
-
-
-
-
-            case "curioso":
-
-
-                opciones.push({
-
-                    accion:"explorar",
-
-                    prioridad:50
-
-                });
-
-
-            break;
-
-
-
-
-
-            case "protector":
-
-
-                opciones.push({
-
-                    accion:"proteger_comunidad",
-
-                    prioridad:70
-
-                });
-
-
-            break;
-
-
-
-
-
-            case "aventurero":
-
-
-                opciones.push({
-
-                    accion:"viajar",
-
-                    prioridad:50
-
-                });
-
-
-            break;
-
-
-
-        }
-
-
-
-    }
-
-
-
-
-
-
-
-
-
-    // ==============================
-    // FAMILIA
-    // ==============================
-
-
-    if(
-        contexto.tiene_familia
-    ){
+    if(n.social <30){
 
 
         opciones.push({
 
-            accion:"visitar_familia",
+            accion:"socializar",
 
-            prioridad:40
-
-        });
-
-
-    }
-
-
-
-
-
-
-    if(
-        contexto.tiene_hijos
-    ){
-
-
-        opciones.push({
-
-            accion:"cuidar_hijos",
-
-            prioridad:90
-
-        });
-
-
-    }
-
-
-
-
-
-
-
-
-
-    // ==============================
-    // PROFESIÓN
-    // ==============================
-
-
-    if(
-        contexto.profesion
-    ){
-
-
-        opciones.push({
-
-            accion:
-            obtenerAccionProfesion(
-                contexto.profesion
-            ),
+            motivo:"Necesita compañía",
 
             prioridad:60
 
@@ -520,39 +162,89 @@ contexto
     }
 
 
+}
 
 
 
 
 
-    if(
-        opciones.length===0
+
+
+
+
+// ===============================
+// RUTINA
+// ===============================
+
+
+if(contexto.rutina){
+
+
+    switch(
+        contexto.rutina.actividad_actual
     ){
 
-        return "descansar";
+
+
+        case "trabajar":
+
+
+            opciones.push({
+
+                accion:"ir_al_trabajo",
+
+                motivo:"Horario laboral",
+
+                destino:"trabajo",
+
+                prioridad:90
+
+            });
+
+
+        break;
+
+
+
+        case "familia":
+
+
+            opciones.push({
+
+                accion:"visitar_familia",
+
+                motivo:"Tiempo familiar",
+
+                prioridad:70
+
+            });
+
+
+        break;
+
+
+
+        case "dormir":
+
+
+            opciones.push({
+
+                accion:"ir_a_casa",
+
+                motivo:"Hora de dormir",
+
+                destino:"hogar",
+
+                prioridad:90
+
+            });
+
+
+        break;
+
+
 
     }
-
-
-
-
-
-
-
-    opciones.sort(
-
-        (a,b)=>
-
-        b.prioridad-a.prioridad
-
-    );
-
-
-
-
-
-
-    return opciones[0].accion;
 
 
 }
@@ -565,9 +257,298 @@ contexto
 
 
 
-// ==================================
-// ACCIONES DE PROFESIÓN
-// ==================================
+// ===============================
+// PROFESIÓN
+// ===============================
+
+
+if(contexto.profesion){
+
+
+    opciones.push({
+
+        accion:
+        obtenerAccionProfesion(
+            contexto.profesion
+        ),
+
+
+        motivo:
+        "Responsabilidad laboral",
+
+
+        destino:"trabajo",
+
+
+        prioridad:70
+
+
+    });
+
+
+}
+
+
+
+
+
+
+
+
+
+// ===============================
+// EMOCIONES
+// ===============================
+
+
+if(contexto.emocion){
+
+
+
+switch(contexto.emocion){
+
+
+
+case "tristeza":
+
+
+opciones.push({
+
+    accion:"buscar_apoyo",
+
+    motivo:"Busca compañía",
+
+    prioridad:70
+
+});
+
+
+break;
+
+
+
+case "miedo":
+
+
+opciones.push({
+
+    accion:"buscar_refugio",
+
+    motivo:"Busca seguridad",
+
+    prioridad:100
+
+});
+
+
+break;
+
+
+
+case "felicidad":
+
+
+opciones.push({
+
+    accion:"compartir_momento",
+
+    motivo:"Quiere socializar",
+
+    prioridad:40
+
+});
+
+
+break;
+
+
+
+}
+
+
+
+}
+
+
+
+
+
+
+
+
+
+// ===============================
+// PERSONALIDAD
+// ===============================
+
+
+if(contexto.personalidad){
+
+
+
+switch(contexto.personalidad){
+
+
+
+case "curioso":
+
+
+opciones.push({
+
+accion:"explorar",
+
+motivo:"Desea descubrir",
+
+prioridad:50
+
+});
+
+
+break;
+
+
+
+case "protector":
+
+
+opciones.push({
+
+accion:"proteger_comunidad",
+
+motivo:"Protege a otros",
+
+prioridad:70
+
+});
+
+
+break;
+
+
+
+case "amable":
+
+
+opciones.push({
+
+accion:"ayudar",
+
+motivo:"Quiere ayudar",
+
+prioridad:50
+
+});
+
+
+break;
+
+
+
+}
+
+
+}
+
+
+
+
+
+
+
+
+
+// ===============================
+// FAMILIA
+// ===============================
+
+
+if(contexto.hijos){
+
+
+opciones.push({
+
+accion:"cuidar_hijos",
+
+motivo:"Responsabilidad familiar",
+
+prioridad:90
+
+});
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+// SI NO TIENE NADA QUE HACER
+
+
+if(opciones.length===0){
+
+
+return {
+
+
+accion:"descansar",
+
+motivo:"No tiene necesidades urgentes",
+
+prioridad:10
+
+
+};
+
+
+}
+
+
+
+
+
+
+
+
+// ORDENAR
+
+
+opciones.sort(
+
+(a,b)=>
+
+b.prioridad-a.prioridad
+
+);
+
+
+
+
+
+return opciones[0];
+
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// PROFESIONES
+// =================================
+
 
 function obtenerAccionProfesion(
 profesion
@@ -575,44 +556,38 @@ profesion
 
 
 
-    const acciones={
+const trabajos={
 
 
-        agricultor:
-        "trabajar_campo",
+agricultor:
+"trabajar_campo",
 
 
-        herrero:
-        "forjar_objetos",
+herrero:
+"forjar_objetos",
 
 
-        cocinero:
-        "preparar_comida",
+cocinero:
+"preparar_comida",
 
 
-        medico:
-        "atender_enfermos",
+medico:
+"atender_pacientes",
 
 
-        maestro:
-        "enseñar",
+maestro:
+"enseñar",
 
 
-        guardia:
-        "patrullar"
+guardia:
+"patrullar"
 
 
-    };
-
-
+};
 
 
 
-    return acciones[profesion]
-
-    ||
-
-    "trabajar";
+return trabajos[profesion] || "trabajar";
 
 
 }
@@ -625,9 +600,10 @@ profesion
 
 
 
-// ==================================
-// GUARDAR DECISIÓN
-// ==================================
+// =================================
+// GUARDAR
+// =================================
+
 
 function guardarDecision(
 habitante_id,
@@ -635,40 +611,31 @@ decision
 ){
 
 
+crearMemoria(
 
-    crearMemoria(
+habitante_id,
 
-        habitante_id,
+"decision",
 
-        "decision",
+"Decidió: "+decision.accion+
+" porque "+decision.motivo,
 
-        "Decidió realizar: "+decision,
+"media"
 
-        "media"
-
-    );
-
-
+);
 
 
 
-    crearEvento(
+crearEvento(
 
-        "decision_habitante",
+"decision_habitante",
 
-        [
+[habitante_id],
 
-            habitante_id
+decision
 
-        ],
+);
 
-        {
-
-            decision
-
-        }
-
-    );
 
 
 }
@@ -683,9 +650,9 @@ decision
 module.exports={
 
 
-    procesarDecision,
+procesarDecision,
 
-    analizarContexto
+analizarContexto
 
 
 };
