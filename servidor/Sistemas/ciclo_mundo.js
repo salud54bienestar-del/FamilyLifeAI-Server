@@ -1,4 +1,4 @@
-// Sistema de ciclo del mundo - Village Soul
+// Sistema avanzado de ciclo del mundo - Village Soul
 
 
 const avanzarTiempo =
@@ -6,16 +6,8 @@ require("./tiempo.js")
 .avanzarTiempo;
 
 
-
-const actualizarCrecimiento =
-require("./crecimiento.js")
-.actualizarCrecimiento;
-
-
-
 const crearEvento =
 require("./eventos.js");
-
 
 
 const obtenerMundo =
@@ -24,63 +16,88 @@ require("./mundo.js")
 
 
 
-// Sistemas opcionales
-
-let actualizarEmbarazos = null;
-
-try{
-
-    actualizarEmbarazos =
-    require("./embarazos.js")
-    .actualizarEmbarazos;
-
-}
-catch(e){}
+let cicloActual = 0;
 
 
 
+// ================================
+// SISTEMAS OPCIONALES
+// ================================
 
 
-let actualizarEconomia = null;
+function cargarSistema(
+archivo,
+funcion
+){
 
-try{
+    try{
 
-    actualizarEconomia =
-    require("./recursos.js")
-    .actualizarEconomia;
+        return require(archivo)[funcion];
 
-}
-catch(e){}
+    }
 
+    catch(error){
 
+        console.log(
+            "Sistema no disponible:",
+            archivo
+        );
 
+        return null;
 
-
-let actualizarNecesidades = null;
-
-try{
-
-    actualizarNecesidades =
-    require("./necesidades.js")
-    .actualizarNecesidades;
+    }
 
 }
-catch(e){}
 
 
 
 
 
-let ejecutarRutinas = null;
+const actualizarCrecimiento =
+cargarSistema(
+"./crecimiento.js",
+"actualizarCrecimiento"
+);
 
-try{
 
-    ejecutarRutinas =
-    require("./rutinas.js")
-    .ejecutarRutinas;
 
-}
-catch(e){}
+const actualizarEmbarazos =
+cargarSistema(
+"./embarazos.js",
+"actualizarEmbarazos"
+);
+
+
+
+const actualizarEconomia =
+cargarSistema(
+"./recursos.js",
+"actualizarEconomia"
+);
+
+
+
+const actualizarNecesidades =
+cargarSistema(
+"./necesidades.js",
+"actualizarNecesidades"
+);
+
+
+
+const ejecutarRutinas =
+cargarSistema(
+"./rutinas.js",
+"ejecutarRutinas"
+);
+
+
+
+const pensarHabitantes =
+cargarSistema(
+"./ia_almas.js",
+"pensarHabitantes"
+);
 
 
 
@@ -98,189 +115,210 @@ function ejecutarCiclo(){
 
 
 
-console.log(
-"=============================="
-);
-
-
-console.log(
-"Ciclo Village Soul"
-);
-
-
-console.log(
-"=============================="
-);
+    cicloActual++;
 
 
 
+    console.log(
+        "=============================="
+    );
+
+
+    console.log(
+        "Ciclo Village Soul:",
+        cicloActual
+    );
+
+
+    console.log(
+        "=============================="
+    );
 
 
 
-// Tiempo
 
 
-const tiempo =
-avanzarTiempo(1);
+    try{
+
+
+        const tiempo =
+        avanzarTiempo(1);
 
 
 
-if(!tiempo){
+        if(!tiempo){
 
-return null;
+            return null;
+
+        }
+
+
+
+
+
+        // Rutinas
+
+        if(ejecutarRutinas){
+
+            ejecutarRutinas();
+
+        }
+
+
+
+
+
+
+
+        // IA
+
+        if(
+            pensarHabitantes &&
+            tiempo.hora % 6 === 0
+        ){
+
+            pensarHabitantes();
+
+        }
+
+
+
+
+
+
+
+
+        // NUEVO DÍA
+
+        if(
+            tiempo.nuevo_dia_minecraft === true
+        ){
+
+
+
+            console.log(
+                "Nuevo día."
+            );
+
+
+
+
+            if(actualizarCrecimiento){
+
+                actualizarCrecimiento();
+
+            }
+
+
+
+
+            if(actualizarEmbarazos){
+
+                actualizarEmbarazos();
+
+            }
+
+
+
+
+            if(actualizarEconomia){
+
+                actualizarEconomia();
+
+            }
+
+
+
+
+            if(actualizarNecesidades){
+
+                actualizarNecesidades();
+
+            }
+
+
+
+
+
+            crearEvento(
+
+                "ciclo_diario",
+
+                [],
+
+                {
+
+                    ciclo:
+                    cicloActual,
+
+
+                    dia:
+                    tiempo.dia,
+
+
+                    mes:
+                    tiempo.mes,
+
+
+                    año:
+                    tiempo.año
+
+
+                }
+
+            );
+
+
+        }
+
+
+
+
+
+
+        return {
+
+
+            ciclo:
+            cicloActual,
+
+
+            tiempo,
+
+
+            mundo:
+            obtenerMundo()
+
+
+        };
+
+
+
+
+
+    }
+
+
+
+    catch(error){
+
+
+        console.log(
+
+            "Error en ciclo:",
+            error.message
+
+        );
+
+
+        return null;
+
+
+    }
+
 
 }
 
-
-
-
-
-
-
-
-// Rutinas diarias
-
-
-if(ejecutarRutinas){
-
-    ejecutarRutinas();
-
-}
-
-
-
-
-
-
-
-
-
-// Nuevo día Minecraft
-
-
-if(
-tiempo.nuevo_dia_minecraft === true
-){
-
-
-
-console.log(
-"Nuevo día del mundo."
-);
-
-
-
-
-
-// Crecimiento
-
-actualizarCrecimiento();
-
-
-
-
-
-
-// Embarazos
-
-if(actualizarEmbarazos){
-
-actualizarEmbarazos();
-
-}
-
-
-
-
-
-
-// Economía
-
-if(actualizarEconomia){
-
-actualizarEconomia();
-
-}
-
-
-
-
-
-
-
-// Necesidades
-
-if(actualizarNecesidades){
-
-actualizarNecesidades();
-
-}
-
-
-
-
-
-
-
-crearEvento(
-
-"ciclo_diario",
-
-[],
-
-{
-
-dia:
-tiempo.dia,
-
-
-mes:
-tiempo.mes,
-
-
-año:
-tiempo.año
-
-
-}
-
-);
-
-
-
-}
-
-
-
-
-
-
-
-
-
-const mundo =
-obtenerMundo();
-
-
-
-
-
-
-
-return {
-
-
-tiempo,
-
-
-mundo
-
-
-};
-
-
-
-}
 
 
 
@@ -290,7 +328,7 @@ mundo
 
 
 // =================================
-// VARIOS CICLOS
+// EJECUTAR VARIOS CICLOS
 // =================================
 
 
@@ -299,28 +337,24 @@ cantidad
 ){
 
 
-
-let resultado=null;
-
-
-
-for(
-let i=0;
-i<cantidad;
-i++
-){
-
-
-resultado =
-ejecutarCiclo();
-
-
-}
+    let resultado=null;
 
 
 
-return resultado;
+    for(
+        let i=0;
+        i<cantidad;
+        i++
+    ){
 
+        resultado =
+        ejecutarCiclo();
+
+    }
+
+
+
+    return resultado;
 
 
 }
@@ -335,10 +369,9 @@ return resultado;
 module.exports={
 
 
-ejecutarCiclo,
+    ejecutarCiclo,
 
-
-ejecutarDias
+    ejecutarDias
 
 
 };
