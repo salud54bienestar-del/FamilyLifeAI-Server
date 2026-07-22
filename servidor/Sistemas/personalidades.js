@@ -1,7 +1,19 @@
-// Sistema de personalidades de Village Soul
+// Sistema avanzado de personalidades - Village Soul
 
-const cargarArchivo = require("./cargador_datos.js");
-const crearMemoria = require("./memorias.js");
+
+const cargarArchivo =
+require("./cargador_datos.js");
+
+
+const guardarArchivo =
+require("./guardador_datos.js");
+
+
+const crearMemoria =
+require("./memorias.js");
+
+
+
 
 
 
@@ -10,21 +22,21 @@ const crearMemoria = require("./memorias.js");
 // CARGAR PERSONALIDADES
 // =================================
 
+
 function cargarPersonalidades(){
+
 
     const datos =
     cargarArchivo("../datos/personalidades.json");
 
 
+
     if(!datos){
 
-        console.log(
-            "No se pudieron cargar las personalidades."
-        );
-
-        return null;
+        return [];
 
     }
+
 
 
     return datos.personalidades || [];
@@ -37,97 +49,85 @@ function cargarPersonalidades(){
 
 
 
-// =================================
-// OBTENER PERSONALIDAD POR ID
-// =================================
-
-function obtenerPersonalidad(id){
-
-
-    const personalidades =
-    cargarPersonalidades();
-
-
-
-    if(!personalidades){
-
-        return null;
-
-    }
-
-
-
-    return personalidades.find(
-
-        p => p.id === id
-
-    ) || null;
-
-
-}
-
-
-
-
-
 
 
 // =================================
-// BUSCAR PERSONALIDAD POR NOMBRE
+// OBTENER PERSONALIDAD
 // =================================
 
-function buscarPersonalidad(nombre){
 
-
-
-    const personalidades =
-    cargarPersonalidades();
-
-
-
-    if(
-        !personalidades ||
-        !nombre
-    ){
-
-        return null;
-
-    }
-
-
-
-    return personalidades.find(
-
-        p =>
-        p.nombre === nombre.toLowerCase()
-
-    ) || null;
-
-
-}
-
-
-
-
-
-
-
-// =================================
-// ASIGNAR PERSONALIDAD
-// =================================
-
-function asignarPersonalidad(
-    habitante,
-    personalidad_id
+function obtenerPersonalidad(
+id
 ){
 
 
+    return cargarPersonalidades()
+    .find(
 
-    if(!habitante){
+        p=>p.id===id
+
+    ) || null;
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// BUSCAR
+// =================================
+
+
+function buscarPersonalidad(
+nombre
+){
+
+
+    if(!nombre){
 
         return null;
 
     }
+
+
+
+    return cargarPersonalidades()
+    .find(
+
+        p=>
+
+        p.nombre.toLowerCase()
+        ===
+        nombre.toLowerCase()
+
+    ) || null;
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// ASIGNAR
+// =================================
+
+
+function asignarPersonalidad(
+habitante,
+personalidad_id
+){
 
 
 
@@ -138,11 +138,10 @@ function asignarPersonalidad(
 
 
 
-    if(!personalidad){
-
-        console.log(
-            "Personalidad no encontrada."
-        );
+    if(
+        !habitante ||
+        !personalidad
+    ){
 
         return null;
 
@@ -152,11 +151,13 @@ function asignarPersonalidad(
 
 
 
+    habitante.personalidad_id =
+    personalidad.id;
+
+
+
+
     habitante.personalidad = {
-
-
-        id:
-        personalidad.id,
 
 
         nombre:
@@ -167,24 +168,34 @@ function asignarPersonalidad(
         [...personalidad.rasgos],
 
 
-        curiosidad:
-        personalidad.curiosidad,
+
+        valores:
 
 
-        valentia:
-        personalidad.valentia,
+        {
 
 
-        sociabilidad:
-        personalidad.sociabilidad,
+            curiosidad:
+            personalidad.curiosidad || 50,
 
 
-        paciencia:
-        personalidad.paciencia
+            valentia:
+            personalidad.valentia || 50,
+
+
+            sociabilidad:
+            personalidad.sociabilidad || 50,
+
+
+            paciencia:
+            personalidad.paciencia || 50
+
+
+        }
+
 
 
     };
-
 
 
 
@@ -197,7 +208,7 @@ function asignarPersonalidad(
 
         "personalidad",
 
-        "Su personalidad se definió como " +
+        "Desarrolló una personalidad " +
         personalidad.nombre,
 
         "alta"
@@ -219,57 +230,33 @@ function asignarPersonalidad(
 
 
 
-// =================================
-// OBTENER RASGOS
-// =================================
-
-function obtenerRasgos(habitante){
-
-
-    if(
-        !habitante ||
-        !habitante.personalidad
-    ){
-
-        return [];
-
-    }
-
-
-
-    return habitante.personalidad.rasgos || [];
-
-}
-
-
-
-
-
 
 
 // =================================
-// OBTENER VALOR DE PERSONALIDAD
+// MODIFICADORES
 // =================================
+
 
 function obtenerModificador(
-    habitante,
-    tipo
+habitante,
+tipo
 ){
 
 
+    return (
 
-    if(
-        !habitante ||
-        !habitante.personalidad
-    ){
+        habitante
+        ?.personalidad
+        ?.valores
+        ?.
 
-        return 0;
+        [tipo]
 
-    }
+    )
 
+    ||
 
-
-    return habitante.personalidad[tipo] || 0;
+    50;
 
 
 }
@@ -280,47 +267,36 @@ function obtenerModificador(
 
 
 
+
+
 // =================================
-// INFLUIR EN DECISIONES
+// EFECTO EN EMOCIONES
 // =================================
 
-function influirDecision(
-    habitante,
-    decision
+
+function modificarEmocionPorPersonalidad(
+habitante,
+emocion,
+valor
 ){
 
 
 
-    if(
-        !habitante ||
-        !habitante.personalidad
-    ){
-
-        return decision;
-
-    }
-
-
-
-
-    const personalidad =
-    habitante.personalidad.nombre;
-
-
+    const valentia =
+    obtenerModificador(
+        habitante,
+        "valentia"
+    );
 
 
 
     if(
-        personalidad === "amable"
+        emocion==="miedo"
+        &&
+        valentia>70
     ){
 
-
-        if(decision === "conflicto"){
-
-            return "buscar_dialogo";
-
-        }
-
+        return valor-5;
 
     }
 
@@ -328,19 +304,21 @@ function influirDecision(
 
 
 
+    const sociabilidad =
+    obtenerModificador(
+        habitante,
+        "sociabilidad"
+    );
+
 
 
     if(
-        personalidad === "curiosa"
+        emocion==="soledad"
+        &&
+        sociabilidad>70
     ){
 
-
-        if(decision === "descansar"){
-
-            return "explorar";
-
-        }
-
+        return valor-5;
 
     }
 
@@ -348,18 +326,138 @@ function influirDecision(
 
 
 
+    return valor;
 
 
-    if(
-        personalidad === "protectora"
-    ){
+}
 
 
-        if(decision === "huir"){
 
-            return "proteger_aliados";
 
-        }
+
+
+
+
+
+// =================================
+// APRENDIZAJE
+// =================================
+
+
+function modificarAprendizaje(
+habitante,
+experiencia
+){
+
+
+
+    const curiosidad =
+    obtenerModificador(
+
+        habitante,
+
+        "curiosidad"
+
+    );
+
+
+
+    return experiencia +
+
+    Math.floor(
+
+        curiosidad / 20
+
+    );
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// DECISIONES
+// =================================
+
+
+function influirDecision(
+habitante,
+decision
+){
+
+
+
+    const nombre =
+
+    habitante
+    ?.personalidad
+    ?.nombre;
+
+
+
+
+
+    switch(nombre){
+
+
+
+        case "amable":
+
+
+            if(decision==="conflicto")
+
+                return "dialogar";
+
+
+        break;
+
+
+
+
+
+        case "curiosa":
+
+
+            if(decision==="descansar")
+
+                return "explorar";
+
+
+        break;
+
+
+
+
+
+        case "protectora":
+
+
+            if(decision==="huir")
+
+                return "defender";
+
+
+        break;
+
+
+
+
+
+        case "aventurera":
+
+
+            if(decision==="quedarse")
+
+                return "explorar";
+
+
+        break;
 
 
     }
@@ -379,7 +477,70 @@ function influirDecision(
 
 
 
-module.exports = {
+
+// =================================
+// EVOLUCIONAR PERSONALIDAD
+// =================================
+
+
+function modificarPersonalidad(
+habitante,
+rasgo,
+cantidad
+){
+
+
+    if(
+        !habitante.personalidad
+    ){
+
+        return null;
+
+    }
+
+
+
+
+    if(
+        !habitante.personalidad.rasgos.includes(rasgo)
+    ){
+
+        habitante.personalidad.rasgos.push(
+            rasgo
+        );
+
+    }
+
+
+
+    crearMemoria(
+
+        habitante.id,
+
+        "cambio_personalidad",
+
+        "Desarrolló el rasgo "+rasgo,
+
+        "media"
+
+    );
+
+
+
+    return habitante.personalidad;
+
+
+}
+
+
+
+
+
+
+
+
+
+module.exports={
 
 
     cargarPersonalidades,
@@ -390,11 +551,15 @@ module.exports = {
 
     asignarPersonalidad,
 
-    obtenerRasgos,
-
     obtenerModificador,
 
-    influirDecision
+    modificarEmocionPorPersonalidad,
+
+    modificarAprendizaje,
+
+    influirDecision,
+
+    modificarPersonalidad
 
 
 };
