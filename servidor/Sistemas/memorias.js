@@ -1,17 +1,126 @@
-// Sistema avanzado de memorias - Village Soul
-
+// Sistema avanzado de memorias - Village Soul v2.0
 
 const cargarArchivo =
 require("./cargador_datos.js");
 
-
 const guardarArchivo =
 require("./guardador_datos.js");
 
+const reloj =
+require("./reloj_mundo.js");
+
+
+// =================================
+// GENERAR ID
+// =================================
+
+function generarId(datos){
+
+    if(
+        !datos ||
+        !datos.memorias ||
+        datos.memorias.length===0
+    ){
+        return 1;
+    }
+
+    return Math.max(
+        ...datos.memorias.map(
+            memoria=>memoria.id
+        )
+    )+1;
+
+}
 
 
 
+// =================================
+// FECHA DEL MUNDO
+// =================================
 
+function obtenerFechaMundo(){
+
+    if(
+        reloj &&
+        typeof reloj.obtenerFecha==="function"
+    ){
+        return reloj.obtenerFecha();
+    }
+
+    return {
+        año:1,
+        estacion:"primavera",
+        dia:1,
+        hora:8
+    };
+
+}
+
+
+
+// =================================
+// CLASIFICAR CATEGORÍA
+// =================================
+
+function obtenerCategoria(emocion){
+
+    if([
+        "felicidad",
+        "amor",
+        "orgullo",
+        "esperanza",
+        "motivacion",
+        "calma"
+    ].includes(emocion)){
+
+        return "positiva";
+
+    }
+
+    if([
+        "tristeza",
+        "miedo",
+        "ira",
+        "estres",
+        "soledad"
+    ].includes(emocion)){
+
+        return "negativa";
+
+    }
+
+    return "neutral";
+
+}
+
+
+
+// =================================
+// CALCULAR INFLUENCIA
+// =================================
+
+function calcularInfluencia(importancia){
+
+    switch(importancia){
+
+        case "muy_alta":
+            return 100;
+
+        case "alta":
+            return 90;
+
+        case "media":
+            return 60;
+
+        case "baja":
+            return 30;
+
+        default:
+            return 20;
+
+    }
+
+}
 
 
 
@@ -19,363 +128,205 @@ require("./guardador_datos.js");
 // CREAR MEMORIA
 // =================================
 
-
 function crearMemoria(
+
 habitante_id,
+
 tipo,
+
 descripcion,
+
 importancia="baja",
+
 personas=[],
+
 emocion="neutral",
+
 lugar=null,
+
 efecto={},
-aprendizaje=null
+
+aprendizaje=null,
+
+origen="evento",
+
+grupo_memoria=null,
+
+ubicacion=null
+
 ){
 
+    const datos =
+    cargarArchivo("../datos/memorias.json");
 
+    if(!datos){
+        return null;
+    }
 
-const datos =
-cargarArchivo("../datos/memorias.json");
+    if(!datos.memorias){
+        datos.memorias=[];
+    }
 
+    const memoria={
 
+        id:
+        generarId(datos),
 
-if(!datos){
+        habitante_id,
 
-return null;
+        tipo,
 
-}
+        descripcion,
 
+        importancia,
 
+        influencia:
+        calcularInfluencia(
+            importancia
+        ),
 
-if(!datos.memorias){
+        categoria:
+        obtenerCategoria(
+            emocion
+        ),
 
-datos.memorias=[];
+        emocion,
 
-}
+        personas_relacionadas:
+        personas,
 
+        lugar_relacionado:
+        lugar,
 
+        ubicacion:
+        ubicacion,
 
+        origen,
 
+        grupo_memoria,
 
+        efecto_personalidad:{
 
-const id =
+            confianza:
+            efecto.confianza || 0,
 
-datos.memorias.length
+            miedo:
+            efecto.miedo || 0,
 
-?
+            felicidad:
+            efecto.felicidad || 0,
 
-Math.max(
+            tristeza:
+            efecto.tristeza || 0,
 
-...datos.memorias.map(
+            respeto:
+            efecto.respeto || 0,
 
-m=>m.id
+            valentia:
+            efecto.valentia || 0
 
-)
+        },
 
-)+1
+        aprendizaje:
+        aprendizaje || "ninguno",
 
-:
+        impacto_comportamiento:
 
-1;
+        importancia==="muy_alta"
 
+        ?
 
+        "permanente"
 
+        :
 
+        importancia==="alta"
 
+        ?
 
+        "fuerte"
 
+        :
 
-const influencia =
+        importancia==="media"
 
-importancia==="alta"
+        ?
 
-?
+        "moderado"
 
-90
+        :
 
-:
+        "leve",
 
-importancia==="media"
+        fuerza_recuerdo:100,
 
-?
+        recordada:true,
 
-60
+        estado:"activa",
 
-:
+        favorita:false,
 
-30;
+        veces_recordada:0,
 
+        fecha_real:
+        new Date().toISOString(),
 
+        fecha_mundo:
+        obtenerFechaMundo()
 
+    };
 
+    datos.memorias.push(
+        memoria
+    );
 
 
 
+// Limitar memorias por habitante
 
-const categoria =
+    const memoriasHabitante =
+    datos.memorias.filter(
+        memoria =>
+        memoria.habitante_id === habitante_id
+    );
 
-[
-"felicidad",
-"amor",
-"orgullo"
+    if(memoriasHabitante.length > 500){
 
-].includes(emocion)
+        const eliminar = memoriasHabitante
 
-?
+        .filter(
+            memoria =>
+            !memoria.favorita &&
+            memoria.estado !== "permanente"
+        )
 
-"positiva"
+        .sort(
+            (a,b)=>
+            new Date(a.fecha_real) -
+            new Date(b.fecha_real)
+        )
 
-:
+        .slice(
+            0,
+            memoriasHabitante.length-500
+        );
 
-[
-"tristeza",
-"miedo",
-"ira",
-"estres"
+        datos.memorias =
+        datos.memorias.filter(
+            memoria =>
+            !eliminar.includes(memoria)
+        );
 
-].includes(emocion)
+    }
 
-?
-
-"negativa"
-
-:
-
-"neutral";
-
-
-
-
-
-
-
-
-
-const memoria={
-
-
-
-id,
-
-
-habitante_id,
-
-
-
-tipo,
-
-
-
-descripcion,
-
-
-
-importancia,
-
-
-
-influencia,
-
-
-
-categoria,
-
-
-
-emocion,
-
-
-
-
-personas_relacionadas:
-
-personas,
-
-
-
-lugar_relacionado:
-
-lugar,
-
-
-
-
-
-efecto_personalidad:{
-
-
-confianza:
-
-efecto.confianza || 0,
-
-
-miedo:
-
-efecto.miedo || 0,
-
-
-felicidad:
-
-efecto.felicidad || 0,
-
-
-tristeza:
-
-efecto.tristeza || 0
-
-
-},
-
-
-
-
-aprendizaje:
-
-
-
-aprendizaje || "ninguno",
-
-
-
-
-impacto_comportamiento:
-
-
-importancia==="alta"
-
-?
-
-"fuerte"
-
-:
-
-importancia==="media"
-
-?
-
-"moderado"
-
-:
-
-"leve",
-
-
-
-
-
-fuerza_recuerdo:100,
-
-
-recordada:true,
-
-
-
-fecha:
-
-new Date().toISOString()
-
-
-};
-
-
-
-
-
-
-
-datos.memorias.push(
-memoria
-);
-
-
-
-
-
-
-
-// Limitar memoria por habitante
-
-
-const propias =
-
-datos.memorias.filter(
-
-m=>m.habitante_id===habitante_id
-
-);
-
-
-
-if(propias.length>500){
-
-
-
-const eliminar =
-
-propias
-
-.sort(
-
-(a,b)=>
-
-new Date(a.fecha)-
-
-new Date(b.fecha)
-
-)
-
-.slice(
-
-0,
-
-propias.length-500
-
-);
-
-
-
-datos.memorias =
-
-datos.memorias.filter(
-
-m=>!eliminar.includes(m)
-
-);
-
-
-
-}
-
-
-
-
-
-
-
-
-
-guardarArchivo(
-
-"../datos/memorias.json",
-
-datos
-
-);
-
-
-
-
+    guardarArchivo(
+        "../datos/memorias.json",
+        datos
+    );
 
 return memoria;
 
-
 }
-
-
-
-
-
-
 
 
 
@@ -383,381 +334,295 @@ return memoria;
 // OBTENER MEMORIAS
 // =================================
 
-
 function obtenerMemorias(
 habitante_id
 ){
 
+    const datos =
+    cargarArchivo("../datos/memorias.json");
 
-const datos =
+    if(
+        !datos ||
+        !datos.memorias
+    ){
+        return [];
+    }
 
-cargarArchivo("../datos/memorias.json");
+    return datos.memorias
 
+    .filter(
+        memoria =>
+        memoria.habitante_id===habitante_id
+    )
 
-
-if(!datos || !datos.memorias){
-
-return [];
-
-}
-
-
-
-
-
-return datos.memorias
-
-.filter(
-
-m=>m.habitante_id===habitante_id
-
-)
-
-.sort(
-
-(a,b)=>
-
-new Date(a.fecha)-
-
-new Date(b.fecha)
-
-);
-
+    .sort(
+        (a,b)=>
+        new Date(a.fecha_real)-
+        new Date(b.fecha_real)
+    );
 
 }
-
-
-
-
-
-
-
-
-
 // =================================
-// BUSCAR TIPO
+// BUSCAR MEMORIAS
 // =================================
-
 
 function buscarMemoriasTipo(
 habitante_id,
 tipo
 ){
 
+    return obtenerMemorias(habitante_id)
 
-return obtenerMemorias(
-
-habitante_id
-
-)
-
-.filter(
-
-m=>m.tipo===tipo
-
-);
-
+    .filter(
+        memoria =>
+        memoria.tipo===tipo
+    );
 
 }
-
-
-
-
-
-
-
-
-
-// =================================
-// BUSCAR PERSONA
-// =================================
-
 
 function buscarMemoriasPersona(
 habitante_id,
 persona_id
 ){
 
+    return obtenerMemorias(habitante_id)
 
-return obtenerMemorias(
+    .filter(
+        memoria =>
 
-habitante_id
+        memoria.personas_relacionadas.includes(
+            persona_id
+        )
 
-)
+    );
 
-.filter(
+}
 
-m=>
+function buscarMemoriasEmocion(
+habitante_id,
+emocion
+){
 
-m.personas_relacionadas.includes(
-persona_id
-)
+    return obtenerMemorias(habitante_id)
 
-);
-
+    .filter(
+        memoria =>
+        memoria.emocion===emocion
+    );
 
 }
 
 
-
-
-
-
-
-
-
 // =================================
-// IMPORTANTES
+// RECUERDOS IMPORTANTES
 // =================================
-
 
 function obtenerRecuerdosImportantes(
 habitante_id
 ){
 
+    return obtenerMemorias(habitante_id)
 
-return obtenerMemorias(
-
-habitante_id
-
-)
-
-.filter(
-
-m=>
-
-m.influencia>=80
-
-);
-
+    .filter(
+        memoria =>
+        memoria.influencia>=80
+    );
 
 }
 
 
 
-
-
-
-
-
-
 // =================================
-// ÚLTIMO RECUERDO
+// RECORDAR MEMORIA
 // =================================
 
-
-function ultimaMemoria(
-habitante_id
+function recordarMemoria(
+habitante_id,
+id
 ){
 
+    const datos =
+    cargarArchivo("../datos/memorias.json");
 
-const lista =
+    if(!datos){
+        return null;
+    }
 
-obtenerMemorias(
+    const memoria =
+    datos.memorias.find(
 
-habitante_id
+        memoria=>
 
-);
+        memoria.id===id &&
 
+        memoria.habitante_id===habitante_id
 
+    );
 
-return lista.length
+    if(!memoria){
+        return null;
+    }
 
-?
+    memoria.recordada=true;
 
-lista[lista.length-1]
+    memoria.veces_recordada++;
 
-:
+    memoria.fuerza_recuerdo =
 
-null;
+    Math.min(
+        100,
+        memoria.fuerza_recuerdo+5
+    );
 
+    guardarArchivo(
+        "../datos/memorias.json",
+        datos
+    );
+
+    return memoria;
 
 }
 
 
-
-
-
-
-
-
-
 // =================================
-// OLVIDAR CON EL TIEMPO
+// EVOLUCIONAR MEMORIAS
 // =================================
-
 
 function evolucionarMemorias(){
 
+    const datos =
+    cargarArchivo("../datos/memorias.json");
 
+    if(!datos){
+        return false;
+    }
 
-const datos =
+    datos.memorias.forEach(
 
-cargarArchivo(
+        memoria=>{
 
-"../datos/memorias.json"
+            if(
+                memoria.favorita ||
+                memoria.estado==="permanente"
+            ){
+                return;
+            }
 
-);
+            let perdida=1;
 
+            switch(memoria.importancia){
 
+                case "muy_alta":
+                    perdida=0.1;
+                break;
 
-if(!datos){
+                case "alta":
+                    perdida=0.2;
+                break;
 
-return null;
+                case "media":
+                    perdida=0.5;
+                break;
 
-}
+                default:
+                    perdida=1;
+                break;
 
+            }
 
+            memoria.fuerza_recuerdo-=perdida;
 
+            if(
+                memoria.fuerza_recuerdo<=50
+            ){
+                memoria.recordada=false;
+            }
 
+            if(
+                memoria.fuerza_recuerdo<=20 &&
+                memoria.estado==="activa"
+            ){
+                memoria.estado="debil";
+            }
 
+            if(
+                memoria.fuerza_recuerdo<=0
+            ){
 
-datos.memorias.forEach(
+                memoria.fuerza_recuerdo=0;
 
-memoria=>{
+                memoria.estado="olvidada";
 
+            }
 
-let perdida=1;
+        }
 
+    );
 
+    guardarArchivo(
+        "../datos/memorias.json",
+        datos
+    );
 
-if(memoria.importancia==="alta")
-
-perdida=0.2;
-
-
-else if(memoria.importancia==="media")
-
-perdida=0.5;
-
-
-
-
-
-memoria.fuerza_recuerdo-=perdida;
-
-
-
-if(memoria.fuerza_recuerdo<=0){
-
-
-memoria.recordada=false;
-
-
-}
-
-
-
-}
-
-
-
-);
-
-
-
-
-
-
-guardarArchivo(
-
-"../datos/memorias.json",
-
-datos
-
-);
-
-
-
-
-
-
-return true;
-
+    return true;
 
 }
-
-
-
-
-
-
 
 
 
 // =================================
-// ELIMINAR
+// ELIMINAR MEMORIA
 // =================================
-
 
 function eliminarMemoria(id){
 
+    const datos =
+    cargarArchivo("../datos/memorias.json");
 
-const datos=
+    if(!datos){
+        return false;
+    }
 
-cargarArchivo("../datos/memorias.json");
+    datos.memorias =
 
+    datos.memorias.filter(
+        memoria =>
+        memoria.id!==id
+    );
 
+    guardarArchivo(
+        "../datos/memorias.json",
+        datos
+    );
 
-if(!datos){
-
-return false;
-
-}
-
-
-
-datos.memorias=
-
-datos.memorias.filter(
-
-m=>m.id!==id
-
-);
-
-
-
-
-guardarArchivo(
-
-"../datos/memorias.json",
-
-datos
-
-);
-
-
-
-return true;
-
+    return true;
 
 }
 
 
 
-
-
-
-
+// =================================
+// EXPORTAR
+// =================================
 
 module.exports={
 
+    crearMemoria,
 
-crearMemoria,
+    obtenerMemorias,
 
-obtenerMemorias,
+    buscarMemoriasTipo,
 
-buscarMemoriasTipo,
+    buscarMemoriasPersona,
 
-buscarMemoriasPersona,
+    buscarMemoriasEmocion,
 
-obtenerRecuerdosImportantes,
+    obtenerRecuerdosImportantes,
 
-ultimaMemoria,
+    recordarMemoria,
 
-evolucionarMemorias,
+    evolucionarMemorias,
 
-eliminarMemoria
-
+    eliminarMemoria
 
 };
