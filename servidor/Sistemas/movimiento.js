@@ -29,31 +29,42 @@ require("./ubicaciones.js");
 // OBTENER MOVIMIENTO
 // =================================
 
+
 function obtenerMovimiento(
 habitante_id
 ){
 
 
-    const datos =
-    cargarArchivo("../datos/movimientos.json");
-
-
-    if(!datos){
-
-        return null;
-
-    }
+const datos =
+cargarArchivo("../datos/movimientos.json");
 
 
 
-    return datos.movimientos.find(
+if(!datos){
 
-        m=>m.habitante_id===habitante_id
+return null;
 
-    ) || null;
+}
+
+
+
+if(!datos.movimientos){
+
+datos.movimientos=[];
+
+}
+
+
+
+return datos.movimientos.find(
+
+m=>m.habitante_id===habitante_id
+
+)||null;
 
 
 }
+
 
 
 
@@ -66,143 +77,161 @@ habitante_id
 // CREAR MOVIMIENTO
 // =================================
 
+
 function crearMovimiento(
 habitante_id,
 posicionInicial={}
 ){
 
 
-    const datos =
-    cargarArchivo("../datos/movimientos.json");
 
+const datos =
+cargarArchivo("../datos/movimientos.json");
 
-    if(!datos){
 
-        return null;
 
-    }
+if(!datos){
 
+return null;
 
+}
 
-    let existente =
-    obtenerMovimiento(
-        habitante_id
-    );
 
 
+if(!datos.movimientos){
 
-    if(existente){
+datos.movimientos=[];
 
-        return existente;
+}
 
-    }
 
 
 
 
+const existente =
+obtenerMovimiento(
+habitante_id
+);
 
-    const movimiento={
 
 
-        id:
-        datos.movimientos.length + 1,
+if(existente){
 
+return existente;
 
-        habitante_id,
+}
 
 
 
-        posicion_actual:{
 
 
-            x:posicionInicial.x || 0,
 
-            y:posicionInicial.y || 0,
 
-            z:posicionInicial.z || 0
+const movimiento={
 
 
-        },
+id:
+datos.movimientos.length+1,
 
 
+habitante_id,
 
-        ultima_ubicacion:"inicio",
 
 
-        destino:null,
+posicion_actual:{
 
 
-        tipo_destino:null,
+x:posicionInicial.x || 0,
 
+y:posicionInicial.y || 0,
 
-        estado:"quieto",
+z:posicionInicial.z || 0
 
 
-        velocidad:1,
+},
 
 
-        siguiendo:null,
 
+ultima_ubicacion:"inicio",
 
-        ultima_actualizacion:
-        new Date().toISOString()
 
 
-    };
+destino:null,
 
 
 
+tipo_destino:null,
 
 
 
-    datos.movimientos.push(
-        movimiento
-    );
+estado:"quieto",
 
 
 
+velocidad:1,
 
 
-    guardarArchivo(
 
-        "../datos/movimientos.json",
+siguiendo:null,
 
-        datos
 
-    );
 
+ultima_actualizacion:
+new Date().toISOString()
 
 
+};
 
 
 
-    // Crear perfil de ubicación si no existe
 
-    ubicaciones.crearUbicaciones(
-        habitante_id
-    );
 
 
+datos.movimientos.push(
+movimiento
+);
 
 
 
-    crearMemoria(
+guardarArchivo(
 
-        habitante_id,
+"../datos/movimientos.json",
 
-        "movimiento",
+datos
 
-        "Registró su posición inicial.",
+);
 
-        "baja"
 
-    );
 
 
 
+// Crear ubicación relacionada
 
+ubicaciones.crearUbicacion(
+habitante_id
+);
 
-    return movimiento;
+
+
+
+
+crearMemoria(
+
+habitante_id,
+
+"movimiento",
+
+"Registró su posición inicial.",
+
+"baja"
+
+);
+
+
+
+
+
+return movimiento;
 
 
 }
@@ -219,6 +248,7 @@ posicionInicial={}
 // ESTABLECER DESTINO
 // =================================
 
+
 function establecerDestino(
 habitante_id,
 destino,
@@ -226,83 +256,96 @@ tipo="desconocido"
 ){
 
 
-    const movimiento =
-    obtenerMovimiento(
-        habitante_id
-    );
 
-
-    if(!movimiento){
-
-        return null;
-
-    }
+let movimiento =
+obtenerMovimiento(
+habitante_id
+);
 
 
 
-
-    movimiento.destino={
-
-
-        x:destino.x,
-
-        y:destino.y,
-
-        z:destino.z
+if(!movimiento){
 
 
-    };
+movimiento =
+crearMovimiento(
+habitante_id
+);
 
 
-
-    movimiento.tipo_destino =
-    tipo;
-
-
-    movimiento.estado =
-    "caminando";
-
-
-    movimiento.siguiendo=null;
-
-
-    movimiento.ultima_actualizacion =
-    new Date().toISOString();
+}
 
 
 
 
 
-    guardarMovimiento(
-        movimiento
-    );
+
+movimiento.destino={
+
+
+x:destino.x || 0,
+
+y:destino.y || 0,
+
+z:destino.z || 0
+
+
+};
 
 
 
 
 
-    crearEvento(
-
-        "movimiento_iniciado",
-
-        [
-            habitante_id
-        ],
-
-        {
-
-            destino,
-
-            tipo
-
-        }
-
-    );
+movimiento.tipo_destino =
+tipo;
 
 
 
+movimiento.estado =
+"caminando";
 
-    return movimiento;
+
+
+movimiento.siguiendo=null;
+
+
+
+movimiento.ultima_actualizacion =
+new Date().toISOString();
+
+
+
+
+
+guardarMovimiento(
+movimiento
+);
+
+
+
+
+
+crearEvento(
+
+"movimiento_iniciado",
+
+[habitante_id],
+
+{
+
+destino,
+
+tipo
+
+}
+
+);
+
+
+
+
+
+return movimiento;
 
 
 }
@@ -319,42 +362,72 @@ tipo="desconocido"
 // IR A UBICACIÓN
 // =================================
 
+
 function irAUbicacion(
 habitante_id,
 tipo
 ){
 
 
-    const destino =
-    ubicaciones.obtenerDestino(
 
-        habitante_id,
+const destino =
+ubicaciones.obtenerDestino(
 
-        tipo
+habitante_id,
 
-    );
+tipo
 
-
-
-    if(!destino){
-
-        return null;
-
-    }
+);
 
 
 
 
-    return establecerDestino(
+if(!destino){
 
-        habitante_id,
+return null;
 
-        destino,
+}
 
-        tipo
 
-    );
 
+
+return establecerDestino(
+
+habitante_id,
+
+destino,
+
+tipo
+
+);
+
+
+}
+
+
+
+
+
+
+
+
+function irAHogar(id){
+
+return irAUbicacion(id,"hogar");
+
+}
+
+
+function irAlTrabajo(id){
+
+return irAUbicacion(id,"trabajo");
+
+}
+
+
+function irAEscuela(id){
+
+return irAUbicacion(id,"escuela");
 
 }
 
@@ -367,57 +440,9 @@ tipo
 
 
 // =================================
-// ATAJOS DE MOVIMIENTO
+// VISITAR HABITANTE
 // =================================
 
-function irAHogar(
-habitante_id
-){
-
-    return irAUbicacion(
-        habitante_id,
-        "hogar"
-    );
-
-}
-
-
-
-function irAlTrabajo(
-habitante_id
-){
-
-    return irAUbicacion(
-        habitante_id,
-        "trabajo"
-    );
-
-}
-
-
-
-function irAEscuela(
-habitante_id
-){
-
-    return irAUbicacion(
-        habitante_id,
-        "escuela"
-    );
-
-}
-
-
-
-
-
-
-
-
-
-// =================================
-// VISITAR AMIGO
-// =================================
 
 function irAVisitarAmigo(
 habitante_id,
@@ -425,33 +450,50 @@ amigo_id
 ){
 
 
-    const amigo =
-    ubicaciones.obtenerUbicaciones(
-        amigo_id
-    );
+
+const amigo =
+ubicaciones.obtenerUbicaciones(
+amigo_id
+);
 
 
 
-    if(
-        !amigo ||
-        !amigo.hogar
-    ){
+if(
+!amigo ||
+!amigo.hogar
+){
 
-        return null;
+return null;
 
-    }
+}
 
 
 
-    return establecerDestino(
 
-        habitante_id,
+crearMemoria(
 
-        amigo.hogar,
+habitante_id,
 
-        "amigo"
+"relacion",
 
-    );
+"Fue a visitar a un amigo.",
+
+"media"
+
+);
+
+
+
+
+return establecerDestino(
+
+habitante_id,
+
+amigo.hogar,
+
+"amigo"
+
+);
 
 
 }
@@ -468,103 +510,61 @@ amigo_id
 // SEGUIR HABITANTE
 // =================================
 
+
 function seguirHabitante(
 habitante_id,
 objetivo_id
 ){
 
 
-    const movimiento =
-    obtenerMovimiento(
-        habitante_id
-    );
 
-
-    if(!movimiento){
-
-        return null;
-
-    }
+const movimiento =
+obtenerMovimiento(
+habitante_id
+);
 
 
 
-    movimiento.siguiendo =
-    objetivo_id;
+if(!movimiento){
 
-
-    movimiento.estado =
-    "siguiendo";
-
-
-    guardarMovimiento(
-        movimiento
-    );
-
-
-
-    crearEvento(
-
-        "siguiendo_habitante",
-
-        [
-            habitante_id,
-            objetivo_id
-        ]
-
-    );
-
-
-
-    return movimiento;
-
+return null;
 
 }
 
 
 
 
+movimiento.siguiendo =
+objetivo_id;
+
+
+
+movimiento.estado =
+"siguiendo";
+
+
+
+guardarMovimiento(
+movimiento
+);
 
 
 
 
+crearEvento(
 
-// =================================
-// DETENER SEGUIMIENTO
-// =================================
+"siguiendo_habitante",
 
-function dejarDeSeguir(
-habitante_id
-){
+[
+habitante_id,
+objetivo_id
+]
 
-
-    const movimiento =
-    obtenerMovimiento(
-        habitante_id
-    );
+);
 
 
 
-    if(!movimiento){
-
-        return null;
-
-    }
-
-
-
-    movimiento.siguiendo=null;
-
-
-    movimiento.estado="quieto";
-
-
-    guardarMovimiento(
-        movimiento
-    );
-
-
-
-    return movimiento;
+return movimiento;
 
 
 }
@@ -581,63 +581,68 @@ habitante_id
 // ACTUALIZAR POSICIÓN
 // =================================
 
+
 function actualizarPosicion(
 habitante_id,
-nuevaPosicion
+posicion
 ){
 
 
-    const movimiento =
-    obtenerMovimiento(
-        habitante_id
-    );
 
-
-    if(!movimiento){
-
-        return null;
-
-    }
+const movimiento =
+obtenerMovimiento(
+habitante_id
+);
 
 
 
+if(!movimiento){
 
-    movimiento.posicion_actual={
+return null;
 
-
-        x:nuevaPosicion.x,
-
-        y:nuevaPosicion.y,
-
-        z:nuevaPosicion.z
-
-
-    };
+}
 
 
 
-    movimiento.ultima_actualizacion =
-    new Date().toISOString();
+
+movimiento.posicion_actual={
+
+
+x:posicion.x || 0,
+
+y:posicion.y || 0,
+
+z:posicion.z || 0
+
+
+};
 
 
 
 
 
-    verificarLlegada(
-        movimiento
-    );
+movimiento.ultima_actualizacion =
+new Date().toISOString();
 
 
 
 
 
-    guardarMovimiento(
-        movimiento
-    );
+verificarLlegada(
+movimiento
+);
 
 
 
-    return movimiento;
+
+
+guardarMovimiento(
+movimiento
+);
+
+
+
+return movimiento;
 
 
 }
@@ -654,104 +659,112 @@ nuevaPosicion
 // VERIFICAR LLEGADA
 // =================================
 
+
 function verificarLlegada(
 movimiento
 ){
 
 
-    if(!movimiento.destino){
 
-        return false;
+if(!movimiento.destino){
 
-    }
+return false;
 
-
-
-    const distancia =
-    Math.sqrt(
-
-
-        Math.pow(
-        movimiento.posicion_actual.x -
-        movimiento.destino.x,
-        2)
-
-        +
-
-        Math.pow(
-        movimiento.posicion_actual.y -
-        movimiento.destino.y,
-        2)
-
-        +
-
-        Math.pow(
-        movimiento.posicion_actual.z -
-        movimiento.destino.z,
-        2)
-
-
-    );
+}
 
 
 
+const distancia =
+Math.sqrt(
 
 
-    if(distancia <=1){
+Math.pow(
+movimiento.posicion_actual.x -
+movimiento.destino.x,
+2)
+
++
+
+Math.pow(
+movimiento.posicion_actual.y -
+movimiento.destino.y,
+2)
+
++
+
+Math.pow(
+movimiento.posicion_actual.z -
+movimiento.destino.z,
+2)
 
 
-        movimiento.estado =
-        "llegado";
-
-
-        movimiento.ultima_ubicacion =
-        movimiento.tipo_destino;
-
-
-
-        crearEvento(
-
-            "lugar_alcanzado",
-
-            [
-                movimiento.habitante_id
-            ],
-
-            {
-
-                tipo:
-                movimiento.tipo_destino
-
-            }
-
-        );
+);
 
 
 
 
 
-        crearMemoria(
 
-            movimiento.habitante_id,
 
-            "movimiento",
-
-            "Llegó a "+movimiento.tipo_destino,
-
-            "baja"
-
-        );
+if(distancia<=1){
 
 
 
-        return true;
-
-
-    }
+movimiento.estado =
+"llegado";
 
 
 
-    return false;
+movimiento.ultima_ubicacion =
+movimiento.tipo_destino;
+
+
+
+
+
+crearEvento(
+
+"lugar_alcanzado",
+
+[
+movimiento.habitante_id
+],
+
+{
+
+tipo:
+movimiento.tipo_destino
+
+}
+
+);
+
+
+
+
+
+crearMemoria(
+
+movimiento.habitante_id,
+
+"movimiento",
+
+"Llegó a "+movimiento.tipo_destino,
+
+"baja"
+
+);
+
+
+
+return true;
+
+
+}
+
+
+
+return false;
 
 
 }
@@ -765,44 +778,45 @@ movimiento
 
 
 // =================================
-// DETENER MOVIMIENTO
+// DETENER
 // =================================
+
 
 function detenerMovimiento(
 habitante_id
 ){
 
 
-    const movimiento =
-    obtenerMovimiento(
-        habitante_id
-    );
-
-
-    if(!movimiento){
-
-        return null;
-
-    }
+const movimiento =
+obtenerMovimiento(
+habitante_id
+);
 
 
 
-    movimiento.estado="quieto";
+if(!movimiento){
 
+return null;
 
-    movimiento.destino=null;
-
-
-    movimiento.siguiendo=null;
+}
 
 
 
-    guardarMovimiento(
-        movimiento
-    );
+movimiento.estado="quieto";
+
+movimiento.destino=null;
+
+movimiento.siguiendo=null;
 
 
-    return movimiento;
+
+guardarMovimiento(
+movimiento
+);
+
+
+
+return movimiento;
 
 
 }
@@ -819,51 +833,53 @@ habitante_id
 // GUARDAR
 // =================================
 
+
 function guardarMovimiento(
 movimiento
 ){
 
 
-    const datos =
-    cargarArchivo("../datos/movimientos.json");
-
-
-    if(!datos){
-
-        return null;
-
-    }
+const datos =
+cargarArchivo("../datos/movimientos.json");
 
 
 
-    const index =
-    datos.movimientos.findIndex(
+if(!datos){
 
-        m=>m.id===movimiento.id
+return null;
 
-    );
-
-
-
-    if(index!==-1){
-
-        datos.movimientos[index]=movimiento;
-
-    }
+}
 
 
 
-    guardarArchivo(
+const index =
+datos.movimientos.findIndex(
 
-        "../datos/movimientos.json",
+m=>m.id===movimiento.id
 
-        datos
-
-    );
-
+);
 
 
-    return movimiento;
+
+if(index!==-1){
+
+datos.movimientos[index]=movimiento;
+
+}
+
+
+
+guardarArchivo(
+
+"../datos/movimientos.json",
+
+datos
+
+);
+
+
+
+return movimiento;
 
 
 }
@@ -878,29 +894,27 @@ movimiento
 module.exports={
 
 
-    obtenerMovimiento,
+obtenerMovimiento,
 
-    crearMovimiento,
+crearMovimiento,
 
-    establecerDestino,
+establecerDestino,
 
-    irAUbicacion,
+irAUbicacion,
 
-    irAHogar,
+irAHogar,
 
-    irAlTrabajo,
+irAlTrabajo,
 
-    irAEscuela,
+irAEscuela,
 
-    irAVisitarAmigo,
+irAVisitarAmigo,
 
-    seguirHabitante,
+seguirHabitante,
 
-    dejarDeSeguir,
+actualizarPosicion,
 
-    actualizarPosicion,
-
-    detenerMovimiento
+detenerMovimiento
 
 
 };
