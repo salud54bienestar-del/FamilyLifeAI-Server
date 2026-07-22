@@ -1,8 +1,12 @@
-// Sistema de embarazo de Village Soul
+// Sistema avanzado de embarazo de Village Soul
 
 
 const cargarArchivo =
 require("./cargador_datos.js");
+
+
+const guardarArchivo =
+require("./guardador_datos.js");
 
 
 const crearEvento =
@@ -11,6 +15,15 @@ require("./eventos.js");
 
 const crearMemoria =
 require("./memorias.js");
+
+
+const cambiarEmocion =
+require("./emociones.js").cambiarEmocion;
+
+
+const obtenerEtapaHabitante =
+require("./etapas_vida.js").obtenerEtapaHabitante;
+
 
 
 const {
@@ -22,15 +35,50 @@ require("./nacimientos.js");
 
 
 
+
 // =================================
 // CONFIGURACIÓN
 // =================================
 
 
-// Duración del embarazo
+const DURACION_EMBARAZO = 90;
 
-const DURACION_EMBARAZO =
-90; // días Minecraft
+
+
+
+
+
+
+
+
+// =================================
+// OBTENER HABITANTE
+// =================================
+
+function obtenerHabitante(id){
+
+
+    const datos =
+    cargarArchivo("../datos/almas.json");
+
+
+    if(!datos){
+
+        return null;
+
+    }
+
+
+    return datos.almas.find(
+
+        a=>a.id===id
+
+    ) || null;
+
+
+}
+
+
 
 
 
@@ -51,8 +99,20 @@ function evaluarEmbarazo(
     cargarArchivo("../datos/relaciones.json");
 
 
+    const madre =
+    obtenerHabitante(madre_id);
 
-    if(!relaciones){
+
+    const padre =
+    obtenerHabitante(padre_id);
+
+
+
+    if(
+        !relaciones ||
+        !madre ||
+        !padre
+    ){
 
         return null;
 
@@ -61,21 +121,22 @@ function evaluarEmbarazo(
 
 
 
+
     const pareja =
     relaciones.relaciones.find(
 
-        r =>
+        r=>
 
         (
-            r.habitante_a === madre_id &&
-            r.habitante_b === padre_id
+            r.habitante_a===madre_id &&
+            r.habitante_b===padre_id
         )
 
         ||
 
         (
-            r.habitante_a === padre_id &&
-            r.habitante_b === madre_id
+            r.habitante_a===padre_id &&
+            r.habitante_b===madre_id
         )
 
     );
@@ -91,22 +152,52 @@ function evaluarEmbarazo(
 
 
 
+
+    const etapaMadre =
+    obtenerEtapaHabitante(
+        madre
+    );
+
+
+    const etapaPadre =
+    obtenerEtapaHabitante(
+        padre
+    );
+
+
+
+
+
     const requisitos = {
 
 
         matrimonio:
-        pareja.estado_pareja === "casados",
+        pareja.estado_pareja==="casados",
 
 
         romance:
-        pareja.romance >= 80,
+        pareja.romance>=80,
 
 
         confianza:
-        pareja.confianza >= 80
+        pareja.confianza>=80,
+
+
+        madre_adulta:
+        etapaMadre?.nombre==="adulto"
+        ||
+        etapaMadre?.nombre==="adulto_mayor",
+
+
+
+        padre_adulto:
+        etapaPadre?.nombre==="adulto"
+        ||
+        etapaPadre?.nombre==="adulto_mayor"
 
 
     };
+
 
 
 
@@ -138,6 +229,8 @@ function evaluarEmbarazo(
 
 
 
+
+
 // =================================
 // INICIAR EMBARAZO
 // =================================
@@ -145,8 +238,9 @@ function evaluarEmbarazo(
 function iniciarEmbarazo(
     madre_id,
     padre_id,
-    familia_id = null
+    familia_id=null
 ){
+
 
 
     const evaluacion =
@@ -174,9 +268,10 @@ function iniciarEmbarazo(
 
 
 
+
+
     const datos =
     cargarArchivo("../datos/embarazos.json");
-
 
 
     const tiempo =
@@ -198,23 +293,21 @@ function iniciarEmbarazo(
 
 
 
+
     const existe =
     datos.embarazos.find(
 
-        e =>
+        e=>
 
-        e.madre === madre_id &&
-        e.estado === "embarazada"
+        e.madre===madre_id
+        &&
+        e.estado==="embarazada"
 
     );
 
 
 
     if(existe){
-
-        console.log(
-            "Ya existe un embarazo activo."
-        );
 
         return null;
 
@@ -225,72 +318,89 @@ function iniciarEmbarazo(
 
 
 
+    const nuevoId =
+
+
+    datos.embarazos.length>0
+
+
+    ?
+
+
+    Math.max(
+
+        ...datos.embarazos.map(
+
+            e=>e.id
+
+        )
+
+    )+1
+
+
+    :
+
+
+    1;
+
+
+
+
+
+
+
+
     const embarazo = {
 
 
-        id:
-
-        datos.embarazos.length + 1,
+        id:nuevoId,
 
 
-        madre:
-
-        madre_id,
+        madre:madre_id,
 
 
-        padre:
-
-        padre_id,
+        padre:padre_id,
 
 
         familia_id,
 
 
-        dia_inicio:
 
+        dia_inicio:
         tiempo.tiempo.dia,
 
 
 
-        dias_transcurridos:
-
-        0,
-
+        dias_transcurridos:0,
 
 
         duracion:
-
         DURACION_EMBARAZO,
 
 
 
         etapa:
-
         "primer_trimestre",
 
 
 
         estado:
-
         "embarazada",
 
 
 
-        salud_madre:
-
-        100,
+        salud_madre:100,
 
 
-        salud_bebe:
+        salud_bebe:100,
 
-        100,
 
 
         complicaciones:[],
 
 
-        bebe_id:null
 
+        bebe_id:null
 
 
     };
@@ -299,9 +409,26 @@ function iniciarEmbarazo(
 
 
 
+
+
+
     datos.embarazos.push(
         embarazo
     );
+
+
+
+
+
+    guardarArchivo(
+
+        "../datos/embarazos.json",
+
+        datos
+
+    );
+
+
 
 
 
@@ -319,11 +446,13 @@ function iniciarEmbarazo(
         {
 
             embarazo_id:
-            embarazo.id
+            nuevoId
 
         }
 
     );
+
+
 
 
 
@@ -340,6 +469,56 @@ function iniciarEmbarazo(
         "alta"
 
     );
+
+
+
+    crearMemoria(
+
+        padre_id,
+
+        "embarazo",
+
+        "Será padre de un nuevo habitante.",
+
+        "alta"
+
+    );
+
+
+
+
+
+
+
+    cambiarEmocion(
+
+        madre_id,
+
+        "felicidad",
+
+        10,
+
+        "embarazo"
+
+    );
+
+
+
+    cambiarEmocion(
+
+        padre_id,
+
+        "felicidad",
+
+        10,
+
+        "futura familia"
+
+    );
+
+
+
+
 
 
 
@@ -363,10 +542,8 @@ function iniciarEmbarazo(
 function actualizarEmbarazos(){
 
 
-
     const datos =
     cargarArchivo("../datos/embarazos.json");
-
 
 
     const tiempo =
@@ -387,6 +564,8 @@ function actualizarEmbarazos(){
 
 
 
+
+
     if(
         tiempo.tiempo.nuevo_dia_minecraft !== true
     ){
@@ -400,14 +579,14 @@ function actualizarEmbarazos(){
 
 
 
+
     datos.embarazos.forEach(
 
-        embarazo => {
-
+        embarazo=>{
 
 
             if(
-                embarazo.estado !== "embarazada"
+                embarazo.estado!=="embarazada"
             ){
 
                 return;
@@ -426,28 +605,26 @@ function actualizarEmbarazos(){
 
 
             if(
-                embarazo.dias_transcurridos <=30
+                embarazo.dias_transcurridos<=30
             ){
 
-                embarazo.etapa =
+                embarazo.etapa=
                 "primer_trimestre";
-
 
             }
 
             else if(
-                embarazo.dias_transcurridos <=60
+                embarazo.dias_transcurridos<=60
             ){
 
-                embarazo.etapa =
+                embarazo.etapa=
                 "segundo_trimestre";
-
 
             }
 
             else{
 
-                embarazo.etapa =
+                embarazo.etapa=
                 "tercer_trimestre";
 
             }
@@ -458,57 +635,8 @@ function actualizarEmbarazos(){
 
 
 
-
             if(
-                embarazo.dias_transcurridos === 30
-            ){
-
-                crearEvento(
-
-                    "embarazo_segundo_trimestre",
-
-                    [
-                        embarazo.madre
-                    ],
-
-                    {}
-
-                );
-
-            }
-
-
-
-
-
-
-            if(
-                embarazo.dias_transcurridos ===60
-            ){
-
-                crearEvento(
-
-                    "embarazo_tercer_trimestre",
-
-                    [
-                        embarazo.madre
-                    ],
-
-                    {}
-
-                );
-
-            }
-
-
-
-
-
-
-
-
-            if(
-                embarazo.dias_transcurridos >=
+                embarazo.dias_transcurridos>=
                 embarazo.duracion
             ){
 
@@ -522,6 +650,14 @@ function actualizarEmbarazos(){
 
                     {
 
+                        padre:
+                        embarazo.padre,
+
+
+                        madre:
+                        embarazo.madre,
+
+
                         nombre:
                         "Nuevo habitante"
 
@@ -532,14 +668,11 @@ function actualizarEmbarazos(){
 
 
 
-                embarazo.estado =
+                embarazo.estado=
                 "finalizado";
 
 
-
             }
-
-
 
 
 
@@ -552,10 +685,24 @@ function actualizarEmbarazos(){
 
 
 
+    guardarArchivo(
+
+        "../datos/embarazos.json",
+
+        datos
+
+    );
+
+
+
+
+
     return datos.embarazos;
 
 
 }
+
+
 
 
 
