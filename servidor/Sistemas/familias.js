@@ -1,21 +1,23 @@
-// Sistema avanzado de familias - Village Soul
+// Sistema avanzado de familias - Village Soul 2.0
 
 
 const cargarArchivo =
 require("./cargador_datos.js");
 
-
 const guardarArchivo =
 require("./guardador_datos.js");
-
 
 const crearEvento =
 require("./eventos.js");
 
-
 const crearMemoria =
 require("./memorias.js");
 
+const {
+obtenerRelacion
+}
+=
+require("./relaciones.js");
 
 const {
 obtenerEtapaHabitante
@@ -27,7 +29,7 @@ require("./etapas_vida.js");
 
 
 // =================================
-// FECHA DEL MUNDO
+// OBTENER FECHA DEL MUNDO
 // =================================
 
 function obtenerFechaMundo(){
@@ -35,13 +37,14 @@ function obtenerFechaMundo(){
 const tiempo =
 cargarArchivo("../datos/tiempo.json");
 
-
-if(!tiempo || !tiempo.tiempo){
+if(
+!tiempo ||
+!tiempo.tiempo
+){
 
 return new Date().toISOString();
 
 }
-
 
 return tiempo.tiempo;
 
@@ -49,6 +52,33 @@ return tiempo.tiempo;
 
 
 
+
+
+
+// =================================
+// CARGAR FAMILIAS
+// =================================
+
+function cargarFamilias(){
+
+const datos =
+cargarArchivo("../datos/familias.json");
+
+if(!datos){
+
+return null;
+
+}
+
+if(!datos.familias){
+
+datos.familias=[];
+
+}
+
+return datos;
+
+}
 
 
 
@@ -63,21 +93,16 @@ function puedeFormarFamilia(
 habitante
 ){
 
-
 if(!habitante){
 
 return false;
 
 }
 
-
-
 const etapa =
 obtenerEtapaHabitante(
 habitante
 );
-
-
 
 if(!etapa){
 
@@ -85,9 +110,7 @@ return false;
 
 }
 
-
-
-return (
+return(
 
 etapa.nombre==="adulto"
 
@@ -104,9 +127,6 @@ etapa.nombre==="adulto_mayor"
 
 
 
-
-
-
 // =================================
 // CREAR FAMILIA
 // =================================
@@ -116,27 +136,14 @@ apellido="",
 tipo="nuclear"
 ){
 
-
 const datos =
-cargarArchivo("../datos/familias.json");
-
+cargarFamilias();
 
 if(!datos){
 
 return null;
 
 }
-
-
-
-if(!datos.familias){
-
-datos.familias=[];
-
-}
-
-
-
 
 const id =
 
@@ -154,71 +161,71 @@ f=>f.id
 
 1;
 
-
-
-
 const familia={
-
 
 id,
 
-
 apellido,
-
-
-miembros:[],
-
-
-padres:[],
-
-
-hijos:[],
-
-
-generacion:1,
-
 
 tipo_familia:tipo,
 
-
 estado:"activa",
 
+generacion:1,
 
-hogar:null,
+miembros:[],
 
+padres:[],
 
+hijos:[],
+
+mascotas:[],
+
+hogar:{
+
+id:null,
+
+nombre:null,
+
+ubicacion:null
+
+},
 
 estabilidad:{
 
-
 confianza:50,
 
+amor:50,
 
 felicidad:50,
 
+comunicacion:50,
 
-recursos:0
-
+recursos:50
 
 },
-
-
 
 recursos_compartidos:{
 
-
 alimentos:0,
 
+esmeraldas:0,
 
-esmeraldas:0
+madera:0,
 
+piedra:0,
+
+hierro:0,
+
+herramientas:0,
+
+cultivos:0,
+
+animales:0
 
 },
 
-
-
 reputacion:0,
-
 
 historial:[
 
@@ -232,27 +239,16 @@ fecha:obtenerFechaMundo()
 
 ]
 
-
 };
-
-
-
 
 datos.familias.push(
 familia
 );
 
-
-
 guardarArchivo(
-
 "../datos/familias.json",
-
 datos
-
 );
-
-
 
 crearEvento(
 
@@ -262,21 +258,15 @@ crearEvento(
 
 {
 
-familia_id:id
+familia:id
 
 }
 
 );
 
-
-
 return familia;
 
-
 }
-
-
-
 
 
 
@@ -284,7 +274,7 @@ return familia;
 
 
 // =================================
-// MATRIMONIO
+// CREAR MATRIMONIO
 // =================================
 
 function crearFamiliaMatrimonio(
@@ -293,12 +283,8 @@ b,
 apellido=""
 ){
 
-
-
 const almas =
 cargarArchivo("../datos/almas.json");
-
-
 
 if(!almas){
 
@@ -306,22 +292,27 @@ return null;
 
 }
 
-
-
-
 const personaA =
 almas.almas.find(
 x=>x.id===a
 );
-
 
 const personaB =
 almas.almas.find(
 x=>x.id===b
 );
 
+if(
 
+!personaA ||
 
+!personaB
+
+){
+
+return null;
+
+}
 
 if(
 
@@ -337,9 +328,47 @@ return null;
 
 }
 
+const relacion =
+obtenerRelacion(
+a,
+b
+);
 
+if(!relacion){
 
+return null;
 
+}
+
+if(
+
+relacion.estado_pareja!=="pareja"
+
+&&
+
+relacion.estado_pareja!=="comprometidos"
+
+){
+
+return null;
+
+}
+
+if(
+relacion.romance<80
+){
+
+return null;
+
+}
+
+if(
+relacion.compromiso<60
+){
+
+return null;
+
+}
 
 const familia =
 crearFamilia(
@@ -349,9 +378,6 @@ apellido,
 "matrimonio"
 
 );
-
-
-
 
 agregarMiembro(
 
@@ -363,8 +389,6 @@ a,
 
 );
 
-
-
 agregarMiembro(
 
 familia.id,
@@ -375,10 +399,6 @@ b,
 
 );
 
-
-
-
-
 familia.historial.push({
 
 evento:"matrimonio",
@@ -387,17 +407,9 @@ fecha:obtenerFechaMundo()
 
 });
 
-
-
-
-
 guardarFamilia(
 familia
 );
-
-
-
-
 
 crearMemoria(
 
@@ -405,7 +417,7 @@ a,
 
 "familia",
 
-"Formó una familia.",
+"Formó una nueva familia.",
 
 "alta",
 
@@ -413,23 +425,19 @@ a,
 
 );
 
-
-
 crearMemoria(
 
 b,
 
 "familia",
 
-"Formó una familia.",
+"Formó una nueva familia.",
 
 "alta",
 
 [a]
 
 );
-
-
 
 crearEvento(
 
@@ -439,20 +447,16 @@ crearEvento(
 
 {
 
-familia:familia.id
+familia:
+familia.id
 
 }
 
 );
 
-
-
 return familia;
 
-
-}
-
-
+  }
 
 
 
@@ -470,13 +474,8 @@ habitante_id,
 rol="miembro"
 ){
 
-
 const familia =
-obtenerFamiliaPorId(
-idFamilia
-);
-
-
+obtenerFamiliaPorId(idFamilia);
 
 if(!familia){
 
@@ -484,36 +483,62 @@ return null;
 
 }
 
-
-
+// Evitar miembros duplicados
 if(!familia.miembros.includes(habitante_id)){
 
-familia.miembros.push(
-habitante_id
-);
+familia.miembros.push(habitante_id);
 
 }
 
-
-
+// Registrar según el rol
 if(
 rol==="padre" ||
 rol==="madre"
 ){
 
+if(
+!familia.padres.some(
+p=>p.habitante_id===habitante_id
+)
+){
 
 familia.padres.push({
 
 habitante_id,
-
 rol
 
 });
 
+}
 
 }
 
+// Actualizar el alma
+const almas =
+cargarArchivo("../datos/almas.json");
 
+if(
+almas &&
+almas.almas
+){
+
+const alma =
+almas.almas.find(
+a=>a.id===habitante_id
+);
+
+if(alma){
+
+alma.familia=idFamilia;
+
+guardarArchivo(
+"../datos/almas.json",
+almas
+);
+
+}
+
+}
 
 crearMemoria(
 
@@ -527,22 +552,11 @@ habitante_id,
 
 );
 
-
-
-guardarFamilia(
-familia
-);
-
-
+guardarFamilia(familia);
 
 return familia;
 
 }
-
-
-
-
-
 
 
 
@@ -557,13 +571,8 @@ hijo_id,
 tipo="biologico"
 ){
 
-
 const familia =
-obtenerFamiliaPorId(
-idFamilia
-);
-
-
+obtenerFamiliaPorId(idFamilia);
 
 if(!familia){
 
@@ -571,7 +580,16 @@ return null;
 
 }
 
+// Evitar hijos duplicados
+if(
+familia.hijos.some(
+h=>h.habitante_id===hijo_id
+)
+){
 
+return familia;
+
+}
 
 familia.hijos.push({
 
@@ -583,9 +601,6 @@ fecha:obtenerFechaMundo()
 
 });
 
-
-
-
 agregarMiembro(
 
 idFamilia,
@@ -596,9 +611,17 @@ hijo_id,
 
 );
 
+familia.reputacion+=2;
 
+familia.historial.push({
 
+evento:"nuevo_hijo",
 
+habitante:hijo_id,
+
+fecha:obtenerFechaMundo()
+
+});
 
 crearEvento(
 
@@ -608,177 +631,6 @@ familia.miembros,
 
 {
 
-hijo:hijo_id
+hijo:hijo_id,
 
-}
-
-);
-
-
-
-return familia;
-
-
-}
-
-
-
-
-
-
-
-
-
-// =================================
-// GUARDAR FAMILIA
-// =================================
-
-function guardarFamilia(
-familia
-){
-
-
-const datos =
-cargarArchivo("../datos/familias.json");
-
-
-
-const index =
-datos.familias.findIndex(
-
-f=>f.id===familia.id
-
-);
-
-
-
-if(index!==-1){
-
-datos.familias[index]=familia;
-
-}
-
-
-
-guardarArchivo(
-
-"../datos/familias.json",
-
-datos
-
-);
-
-
-}
-
-
-
-
-
-
-
-
-
-// =================================
-// OBTENER
-// =================================
-
-function obtenerFamilia(
-habitante_id
-){
-
-
-const datos =
-cargarArchivo("../datos/familias.json");
-
-
-if(!datos){
-
-return null;
-
-}
-
-
-
-return datos.familias.find(
-
-f=>f.miembros.includes(
-habitante_id
-)
-
-)||null;
-
-
-}
-
-
-
-
-function obtenerFamiliaPorId(
-id
-){
-
-
-const datos =
-cargarArchivo("../datos/familias.json");
-
-
-if(!datos){
-
-return null;
-
-}
-
-
-
-return datos.familias.find(
-
-f=>f.id===id
-
-)||null;
-
-
-}
-
-
-
-
-function listarFamilias(){
-
-
-const datos =
-cargarArchivo("../datos/familias.json");
-
-
-return datos?.familias || [];
-
-}
-
-
-
-
-
-
-
-
-module.exports={
-
-
-crearFamilia,
-
-crearFamiliaMatrimonio,
-
-agregarMiembro,
-
-agregarHijo,
-
-obtenerFamilia,
-
-obtenerFamiliaPorId,
-
-listarFamilias,
-
-puedeFormarFamilia
-
-
-};
+familia:idFamilia
