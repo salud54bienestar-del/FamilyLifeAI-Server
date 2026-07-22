@@ -1,6 +1,5 @@
 // Motor principal de Village Soul
 
-
 console.log("=================================");
 console.log("          SOUL ENGINE");
 console.log("=================================");
@@ -8,18 +7,15 @@ console.log("=================================");
 
 
 const cargarArchivo =
-require("./sistemas/cargador_datos.js");
-
+require("./Sistemas/cargador_datos.js");
 
 
 const sistemas =
 require("./sistemas.js");
 
 
-
 const crearEvento =
-require("./sistemas/eventos.js");
-
+require("./Sistemas/eventos.js");
 
 
 const {
@@ -32,145 +28,156 @@ require("./IA/ia_almas.js");
 
 
 
-
-
-// =================================
-// INICIAR MOTOR
-// =================================
-
 function iniciarSoulEngine(){
 
 
+console.log(
+"Cargando sistemas..."
+);
 
-    console.log(
-        "Cargando sistemas..."
-    );
 
 
+sistemas.forEach(
 
-    sistemas.forEach(
+sistema=>{
 
-        sistema => {
+console.log(
+"✓",
+sistema
+);
 
-            console.log(
-                "✓ " + sistema
-            );
+}
 
-        }
+);
 
-    );
 
 
 
 
 
+console.log(
+"Cargando mundo..."
+);
 
 
-    console.log(
-        "Cargando mundo..."
-    );
 
+const mundo =
+cargarArchivo(
+"datos/mundo.json"
+);
 
 
-    const mundo =
-    cargarArchivo(
-        "../datos/mundo.json"
-    );
 
 
+if(mundo){
 
-    if(mundo){
+console.log(
+"Mundo:",
+mundo.nombre
+);
 
+}
 
-        console.log(
-            "Mundo:",
-            mundo.nombre
-        );
 
 
-    }
 
 
 
 
+console.log(
+"Inicializando almas..."
+);
 
 
 
-    console.log(
-        "Inicializando almas..."
-    );
+const almas =
+cargarArchivo(
+"datos/almas.json"
+);
 
 
 
-    const almas =
-    cargarArchivo(
-        "../datos/almas.json"
-    );
 
 
 
+if(almas){
 
-    if(almas){
 
+almas.almas.forEach(
 
-        almas.almas.forEach(
+alma=>{
 
-            alma=>{
 
+console.log(
+"Alma:",
+alma.nombre,
+"ID:",
+alma.id
+);
 
-                console.log(
 
-                    "Alma:",
-                    alma.nombre,
-                    "ID:",
-                    alma.id
 
-                );
 
+const pensamiento =
+pensarAlma(
+alma.id
+);
 
 
-            }
 
+if(pensamiento){
 
-        );
+console.log(
+"Pensamiento:",
+pensamiento.decision
+);
 
+}
 
-    }
 
 
+}
 
 
+);
 
 
+}
 
-    crearEvento(
 
-        "inicio_mundo",
 
-        [],
 
-        {
 
-            mensaje:
-            "Soul Engine iniciado"
 
-        }
 
-    );
+crearEvento(
 
+"inicio_mundo",
 
+[],
 
+{
 
+mensaje:
+"Soul Engine iniciado"
 
+}
 
+);
 
-    console.log(
-        "Soul Engine activo."
-    );
 
 
 
-    return true;
+
+
+
+console.log(
+"Soul Engine activo."
+);
+
+
+
+return true;
 
 
 }
@@ -182,45 +189,18 @@ function iniciarSoulEngine(){
 
 
 
+function procesarAlma(id){
 
-// =================================
-// PROCESAR PENSAMIENTO DE ALMA
-// =================================
 
-function procesarAlma(
-    id
-){
+const pensamiento =
+pensarAlma(id);
 
 
 
-    const pensamiento =
-    pensarAlma(id);
-
-
-
-    if(!pensamiento){
-
-        return null;
-
-    }
-
-
-
-    console.log(
-
-        "Pensamiento:",
-        pensamiento.decision
-
-    );
-
-
-
-    return pensamiento;
+return pensamiento || null;
 
 
 }
-
-
 
 
 
@@ -229,10 +209,8 @@ function procesarAlma(
 
 module.exports={
 
+iniciarSoulEngine,
 
-    iniciarSoulEngine,
-
-    procesarAlma
-
+procesarAlma
 
 };
