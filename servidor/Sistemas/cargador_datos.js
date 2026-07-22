@@ -1,20 +1,21 @@
-// Guardador de datos de Village Soul
+// Cargador de datos de Village Soul
 
 const fs = require("fs");
 const path = require("path");
 
 
 
+
 // =================================
-// GUARDAR ARCHIVO JSON
+// CARGAR ARCHIVO JSON
 // =================================
 
-function guardarArchivo(
-    nombre,
-    datos
+function cargarArchivo(
+    nombre
 ){
 
     try{
+
 
         // Eliminar ./ o ../ del inicio
 
@@ -28,7 +29,6 @@ function guardarArchivo(
 
 
 
-        // Buscar siempre dentro de la carpeta datos
 
         const rutaCompleta = path.join(
 
@@ -42,19 +42,31 @@ function guardarArchivo(
 
 
 
-        fs.writeFileSync(
+
+
+        if(
+            !fs.existsSync(rutaCompleta)
+        ){
+
+            console.log(
+                "Archivo no encontrado:",
+                rutaCompleta
+            );
+
+            return null;
+
+        }
+
+
+
+
+
+
+        const contenido =
+
+        fs.readFileSync(
 
             rutaCompleta,
-
-            JSON.stringify(
-
-                datos,
-
-                null,
-
-                2
-
-            ),
 
             "utf8"
 
@@ -62,7 +74,13 @@ function guardarArchivo(
 
 
 
-        return true;
+
+
+        return JSON.parse(
+            contenido
+        );
+
+
 
     }
 
@@ -70,63 +88,43 @@ function guardarArchivo(
 
 
         console.log(
-
             "==============================="
-
         );
 
+
         console.log(
-
-            "ERROR GUARDANDO ARCHIVO"
-
+            "ERROR CARGANDO ARCHIVO"
         );
 
-        console.log(
 
+        console.log(
             "==============================="
-
         );
 
-        console.log(
 
+        console.log(
             "Archivo:",
-
             nombre
-
         );
 
-        console.log(
-
-            "Ruta:",
-
-            path.join(
-
-                __dirname,
-
-                "..",
-
-                nombre
-
-            )
-
-        );
 
         console.log(
-
             "Motivo:",
-
             error.message
-
         );
 
 
 
-        return false;
+        return null;
+
 
     }
+
 
 }
 
 
 
-module.exports = guardarArchivo;
+
+
+module.exports = cargarArchivo;
