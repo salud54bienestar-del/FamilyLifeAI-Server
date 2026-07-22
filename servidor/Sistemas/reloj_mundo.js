@@ -1,40 +1,92 @@
-// ==========================================
-// Reloj del mundo - Village Soul
-// Controla el paso del tiempo
-// ==========================================
-
-
-const mundo =
-require("./mundo.js");
+// Sistema avanzado de reloj del mundo - Village Soul
 
 
 const cargarArchivo =
 require("./cargador_datos.js");
 
 
+const guardarArchivo =
+require("./guardador_datos.js");
+
+
 const crearEvento =
 require("./eventos.js");
 
 
-const {
-    ejecutarPensamiento
+// =================================
+// OBTENER TIEMPO
+// =================================
+
+function obtenerTiempo(){
+
+
+    const datos =
+    cargarArchivo("../datos/tiempo.json");
+
+
+
+    if(!datos){
+
+        return null;
+
+    }
+
+
+
+    if(!datos.tiempo){
+
+
+        datos.tiempo={
+
+            hora:6,
+
+            dia:1,
+
+            mes:1,
+
+            año:1,
+
+            estacion:"primavera"
+
+        };
+
+
+        guardarTiempo(datos);
+
+    }
+
+
+
+    return datos.tiempo;
+
+
 }
-=
-require("./cerebro.js");
 
 
-const {
-    actualizarNecesidades
+
+
+
+
+
+// =================================
+// GUARDAR TIEMPO
+// =================================
+
+function guardarTiempo(
+datos
+){
+
+
+    guardarArchivo(
+
+        "../datos/tiempo.json",
+
+        datos
+
+    );
+
+
 }
-=
-require("./necesidades.js");
-
-
-const {
-    actualizarRutina
-}
-=
-require("./rutinas.js");
 
 
 
@@ -42,26 +94,344 @@ require("./rutinas.js");
 
 
 
-// ==========================================
-// CICLO DEL MUNDO
-// ==========================================
 
 
-function cicloMundo(){
+// =================================
+// AVANZAR HORA
+// =================================
+
+function avanzarHora(
+cantidad=1
+){
 
 
-    console.log(
-        "⏰ Nuevo ciclo del mundo"
+
+    const datos =
+    cargarArchivo("../datos/tiempo.json");
+
+
+
+    if(!datos){
+
+        return null;
+
+    }
+
+
+
+    if(!datos.tiempo){
+
+
+        datos.tiempo={
+
+            hora:6,
+
+            dia:1,
+
+            mes:1,
+
+            año:1,
+
+            estacion:"primavera"
+
+        };
+
+    }
+
+
+
+
+
+    datos.tiempo.hora += cantidad;
+
+
+
+
+
+    if(datos.tiempo.hora >=24){
+
+
+        datos.tiempo.hora=0;
+
+
+        avanzarDiaInterno(datos);
+
+
+    }
+
+
+
+
+
+    guardarTiempo(datos);
+
+
+
+
+    crearEvento(
+
+        "avance_tiempo",
+
+        [],
+
+        {
+
+            hora:
+            datos.tiempo.hora,
+
+            dia:
+            datos.tiempo.dia
+
+        }
+
     );
 
 
 
-    const estado =
-    mundo.avanzarHora();
+
+
+    return datos.tiempo;
+
+
+}
 
 
 
-    if(!estado){
+
+
+
+
+
+
+// =================================
+// AVANZAR DÍA
+// =================================
+
+function avanzarDiaInterno(
+datos
+){
+
+
+    datos.tiempo.dia++;
+
+
+
+
+
+    crearEvento(
+
+        "nuevo_dia",
+
+        [],
+
+        {
+
+            dia:
+            datos.tiempo.dia
+
+        }
+
+    );
+
+
+
+
+
+    if(datos.tiempo.dia >30){
+
+
+        datos.tiempo.dia=1;
+
+
+        avanzarMes(datos);
+
+
+    }
+
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// AVANZAR MES
+// =================================
+
+function avanzarMes(
+datos
+){
+
+
+
+    datos.tiempo.mes++;
+
+
+
+
+
+    if(datos.tiempo.mes>12){
+
+
+        datos.tiempo.mes=1;
+
+
+        datos.tiempo.año++;
+
+
+        crearEvento(
+
+            "nuevo_año",
+
+            [],
+
+            {
+
+                año:
+                datos.tiempo.año
+
+            }
+
+        );
+
+
+    }
+
+
+
+
+
+    actualizarEstacion(datos);
+
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// CAMBIO DE ESTACIÓN
+// =================================
+
+function actualizarEstacion(
+datos
+){
+
+
+
+    let nuevaEstacion;
+
+
+
+    if(
+        datos.tiempo.mes>=3 &&
+        datos.tiempo.mes<=5
+    ){
+
+        nuevaEstacion="primavera";
+
+    }
+
+
+    else if(
+        datos.tiempo.mes>=6 &&
+        datos.tiempo.mes<=8
+    ){
+
+        nuevaEstacion="verano";
+
+    }
+
+
+    else if(
+        datos.tiempo.mes>=9 &&
+        datos.tiempo.mes<=11
+    ){
+
+        nuevaEstacion="otoño";
+
+    }
+
+
+    else{
+
+
+        nuevaEstacion="invierno";
+
+
+    }
+
+
+
+
+
+
+    if(
+        datos.tiempo.estacion !== nuevaEstacion
+    ){
+
+
+        datos.tiempo.estacion =
+        nuevaEstacion;
+
+
+
+        crearEvento(
+
+            "cambio_estacion",
+
+            [],
+
+            {
+
+                estacion:
+                nuevaEstacion
+
+            }
+
+        );
+
+
+    }
+
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// OBTENER MOMENTO DEL DÍA
+// =================================
+
+function obtenerMomentoDia(){
+
+
+
+    const tiempo =
+    obtenerTiempo();
+
+
+
+    if(!tiempo){
 
         return null;
 
@@ -70,140 +440,41 @@ function cicloMundo(){
 
 
 
-    procesarHabitantes();
-
-
-
-
-
-    crearEvento(
-
-        "ciclo_mundo",
-
-        [],
-
-        {
-
-            hora:
-            estado.hora_actual,
-
-            dia:
-            estado.dia_actual
-
-        }
-
-    );
-
-
-
-
-
-    return estado;
-
-
-}
-
-
-
-
-
-
-
-
-
-// ==========================================
-// PROCESAR HABITANTES
-// ==========================================
-
-
-function procesarHabitantes(){
-
-
-    const almas =
-    cargarArchivo(
-        "../datos/almas.json"
-    );
-
-
 
     if(
-        !almas ||
-        !almas.almas
+        tiempo.hora>=6 &&
+        tiempo.hora<12
     ){
 
-        return [];
+        return "mañana";
 
     }
 
 
 
+    if(
+        tiempo.hora>=12 &&
+        tiempo.hora<18
+    ){
+
+        return "tarde";
+
+    }
 
 
 
-    almas.almas.forEach(
+    if(
+        tiempo.hora>=18 &&
+        tiempo.hora<24
+    ){
 
-        habitante=>{
+        return "noche";
 
-
-
-            // necesidades
-
-
-            actualizarNecesidades(
-
-                habitante.id,
-
-                1
-
-            );
+    }
 
 
 
-
-
-
-            // rutina
-
-
-            actualizarRutina(
-
-                habitante.id,
-
-                obtenerHora(),
-
-                {
-
-                    etapa:
-                    habitante.etapa
-
-                }
-
-            );
-
-
-
-
-
-
-            // pensamiento
-
-
-            ejecutarPensamiento(
-
-                habitante.id
-
-            );
-
-
-
-
-        }
-
-    );
-
-
-
-    return true;
+    return "madrugada";
 
 
 }
@@ -215,65 +486,21 @@ function procesarHabitantes(){
 
 
 
+// =================================
+// OBTENER FECHA COMPLETA
+// =================================
 
-// ==========================================
-// OBTENER HORA ACTUAL
-// ==========================================
-
-
-function obtenerHora(){
+function obtenerFecha(){
 
 
-    const estado =
-    mundo.obtenerMundo();
+    const tiempo =
+    obtenerTiempo();
 
 
-
-    return estado?.hora_actual || 0;
+    return tiempo;
 
 
 }
-
-
-
-
-
-
-
-
-
-// ==========================================
-// INICIAR RELOJ AUTOMÁTICO
-// ==========================================
-
-
-function iniciarReloj(
-tiempo=60000
-){
-
-
-
-    console.log(
-        "Reloj del mundo iniciado."
-    );
-
-
-
-    return setInterval(
-
-        ()=>{
-
-            cicloMundo();
-
-        },
-
-        tiempo
-
-    );
-
-
-}
-
 
 
 
@@ -285,11 +512,13 @@ tiempo=60000
 module.exports={
 
 
-    cicloMundo,
+    obtenerTiempo,
 
-    iniciarReloj,
+    avanzarHora,
 
-    procesarHabitantes
+    obtenerMomentoDia,
+
+    obtenerFecha
 
 
 };
