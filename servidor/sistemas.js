@@ -12,15 +12,39 @@ const sistemas = {
     activos:[
 
 
+        // Núcleo del mundo
+
         "nucleo_mundo",
 
         "mundo",
 
         "tiempo",
 
+
+
+        // Vida e identidad
+
         "almas",
 
+        "vida_habitantes",
+
+        "etapas_vida",
+
+        "crecimiento",
+
+
+
+        // Inteligencia
+
         "ia_almas",
+
+        "cerebro",
+
+        "decisiones",
+
+
+
+        // Estado interno
 
         "personalidades",
 
@@ -30,28 +54,46 @@ const sistemas = {
 
         "necesidades",
 
+
+
+        // Relaciones sociales
+
         "relaciones",
 
         "familias",
 
-        "etapas_vida",
 
-        "crecimiento",
+
+        // Actividades
 
         "objetivos",
 
-        "decisiones",
+        "rutinas",
+
+        "movimiento",
+
+
+
+        // Economía y mundo
 
         "profesiones",
 
         "lugares_trabajo",
 
+        "recursos",
+
         "eventos",
 
-        "recursos"
+
+
+        // Historia
+
+        "historia"
 
 
     ],
+
+
 
 
 
@@ -69,9 +111,9 @@ const sistemas = {
 
         "comportamiento",
 
-        "rutinas",
 
         "habilidades",
+
 
         "embarazos",
 
@@ -79,20 +121,99 @@ const sistemas = {
 
         "adopciones",
 
+
         "matrimonios",
 
         "divorcios",
 
         "custodia",
 
+
+
         "comunicacion",
 
-        "cultura",
 
-        "historia"
+        "cultura"
 
 
-    ]
+    ],
+
+
+
+
+
+
+
+
+    // =========================
+    // DEPENDENCIAS
+    // =========================
+
+
+    dependencias:{
+
+
+        cerebro:[
+
+            "ia_almas",
+
+            "memorias",
+
+            "emociones",
+
+            "necesidades",
+
+            "relaciones"
+
+        ],
+
+
+
+        decisiones:[
+
+            "cerebro"
+
+        ],
+
+
+
+
+        movimiento:[
+
+            "ubicaciones"
+
+        ],
+
+
+
+
+        rutinas:[
+
+            "movimiento",
+
+            "necesidades"
+
+        ],
+
+
+
+
+        vida_habitantes:[
+
+            "almas",
+
+            "necesidades",
+
+            "emociones",
+
+            "etapas_vida"
+
+        ]
+
+
+    }
+
+
 
 
 };
@@ -101,13 +222,22 @@ const sistemas = {
 
 
 
+
+
+
+
+// =========================
+// MOSTRAR SISTEMAS
+// =========================
+
+
 console.log(
 "==============================="
 );
 
 
 console.log(
-"Sistemas Village Soul:"
+" Sistemas Village Soul "
 );
 
 
@@ -120,17 +250,20 @@ console.log(
 
 
 console.log(
-"ACTIVOS:"
+"\nACTIVOS:"
 );
+
 
 
 sistemas.activos.forEach(
 
 sistema=>{
 
+
 console.log(
 "✓ " + sistema
 );
+
 
 }
 
@@ -140,22 +273,31 @@ console.log(
 
 
 
+
+
 console.log(
-"EN DESARROLLO:"
+"\nEN DESARROLLO:"
 );
+
+
+
 
 
 sistemas.desarrollo.forEach(
 
 sistema=>{
 
+
 console.log(
 "○ " + sistema
 );
 
+
 }
 
 );
+
+
 
 
 
