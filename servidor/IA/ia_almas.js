@@ -5,13 +5,12 @@ const cargarArchivo =
 require("../sistemas/cargador_datos.js");
 
 
+
 const {
     procesarDecision
 }
 =
 require("../sistemas/decisiones.js");
-
-
 
 
 
@@ -25,7 +24,17 @@ require("../sistemas/memorias.js");
 
 
 
-function pensarAlma(habitante_id){
+
+
+
+// =================================
+// PENSAMIENTO DEL ALMA
+// =================================
+
+
+function pensarAlma(
+    habitante_id
+){
 
 
 
@@ -33,34 +42,12 @@ function pensarAlma(habitante_id){
     cargarArchivo("../datos/almas.json");
 
 
-    const emociones =
-    cargarArchivo("../datos/emociones.json");
 
+    if(!almas || !almas.almas){
 
-    const habilidades =
-    cargarArchivo("../datos/habilidades.json");
-
-
-    const necesidades =
-    cargarArchivo("../datos/necesidades.json");
-
-
-    const personalidades =
-    cargarArchivo("../datos/personalidades.json");
-
-
-    const relaciones =
-    cargarArchivo("../datos/relaciones.json");
-
-
-    const familias =
-    cargarArchivo("../datos/familias.json");
-
-
-
-
-
-    if(!almas){
+        console.log(
+            "No existen almas cargadas."
+        );
 
         return null;
 
@@ -70,7 +57,10 @@ function pensarAlma(habitante_id){
 
 
 
+
+
     const alma =
+
     almas.almas.find(
 
         a=>a.id===habitante_id
@@ -93,8 +83,55 @@ function pensarAlma(habitante_id){
 
 
 
+
     // =============================
-    // DATOS INTERNOS
+    // CARGAR SISTEMAS INTERNOS
+    // =============================
+
+
+
+    const emociones =
+
+    cargarArchivo("../datos/emociones.json");
+
+
+
+    const necesidades =
+
+    cargarArchivo("../datos/necesidades.json");
+
+
+
+    const personalidades =
+
+    cargarArchivo("../datos/personalidades.json");
+
+
+
+    const relaciones =
+
+    cargarArchivo("../datos/relaciones.json");
+
+
+
+    const familias =
+
+    cargarArchivo("../datos/familias.json");
+
+
+
+    const habilidades =
+
+    cargarArchivo("../datos/habilidades.json");
+
+
+
+
+
+
+
+    // =============================
+    // OBTENER INFORMACIÓN
     // =============================
 
 
@@ -103,7 +140,9 @@ function pensarAlma(habitante_id){
 
     emociones?.emociones.find(
 
-        e=>e.habitante_id===habitante_id
+        e=>
+
+        e.habitante_id===habitante_id
 
     );
 
@@ -115,9 +154,12 @@ function pensarAlma(habitante_id){
 
     necesidades?.necesidades.find(
 
-        n=>n.habitante_id===habitante_id
+        n=>
+
+        n.habitante_id===habitante_id
 
     );
+
 
 
 
@@ -127,9 +169,12 @@ function pensarAlma(habitante_id){
 
     personalidades?.personalidades.find(
 
-        p=>p.id===alma.personalidad_id
+        p=>
+
+        p.id===alma.personalidad_id
 
     );
+
 
 
 
@@ -155,8 +200,11 @@ function pensarAlma(habitante_id){
     familias?.familias.find(
 
         f=>
+
         f.miembros.includes(
+
             habitante_id
+
         )
 
     );
@@ -166,52 +214,192 @@ function pensarAlma(habitante_id){
 
 
 
+
+    const relacionesHabitante =
+
+    relaciones?.relaciones.filter(
+
+        r=>
+
+        r.habitante_a===habitante_id
+
+        ||
+
+        r.habitante_b===habitante_id
+
+    )
+
+    ||
+
+    [];
+
+
+
+
+
+
+
+
+    const habilidadesHabitante =
+
+    habilidades?.habilidades.filter(
+
+        h=>
+
+        h.habitante_id===habitante_id
+
+    )
+
+    ||
+
+    [];
+
+
+
+
+
+
+
+
+
     // =============================
-    // ANALIZAR ESTADO
+    // ANALIZAR PRIORIDAD
     // =============================
 
 
 
-    let prioridad =
-    "vida_normal";
+    let intencion = {
+
+        accion:"vida_normal",
+
+        motivo:"sin problemas",
+
+        urgencia:20
+
+    };
+
+
+
 
 
 
 
     if(
+
         necesidad &&
+
         necesidad.hambre < 30
+
     ){
 
-        prioridad =
-        "buscar_comida";
+
+        intencion={
+
+
+            accion:"buscar_comida",
+
+            motivo:"hambre baja",
+
+            urgencia:90
+
+
+        };
+
 
     }
+
+
+
+
+
+
+    else if(
+
+        necesidad &&
+
+        necesidad.energia < 30
+
+    ){
+
+
+
+        intencion={
+
+
+            accion:"descansar",
+
+            motivo:"falta de energía",
+
+            urgencia:80
+
+
+        };
+
+
+    }
+
+
+
+
 
 
 
     else if(
 
         emocion &&
-        emocion.estado_actual==="tristeza"
+
+        emocion.emocion_actual==="tristeza"
 
     ){
 
-        prioridad =
-        "buscar_apoyo";
+
+
+        intencion={
+
+
+            accion:"buscar_apoyo",
+
+            motivo:"tristeza emocional",
+
+            urgencia:70
+
+
+        };
+
 
     }
+
+
+
+
 
 
 
 
     else if(
+
         familia &&
+
+        familia.hijos &&
+
         familia.hijos.length>0
+
     ){
 
-        prioridad =
-        "cuidar_familia";
+
+
+        intencion={
+
+
+            accion:"cuidar_familia",
+
+            motivo:"protección familiar",
+
+            urgencia:60
+
+
+        };
+
 
     }
 
@@ -220,28 +408,42 @@ function pensarAlma(habitante_id){
 
 
 
+
+
     // =============================
-    // CONTEXTO IA
+    // CREAR CONTEXTO
     // =============================
 
 
 
-    const contexto = {
+    const contexto={
+
 
 
         emocion:
 
-        emocion?.estado_actual
+        emocion?.emocion_actual
+
         ||
+
         "neutral",
+
+
 
 
 
         personalidad:
 
         personalidad?.nombre
+
         ||
-        "normal",
+
+        alma.temperamento
+
+        ||
+
+        "neutral",
+
 
 
 
@@ -249,45 +451,89 @@ function pensarAlma(habitante_id){
         rasgos:
 
         personalidad?.rasgos
+
         ||
+
+        alma.rasgos_iniciales
+
+        ||
+
         [],
 
 
 
 
-        prioridad,
+
+        necesidades:
+
+        necesidad
+
+        ||
+
+        {},
+
+
+
+
+
+        intencion,
+
+
+
+
 
 
 
         familia:
 
+
         !!familia,
+
 
 
 
         hijos:
 
-        familia?.hijos.length || 0,
+        familia?.hijos?.length
+
+        ||
+
+        0,
+
+
+
 
 
 
         profesion:
 
+
         alma.profesion?.nombre
+
         ||
+
         "ninguna",
+
+
+
 
 
 
         habilidades:
 
-        habilidades?.habilidades.filter(
+        habilidadesHabitante,
 
-            h=>h.habitante_id===habitante_id
 
-        )
-        ||
-        [],
+
+
+
+
+        relaciones:
+
+        relacionesHabitante,
+
+
+
 
 
 
@@ -296,7 +542,9 @@ function pensarAlma(habitante_id){
 
         memoria.filter(
 
-            m=>m.importancia==="alta"
+            m=>
+
+            m.importancia==="alta"
 
         )
 
@@ -307,6 +555,14 @@ function pensarAlma(habitante_id){
 
 
 
+
+
+
+
+
+    // =============================
+    // TOMAR DECISIÓN
+    // =============================
 
 
 
@@ -326,6 +582,7 @@ function pensarAlma(habitante_id){
 
 
 
+
     return {
 
 
@@ -333,19 +590,27 @@ function pensarAlma(habitante_id){
 
 
         nombre:
+
         alma.nombre,
 
 
+
         estado:
+
         "pensando",
 
 
 
-        prioridad,
+
+        intencion,
+
+
 
 
 
         contexto,
+
+
 
 
 
@@ -358,6 +623,9 @@ function pensarAlma(habitante_id){
 
 
 }
+
+
+
 
 
 
