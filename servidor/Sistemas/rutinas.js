@@ -29,8 +29,6 @@ require("./reloj_mundo.js");
 
 
 
-
-
 // =================================
 // OBTENER RUTINA
 // =================================
@@ -48,6 +46,14 @@ cargarArchivo("../datos/rutinas.json");
 if(!datos){
 
 return null;
+
+}
+
+
+
+if(!datos.rutinas){
+
+datos.rutinas=[];
 
 }
 
@@ -93,6 +99,34 @@ return null;
 
 
 
+if(!datos.rutinas){
+
+datos.rutinas=[];
+
+}
+
+
+
+
+
+const existente =
+obtenerRutina(
+habitante_id
+);
+
+
+
+if(existente){
+
+return existente;
+
+}
+
+
+
+
+
+
 const rutina={
 
 
@@ -120,7 +154,9 @@ ultima_hora:null,
 
 
 
-ultima_actualizacion:null
+ultima_actualizacion:
+new Date().toISOString()
+
 
 
 };
@@ -129,7 +165,10 @@ ultima_actualizacion:null
 
 
 
-datos.rutinas.push(rutina);
+
+datos.rutinas.push(
+rutina
+);
 
 
 
@@ -140,6 +179,7 @@ guardarArchivo(
 datos
 
 );
+
 
 
 
@@ -160,6 +200,8 @@ habitante_id,
 
 
 
+
+
 return rutina;
 
 
@@ -174,7 +216,7 @@ return rutina;
 
 
 // =================================
-// HORARIOS
+// GENERAR HORARIO SEGÚN ETAPA
 // =================================
 
 function generarHorario(
@@ -184,6 +226,23 @@ etapa
 
 
 switch(etapa){
+
+
+
+case "bebe":
+
+return [
+
+{hora:8,accion:"dormir"},
+
+{hora:12,accion:"jugar"},
+
+{hora:18,accion:"familia"}
+
+];
+
+
+
 
 
 case "niño":
@@ -205,11 +264,12 @@ return [
 
 
 
+
 case "adolescente":
 
 return [
 
-{hora:7,accion:"entrenar"},
+{hora:7,accion:"despertar"},
 
 {hora:10,accion:"socializar"},
 
@@ -220,6 +280,7 @@ return [
 {hora:22,accion:"dormir"}
 
 ];
+
 
 
 
@@ -243,6 +304,7 @@ return [
 
 
 
+
 case "adulto_mayor":
 
 return [
@@ -258,8 +320,10 @@ return [
 ];
 
 
-default:
 
+
+
+default:
 
 return [
 
@@ -298,7 +362,6 @@ switch(actividad){
 
 case "ir_trabajo":
 
-
 return movimiento.irAlTrabajo(
 habitante_id
 );
@@ -306,8 +369,8 @@ habitante_id
 
 
 
-case "regresar_hogar":
 
+case "regresar_hogar":
 
 return movimiento.irAHogar(
 habitante_id
@@ -316,8 +379,8 @@ habitante_id
 
 
 
-case "ir_escuela":
 
+case "ir_escuela":
 
 return movimiento.irAEscuela(
 habitante_id
@@ -351,7 +414,6 @@ break;
 
 
 
-
 case "dormir":
 
 
@@ -373,6 +435,8 @@ break;
 
 
 
+
+
 case "pasear":
 
 
@@ -382,7 +446,7 @@ habitante_id,
 
 "rutina",
 
-"Salió a explorar la comunidad.",
+"Exploró los alrededores.",
 
 "baja"
 
@@ -390,6 +454,7 @@ habitante_id,
 
 
 break;
+
 
 
 
@@ -447,6 +512,8 @@ habitante_id
 
 
 
+
+
 if(!rutina){
 
 
@@ -467,6 +534,48 @@ contexto.etapa || "adulto"
 
 
 
+
+// Actualizar si cambió de etapa
+
+if(
+contexto.etapa &&
+rutina.etapa !== contexto.etapa
+){
+
+
+rutina.etapa =
+contexto.etapa;
+
+
+
+rutina.horario =
+generarHorario(
+contexto.etapa
+);
+
+
+
+crearMemoria(
+
+habitante_id,
+
+"rutina",
+
+"Su rutina cambió por crecimiento.",
+
+"media"
+
+);
+
+
+}
+
+
+
+
+
+
+
 if(
 rutina.ultima_hora===horaActual
 ){
@@ -480,6 +589,7 @@ return rutina;
 
 
 
+
 const actividad =
 
 rutina.horario.find(
@@ -487,6 +597,7 @@ rutina.horario.find(
 a=>a.hora===horaActual
 
 );
+
 
 
 
@@ -545,7 +656,6 @@ rutina
 
 
 
-
 crearEvento(
 
 "actividad_rutina",
@@ -556,6 +666,7 @@ crearEvento(
 
 actividad:
 actividad.accion,
+
 
 momento:
 reloj.obtenerMomentoDia()
@@ -606,6 +717,8 @@ const trabajos={
 
 agricultor:"trabajar_campo",
 
+herrero:"forjar_objetos",
+
 medico:"atender_pacientes",
 
 cocinero:"cocinar",
@@ -621,6 +734,7 @@ guardia:"patrullar"
 
 
 
+
 if(trabajos[profesion]){
 
 
@@ -628,13 +742,13 @@ rutina.horario.push({
 
 hora:9,
 
-accion:trabajos[profesion]
+accion:
+trabajos[profesion]
 
 });
 
 
 }
-
 
 
 
@@ -674,10 +788,17 @@ return null;
 
 
 
+if(!datos.rutinas){
+
+datos.rutinas=[];
+
+}
+
+
+
 
 
 const index =
-
 datos.rutinas.findIndex(
 
 r=>r.id===rutina.id
@@ -693,7 +814,6 @@ if(index!==-1){
 datos.rutinas[index]=rutina;
 
 }
-
 
 
 
