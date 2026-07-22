@@ -1,4 +1,4 @@
-// Motor principal de Village Soul
+// Motor principal avanzado de Village Soul
 
 
 console.log("=================================");
@@ -19,12 +19,20 @@ const crearEvento =
 require("./sistemas/eventos.js");
 
 
-const {
-    pensarAlma
-}
-=
-require("./IA/ia_almas.js");
 
+let estadoMotor = {
+
+
+    activo:false,
+
+    fecha_inicio:null,
+
+    sistemas_cargados:0,
+
+    habitantes:0
+
+
+};
 
 
 
@@ -33,6 +41,7 @@ require("./IA/ia_almas.js");
 // =================================
 // INICIAR MOTOR
 // =================================
+
 
 function iniciarSoulEngine(){
 
@@ -46,19 +55,36 @@ function iniciarSoulEngine(){
 
 
 
+    let sistemasCorrectos=0;
+
+
+
     sistemas.activos.forEach(
 
         sistema=>{
 
 
             console.log(
-                "✓ " + sistema
+                "✓",
+                sistema
             );
+
+
+            sistemasCorrectos++;
 
 
         }
 
     );
+
+
+
+
+
+    estadoMotor.sistemas_cargados =
+    sistemasCorrectos;
+
+
 
 
 
@@ -82,7 +108,8 @@ function iniciarSoulEngine(){
 
 
             console.log(
-                "○ " + sistema
+                "○",
+                sistema
             );
 
 
@@ -96,15 +123,10 @@ function iniciarSoulEngine(){
 
 
 
+
     // =============================
-    // CARGAR MUNDO
+    // MUNDO
     // =============================
-
-
-    console.log(
-        "Cargando mundo..."
-    );
-
 
 
     const mundo =
@@ -114,23 +136,18 @@ function iniciarSoulEngine(){
 
 
 
-
     if(mundo){
 
 
         console.log(
-
             "Mundo:",
             mundo.nombre
-
         );
 
 
         console.log(
-
             "Estado:",
             mundo.estado
-
         );
 
 
@@ -140,7 +157,7 @@ function iniciarSoulEngine(){
 
 
         console.log(
-            "No se pudo cargar el mundo."
+            "Error cargando mundo."
         );
 
 
@@ -152,15 +169,10 @@ function iniciarSoulEngine(){
 
 
 
+
     // =============================
-    // CARGAR ALMAS
+    // ALMAS
     // =============================
-
-
-
-    console.log(
-        "Inicializando almas..."
-    );
 
 
 
@@ -172,9 +184,15 @@ function iniciarSoulEngine(){
 
 
 
+    if(
+        almas &&
+        almas.almas
+    ){
 
 
-    if(almas && almas.almas){
+
+        estadoMotor.habitantes =
+        almas.almas.length;
 
 
 
@@ -183,21 +201,19 @@ function iniciarSoulEngine(){
             alma=>{
 
 
-
                 console.log(
+
                     "Alma:",
                     alma.nombre,
                     "ID:",
                     alma.id
-                );
 
+                );
 
 
             }
 
-
         );
-
 
 
     }
@@ -206,7 +222,7 @@ function iniciarSoulEngine(){
 
 
         console.log(
-            "No existen almas cargadas."
+            "No existen almas."
         );
 
 
@@ -218,22 +234,56 @@ function iniciarSoulEngine(){
 
 
 
+
+
     // =============================
-    // EVENTO DE INICIO
+    // ESTADO
     // =============================
+
+
+    estadoMotor.activo=true;
+
+
+    estadoMotor.fecha_inicio =
+    new Date().toISOString();
+
+
+
+
+
+
+
+
+    console.log(
+        "Motor preparado:"
+    );
+
+
+    console.log(
+        estadoMotor
+    );
+
+
+
+
 
 
 
     crearEvento(
 
-        "inicio_mundo",
+        "soul_engine_inicio",
 
         [],
 
         {
 
+
             mensaje:
-            "Soul Engine iniciado"
+            "Village Soul Engine iniciado",
+
+
+            habitantes:
+            estadoMotor.habitantes
 
 
         }
@@ -257,14 +307,13 @@ function iniciarSoulEngine(){
 
 
     console.log(
-        "================================="
-    );
+        "=================================");
 
 
 
 
-    return true;
 
+    return estadoMotor;
 
 
 }
@@ -278,28 +327,63 @@ function iniciarSoulEngine(){
 
 
 // =================================
-// PROCESAR PENSAMIENTO DE ALMA
+// PROCESAR PENSAMIENTO
 // =================================
 
 
-function procesarAlma(
-    id
-){
+function procesarAlma(id){
+
+
+    try{
+
+
+        const {
+            pensarAlma
+        }
+        =
+        require("./IA/ia_almas.js");
 
 
 
-    const pensamiento =
-    pensarAlma(id);
+        const pensamiento =
+        pensarAlma(id);
 
 
 
 
-    if(!pensamiento){
+        if(!pensamiento){
+
+            return null;
+
+        }
+
+
+
 
 
         console.log(
-            "No se pudo procesar el alma:",
-            id
+
+            "Pensamiento:",
+            pensamiento.decision
+
+        );
+
+
+
+
+
+        return pensamiento;
+
+
+
+    }
+
+    catch(error){
+
+
+        console.log(
+            "Error IA:",
+            error.message
         );
 
 
@@ -309,21 +393,20 @@ function procesarAlma(
     }
 
 
-
-
-
-    console.log(
-
-        "Pensamiento:",
-        pensamiento.decision
-
-    );
+}
 
 
 
 
-    return pensamiento;
 
+
+
+
+
+function obtenerEstadoMotor(){
+
+
+    return estadoMotor;
 
 
 }
@@ -335,13 +418,14 @@ function procesarAlma(
 
 
 
-module.exports = {
+module.exports={
 
 
     iniciarSoulEngine,
 
+    procesarAlma,
 
-    procesarAlma
+    obtenerEstadoMotor
 
 
 };
