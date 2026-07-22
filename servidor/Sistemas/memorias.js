@@ -11,7 +11,6 @@ require("./guardador_datos.js");
 
 
 
-
 // =================================
 // CREAR MEMORIA
 // =================================
@@ -22,7 +21,9 @@ function crearMemoria(
     descripcion,
     importancia="baja",
     personas=[],
-    emocion="neutral"
+    emocion="neutral",
+    lugar=null,
+    efecto={}
 ){
 
 
@@ -43,7 +44,6 @@ function crearMemoria(
 
 
 
-
     if(!datos.memorias){
 
         datos.memorias=[];
@@ -56,12 +56,9 @@ function crearMemoria(
 
     const nuevoId =
 
-
     datos.memorias.length > 0
 
-
     ?
-
 
     Math.max(
         ...datos.memorias.map(
@@ -69,9 +66,7 @@ function crearMemoria(
         )
     ) + 1
 
-
     :
-
 
     1;
 
@@ -80,8 +75,7 @@ function crearMemoria(
 
 
 
-
-    let impacto;
+    let influencia;
 
 
 
@@ -90,7 +84,7 @@ function crearMemoria(
 
         case "alta":
 
-            impacto="fuerte";
+            influencia=90;
 
         break;
 
@@ -98,7 +92,7 @@ function crearMemoria(
 
         case "media":
 
-            impacto="moderado";
+            influencia=60;
 
         break;
 
@@ -106,7 +100,7 @@ function crearMemoria(
 
         default:
 
-            impacto="leve";
+            influencia=30;
 
         break;
 
@@ -124,20 +118,28 @@ function crearMemoria(
 
 
     if(
+
         emocion==="felicidad" ||
+
         emocion==="amor" ||
+
         emocion==="orgullo"
+
     ){
 
         categoria="positiva";
 
     }
 
+
     else if(
 
         emocion==="tristeza" ||
+
         emocion==="miedo" ||
+
         emocion==="ira" ||
+
         emocion==="estres"
 
     ){
@@ -145,6 +147,7 @@ function crearMemoria(
         categoria="negativa";
 
     }
+
 
     else{
 
@@ -167,16 +170,24 @@ function crearMemoria(
         habitante_id,
 
 
+
         tipo,
 
 
         descripcion,
 
 
+
         importancia,
 
 
+
+        influencia,
+
+
+
         categoria,
+
 
 
         emocion,
@@ -188,8 +199,58 @@ function crearMemoria(
 
 
 
+        lugar_relacionado:
+        lugar,
+
+
+
+        efecto_personalidad:{
+
+
+            confianza:
+            efecto.confianza || 0,
+
+
+            miedo:
+            efecto.miedo || 0,
+
+
+            felicidad:
+            efecto.felicidad || 0,
+
+
+            tristeza:
+            efecto.tristeza || 0
+
+
+        },
+
+
+
         impacto_comportamiento:
-        impacto,
+
+        importancia==="alta"
+
+        ?
+
+        "fuerte"
+
+        :
+
+        importancia==="media"
+
+        ?
+
+        "moderado"
+
+        :
+
+        "leve",
+
+
+
+
+        fuerza_recuerdo:100,
 
 
 
@@ -201,9 +262,7 @@ function crearMemoria(
         new Date().toISOString()
 
 
-
     };
-
 
 
 
@@ -219,9 +278,7 @@ function crearMemoria(
 
 
 
-
-
-    // Limitar recuerdos para evitar exceso
+    // Limitar cantidad de memoria
 
     if(datos.memorias.length > 5000){
 
@@ -242,7 +299,6 @@ function crearMemoria(
         datos
 
     );
-
 
 
 
@@ -276,7 +332,7 @@ function obtenerMemorias(
 
 
 
-    if(!datos){
+    if(!datos || !datos.memorias){
 
         return [];
 
@@ -285,10 +341,12 @@ function obtenerMemorias(
 
 
 
+
     return datos.memorias.filter(
 
         memoria =>
-        memoria.habitante_id === habitante_id
+
+        memoria.habitante_id===habitante_id
 
     );
 
@@ -316,9 +374,11 @@ function buscarMemoriasTipo(
     return obtenerMemorias(
         habitante_id
     )
+
     .filter(
 
-        memoria =>
+        memoria=>
+
         memoria.tipo===tipo
 
     );
@@ -335,7 +395,42 @@ function buscarMemoriasTipo(
 
 
 // =================================
-// OBTENER RECUERDOS IMPORTANTES
+// BUSCAR POR PERSONA
+// =================================
+
+function buscarMemoriasPersona(
+    habitante_id,
+    persona_id
+){
+
+
+    return obtenerMemorias(
+        habitante_id
+    )
+
+    .filter(
+
+        memoria =>
+
+        memoria.personas_relacionadas.includes(
+            persona_id
+        )
+
+    );
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// RECUERDOS IMPORTANTES
 // =================================
 
 function obtenerRecuerdosImportantes(
@@ -346,11 +441,12 @@ function obtenerRecuerdosImportantes(
     return obtenerMemorias(
         habitante_id
     )
+
     .filter(
 
         memoria =>
 
-        memoria.importancia==="alta"
+        memoria.influencia >= 80
 
     );
 
@@ -375,6 +471,7 @@ function ultimaMemoria(
 
 
     const memorias =
+
     obtenerMemorias(
         habitante_id
     );
@@ -388,6 +485,7 @@ function ultimaMemoria(
         return null;
 
     }
+
 
 
 
@@ -407,7 +505,108 @@ function ultimaMemoria(
 
 
 // =================================
-// LIMPIAR MEMORIAS
+// EVOLUCIÓN DE MEMORIA
+// =================================
+
+function evolucionarMemorias(){
+
+
+
+
+    const datos =
+
+    cargarArchivo(
+        "../datos/memorias.json"
+    );
+
+
+
+
+    if(!datos){
+
+        return null;
+
+    }
+
+
+
+
+
+    datos.memorias.forEach(
+
+        memoria=>{
+
+
+            let perdida=1;
+
+
+
+            if(
+                memoria.importancia==="alta"
+            ){
+
+                perdida=0.2;
+
+            }
+
+
+            if(
+                memoria.importancia==="media"
+            ){
+
+                perdida=0.5;
+
+            }
+
+
+
+            memoria.fuerza_recuerdo -= perdida;
+
+
+
+            if(
+                memoria.fuerza_recuerdo <=0
+            ){
+
+                memoria.recordada=false;
+
+            }
+
+
+        }
+
+    );
+
+
+
+
+
+    guardarArchivo(
+
+        "../datos/memorias.json",
+
+        datos
+
+    );
+
+
+
+
+    return true;
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// ELIMINAR MEMORIA
 // =================================
 
 function eliminarMemoria(
@@ -419,6 +618,7 @@ function eliminarMemoria(
     cargarArchivo("../datos/memorias.json");
 
 
+
     if(!datos){
 
         return false;
@@ -428,11 +628,13 @@ function eliminarMemoria(
 
 
     datos.memorias =
+
     datos.memorias.filter(
 
         m=>m.id!==id
 
     );
+
 
 
 
@@ -457,18 +659,30 @@ function eliminarMemoria(
 
 
 
+
 module.exports={
 
 
     crearMemoria,
 
+
     obtenerMemorias,
+
 
     buscarMemoriasTipo,
 
+
+    buscarMemoriasPersona,
+
+
     obtenerRecuerdosImportantes,
 
+
     ultimaMemoria,
+
+
+    evolucionarMemorias,
+
 
     eliminarMemoria
 
