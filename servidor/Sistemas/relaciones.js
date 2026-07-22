@@ -9,22 +9,16 @@ const guardarArchivo =
 require("./guardador_datos.js");
 
 
-const crearEvento =
-require("./eventos.js");
-
-
 const crearMemoria =
 require("./memorias.js");
 
 
 const cambiarEmocion =
-require("./emociones.js");
-
+require("./emociones.js").cambiarEmocion;
 
 
 const obtenerEtapaHabitante =
 require("./etapas_vida.js").obtenerEtapaHabitante;
-
 
 
 
@@ -119,6 +113,7 @@ function crearRelacion(
 
 
 
+
     const nuevoId =
 
     datos.relaciones.length > 0
@@ -134,7 +129,6 @@ function crearRelacion(
     :
 
     1;
-
 
 
 
@@ -160,18 +154,13 @@ function crearRelacion(
 
         confianza:0,
 
-
         afinidad:50,
-
 
         respeto:50,
 
-
         amistad:0,
 
-
         romance:0,
-
 
         compromiso:0,
 
@@ -188,7 +177,6 @@ function crearRelacion(
         fecha_matrimonio:null,
 
 
-
         familia:{
 
             parentesco:false,
@@ -198,35 +186,13 @@ function crearRelacion(
         },
 
 
-
         historial:[
 
             "Primer encuentro"
 
-        ],
-
-
-
-        eventos_importantes:[
-
-            {
-
-                evento:"primer_encuentro",
-
-                fecha:
-                new Date().toISOString(),
-
-                impacto:"moderado"
-
-            }
-
         ]
 
-
     };
-
-
-
 
 
 
@@ -247,10 +213,6 @@ function crearRelacion(
 
 
 
-
-
-
-
     crearMemoria(
 
         habitante_a,
@@ -259,17 +221,9 @@ function crearRelacion(
 
         "Conoció a un nuevo habitante.",
 
-        "media",
-
-        [
-
-            habitante_b
-
-        ]
+        "media"
 
     );
-
-
 
 
     crearMemoria(
@@ -280,18 +234,9 @@ function crearRelacion(
 
         "Conoció a un nuevo habitante.",
 
-        "media",
-
-        [
-
-            habitante_a
-
-        ]
+        "media"
 
     );
-
-
-
 
 
 
@@ -307,9 +252,8 @@ function crearRelacion(
 
 
 
-
 // =================================
-// VERIFICAR EDAD ROMANCE
+// VERIFICAR ROMANCE POR EDAD
 // =================================
 
 function puedeTenerRomance(
@@ -343,7 +287,6 @@ function puedeTenerRomance(
         return false;
 
     }
-
 
 
 
@@ -401,7 +344,6 @@ function aumentarConfianza(
     );
 
 
-
     if(!relacion){
 
         return null;
@@ -413,20 +355,12 @@ function aumentarConfianza(
     relacion.confianza += cantidad;
 
 
-
     limitarRelacion(
         relacion
     );
 
 
-    actualizarNivelRelacion(
-        relacion
-    );
-
-
-
     guardarRelaciones();
-
 
 
     return relacion;
@@ -459,7 +393,6 @@ function aumentarAmistad(
     );
 
 
-
     if(!relacion){
 
         return null;
@@ -471,7 +404,7 @@ function aumentarAmistad(
     relacion.amistad += cantidad;
 
 
-    relacion.confianza += cantidad/2;
+    relacion.confianza += cantidad / 2;
 
 
 
@@ -481,9 +414,21 @@ function aumentarAmistad(
 
 
 
-    actualizarNivelRelacion(
-        relacion
+    cambiarEmocion(
+
+        habitante_a,
+
+        "felicidad",
+
+        cantidad / 2,
+
+        "amistad"
+
     );
+
+
+
+    guardarRelaciones();
 
 
 
@@ -501,7 +446,7 @@ function aumentarAmistad(
 
 
 // =================================
-// ROMANCE
+// AUMENTAR ROMANCE
 // =================================
 
 function aumentarRomance(
@@ -513,6 +458,7 @@ function aumentarRomance(
 
 
     if(
+
         !puedeTenerRomance(habitante_a)
 
         ||
@@ -524,7 +470,6 @@ function aumentarRomance(
         return null;
 
     }
-
 
 
 
@@ -556,150 +501,25 @@ function aumentarRomance(
 
 
 
+    relacion.compromiso += cantidad/2;
+
+
+
     limitarRelacion(
         relacion
     );
 
 
 
-    actualizarNivelRelacion(
-        relacion
-    );
-
-
-
-    return relacion;
-
-
-}
-
-
-
-
-
-
-
-
-
-// =================================
-// MATRIMONIO
-// =================================
-
-function casarHabitantes(
-    habitante_a,
-    habitante_b
-){
-
-
-
-    if(
-        !puedeTenerRomance(habitante_a)
-
-        ||
-
-        !puedeTenerRomance(habitante_b)
-
-    ){
-
-        return null;
-
-    }
-
-
-
-
-
-    const relacion =
-    obtenerRelacion(
-        habitante_a,
-        habitante_b
-    );
-
-
-
-    if(!relacion){
-
-        return null;
-
-    }
-
-
-
-
-
-    if(
-
-        relacion.confianza < 80
-
-        ||
-
-        relacion.romance < 80
-
-    ){
-
-        return null;
-
-    }
-
-
-
-
-    relacion.estado_pareja =
-    "casados";
-
-
-    relacion.fecha_matrimonio =
-    new Date().toISOString();
-
-
-
-    relacion.historial.push(
-        "Matrimonio"
-    );
-
-
-
-    crearEvento(
-
-        "boda",
-
-        [
-
-            habitante_a,
-
-            habitante_b
-
-        ],
-
-        {}
-
-    );
-
-
-
-    crearMemoria(
+    cambiarEmocion(
 
         habitante_a,
 
-        "matrimonio",
+        "felicidad",
 
-        "Se casó con otro habitante.",
+        cantidad / 2,
 
-        "alta"
-
-    );
-
-
-
-    crearMemoria(
-
-        habitante_b,
-
-        "matrimonio",
-
-        "Se casó con otro habitante.",
-
-        "alta"
+        "romance"
 
     );
 
@@ -714,6 +534,61 @@ function casarHabitantes(
 
 }
 
+
+
+
+
+
+
+// =================================
+// TERMINAR RELACIÓN
+// =================================
+
+function terminarRelacion(
+    habitante_a,
+    habitante_b
+){
+
+
+    const relacion =
+    obtenerRelacion(
+        habitante_a,
+        habitante_b
+    );
+
+
+    if(!relacion){
+
+        return null;
+
+    }
+
+
+
+    relacion.estado_pareja =
+    "terminada";
+
+
+    relacion.romance = 0;
+
+
+    relacion.compromiso = 0;
+
+
+    relacion.historial.push(
+        "Relación terminada"
+    );
+
+
+
+    guardarRelaciones();
+
+
+
+    return relacion;
+
+
+}
 
 
 
@@ -747,7 +622,6 @@ function actualizarNivelRelacion(
 
 
 
-
     if(valor >=80){
 
         relacion.nivel =
@@ -777,7 +651,6 @@ function actualizarNivelRelacion(
     }
 
 
-
 }
 
 
@@ -788,15 +661,15 @@ function actualizarNivelRelacion(
 
 
 // =================================
-// LIMITAR VALORES
+// LIMITAR
 // =================================
 
 function limitarRelacion(
-relacion
+    relacion
 ){
 
 
-    const valores=[
+    [
 
         "confianza",
 
@@ -810,27 +683,19 @@ relacion
 
         "compromiso"
 
-    ];
+    ].forEach(
+
+        valor=>{
 
 
+            if(relacion[valor]>100)
 
-    valores.forEach(
-
-        v=>{
-
-
-            if(relacion[v]>100){
-
-                relacion[v]=100;
-
-            }
+                relacion[valor]=100;
 
 
-            if(relacion[v]<0){
+            if(relacion[valor]<0)
 
-                relacion[v]=0;
-
-            }
+                relacion[valor]=0;
 
 
         }
@@ -858,6 +723,7 @@ function guardarRelaciones(){
     cargarArchivo("../datos/relaciones.json");
 
 
+
     guardarArchivo(
 
         "../datos/relaciones.json",
@@ -865,6 +731,7 @@ function guardarRelaciones(){
         datos
 
     );
+
 
 }
 
@@ -887,7 +754,7 @@ module.exports={
 
     aumentarRomance,
 
-    casarHabitantes,
+    terminarRelacion,
 
     puedeTenerRomance
 
