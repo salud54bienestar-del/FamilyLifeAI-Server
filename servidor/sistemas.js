@@ -4,6 +4,7 @@
 const sistemas = {
 
 
+
     // =========================
     // SISTEMAS ACTIVOS
     // =========================
@@ -20,6 +21,8 @@ const sistemas = {
 
         "tiempo",
 
+        "reloj_mundo",
+
 
 
         // Vida e identidad
@@ -28,7 +31,7 @@ const sistemas = {
 
         "vida_habitantes",
 
-        "etapas_vida",
+        "etapas",
 
         "crecimiento",
 
@@ -72,6 +75,8 @@ const sistemas = {
 
         "movimiento",
 
+        "ubicaciones",
+
 
 
         // Economía y mundo
@@ -111,7 +116,6 @@ const sistemas = {
 
         "comportamiento",
 
-
         "habilidades",
 
 
@@ -129,15 +133,12 @@ const sistemas = {
         "custodia",
 
 
-
         "comunicacion",
-
 
         "cultura"
 
 
     ],
-
 
 
 
@@ -151,6 +152,7 @@ const sistemas = {
 
 
     dependencias:{
+
 
 
         cerebro:[
@@ -169,11 +171,15 @@ const sistemas = {
 
 
 
+
+
         decisiones:[
 
             "cerebro"
 
         ],
+
+
 
 
 
@@ -187,13 +193,37 @@ const sistemas = {
 
 
 
+
         rutinas:[
 
             "movimiento",
 
-            "necesidades"
+            "necesidades",
+
+            "reloj_mundo"
 
         ],
+
+
+
+
+
+
+        crecimiento:[
+
+            "almas",
+
+            "etapas",
+
+            "tiempo",
+
+            "eventos",
+
+            "memorias"
+
+        ],
+
+
 
 
 
@@ -206,9 +236,10 @@ const sistemas = {
 
             "emociones",
 
-            "etapas_vida"
+            "etapas"
 
         ]
+
 
 
     }
@@ -261,7 +292,7 @@ sistema=>{
 
 
 console.log(
-"✓ " + sistema
+"✓ "+sistema
 );
 
 
@@ -281,15 +312,13 @@ console.log(
 
 
 
-
-
 sistemas.desarrollo.forEach(
 
 sistema=>{
 
 
 console.log(
-"○ " + sistema
+"○ "+sistema
 );
 
 
@@ -304,4 +333,4 @@ console.log(
 
 
 
-module.exports = sistemas;
+module.exports=sistemas;
