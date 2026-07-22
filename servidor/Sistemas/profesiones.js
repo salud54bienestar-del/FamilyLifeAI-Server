@@ -5,12 +5,25 @@ const cargarArchivo =
 require("./cargador_datos.js");
 
 
+const guardarArchivo =
+require("./guardador_datos.js");
+
+
 const crearEvento =
 require("./eventos.js");
 
 
 const crearMemoria =
 require("./memorias.js");
+
+
+const {
+    obtenerEtapaHabitante
+}
+=
+require("./etapas_vida.js");
+
+
 
 
 
@@ -20,12 +33,11 @@ require("./memorias.js");
 // BUSCAR PROFESIÓN
 // =================================
 
-function buscarProfesion(nombreProfesion){
+function buscarProfesion(nombre){
 
 
     const datos =
     cargarArchivo("../datos/profesiones.json");
-
 
 
     if(!datos){
@@ -38,13 +50,73 @@ function buscarProfesion(nombreProfesion){
 
     return datos.profesiones.find(
 
-        p =>
-        p.nombre === nombreProfesion.toLowerCase()
+        p=>
+        p.nombre ===
+        nombre.toLowerCase()
 
-    );
+    ) || null;
 
 
 }
+
+
+
+
+
+
+
+
+// =================================
+// VERIFICAR EDAD LABORAL
+// =================================
+
+function puedeTrabajar(
+    habitante,
+    profesion
+){
+
+
+    const etapa =
+    obtenerEtapaHabitante(
+        habitante
+    );
+
+
+
+    if(!etapa){
+
+        return false;
+
+    }
+
+
+
+    if(
+        etapa.nombre==="bebe" ||
+        etapa.nombre==="niño"
+    ){
+
+        return false;
+
+    }
+
+
+
+    if(
+        etapa.nombre==="adolescente"
+    ){
+
+        return profesion.tipo==="ligero";
+
+    }
+
+
+
+    return true;
+
+
+}
+
 
 
 
@@ -59,7 +131,7 @@ function buscarProfesion(nombreProfesion){
 
 function asignarProfesion(
     habitante_id,
-    nombreProfesion
+    nombre
 ){
 
 
@@ -68,7 +140,7 @@ function asignarProfesion(
 
 
     const profesion =
-    buscarProfesion(nombreProfesion);
+    buscarProfesion(nombre);
 
 
 
@@ -80,7 +152,6 @@ function asignarProfesion(
         return null;
 
     }
-
 
 
 
@@ -104,9 +175,83 @@ function asignarProfesion(
 
 
 
-    habitante.profesion = crearDatosProfesion(
-        profesion
+    if(
+        !puedeTrabajar(
+            habitante,
+            profesion
+        )
+    ){
+
+        return null;
+
+    }
+
+
+
+
+
+
+
+    habitante.profesion = {
+
+
+        nombre:
+        profesion.nombre,
+
+
+        categoria:
+        profesion.categoria || "general",
+
+
+        lugar_trabajo:
+        profesion.lugar_trabajo || null,
+
+
+        tareas:
+        profesion.tareas || [],
+
+
+        habilidades:
+        profesion.habilidades_requeridas || [],
+
+
+        horario:
+        profesion.horario || {
+
+
+            inicio:6,
+
+            fin:18
+
+        },
+
+
+        nivel:1,
+
+
+        experiencia:0,
+
+
+        estado:"activa"
+
+
+    };
+
+
+
+
+
+
+
+    guardarArchivo(
+
+        "../datos/almas.json",
+
+        almas
+
     );
+
+
 
 
 
@@ -121,11 +266,14 @@ function asignarProfesion(
         ],
 
         {
+
             profesion:
             profesion.nombre
+
         }
 
     );
+
 
 
 
@@ -137,12 +285,14 @@ function asignarProfesion(
 
         "profesion",
 
-        "Comenzó como " +
+        "Comenzó a trabajar como "+
         profesion.nombre,
 
         "media"
 
     );
+
+
 
 
 
@@ -158,92 +308,206 @@ function asignarProfesion(
 
 
 
-// =================================
-// CREAR DATOS PROFESIÓN
-// =================================
-
-function crearDatosProfesion(profesion){
-
-
-    return {
-
-
-        nombre:
-        profesion.nombre,
-
-
-        categoria:
-        profesion.categoria || "general",
-
-
-
-        lugar_trabajo:
-        profesion.lugar_trabajo || null,
-
-
-
-        edificio_requerido:
-        profesion.edificio_requerido || null,
-
-
-
-        habilidades:
-        profesion.habilidades_requeridas || [],
-
-
-
-        tareas:
-        profesion.tareas || [],
-
-
-
-        interacciones:
-        profesion.interacciones || [],
-
-
-
-        nivel:1,
-
-
-        experiencia:0,
-
-
-        estado:"activa"
-
-
-
-    };
-
-
-}
-
-
-
-
-
-
-
 
 // =================================
-// CAMBIAR PROFESIÓN
+// TRABAJAR
 // =================================
 
-function cambiarProfesion(
+function trabajarHabitante(
     habitante_id,
-    nuevaProfesion
+    hora
 ){
 
 
-    return asignarProfesion(
+    const almas =
+    cargarArchivo("../datos/almas.json");
 
-        habitante_id,
 
-        nuevaProfesion
+
+    if(!almas){
+
+        return null;
+
+    }
+
+
+
+    const habitante =
+    almas.almas.find(
+
+        a=>a.id===habitante_id
 
     );
 
 
+
+    if(
+        !habitante ||
+        !habitante.profesion
+    ){
+
+        return null;
+
+    }
+
+
+
+
+
+    const trabajo =
+    habitante.profesion;
+
+
+
+
+    const inicio =
+    trabajo.horario.inicio;
+
+
+    const fin =
+    trabajo.horario.fin;
+
+
+
+
+    if(
+        hora < inicio ||
+        hora >= fin
+    ){
+
+        trabajo.estado="descansando";
+
+        return false;
+
+    }
+
+
+
+
+
+    trabajo.estado="trabajando";
+
+
+    trabajo.experiencia++;
+
+
+
+
+
+    if(
+        trabajo.experiencia>=100
+    ){
+
+        subirNivel(
+            habitante_id
+        );
+
+    }
+
+
+
+
+
+
+    guardarArchivo(
+
+        "../datos/almas.json",
+
+        almas
+
+    );
+
+
+
+
+
+
+    crearMemoria(
+
+        habitante_id,
+
+        "trabajo",
+
+        "Trabajó como "+
+        trabajo.nombre,
+
+        "baja"
+
+    );
+
+
+
+
+
+    return trabajo;
+
+
 }
+
+
+
+
+
+
+
+
+
+// =================================
+// SUBIR NIVEL
+// =================================
+
+function subirNivel(
+habitante_id
+){
+
+
+    const profesion =
+    obtenerProfesion(
+        habitante_id
+    );
+
+
+    if(!profesion){
+
+        return null;
+
+    }
+
+
+
+    profesion.nivel++;
+
+
+    profesion.experiencia=0;
+
+
+
+
+
+    crearEvento(
+
+        "subida_nivel_profesion",
+
+        [
+            habitante_id
+        ],
+
+        {
+
+            nivel:
+            profesion.nivel
+
+        }
+
+    );
+
+
+
+    return profesion;
+
+
+}
+
 
 
 
@@ -257,7 +521,7 @@ function cambiarProfesion(
 // =================================
 
 function obtenerProfesion(
-    habitante_id
+habitante_id
 ){
 
 
@@ -295,220 +559,17 @@ function obtenerProfesion(
 
 
 
-// =================================
-// TRABAJAR HABITANTE
-// =================================
 
-function trabajarHabitante(
-    habitante_id,
-    hora
-){
-
-
-    const almas =
-    cargarArchivo("../datos/almas.json");
-
-
-
-    if(!almas){
-
-        return null;
-
-    }
-
-
-
-
-
-    const habitante =
-    almas.almas.find(
-
-        a=>a.id===habitante_id
-
-    );
-
-
-
-    if(
-        !habitante ||
-        !habitante.profesion
-    ){
-
-        return null;
-
-    }
-
-
-
-
-
-    const profesion =
-    habitante.profesion;
-
-
-
-
-
-    // Horario por defecto
-
-    const inicio = 6;
-
-    const fin = 18;
-
-
-
-
-
-    if(
-        hora < inicio ||
-        hora >= fin
-    ){
-
-        return false;
-
-    }
-
-
-
-
-
-
-
-    profesion.experiencia += 1;
-
-
-
-
-
-
-
-    crearMemoria(
-
-        habitante_id,
-
-        "trabajo",
-
-        "Trabajó como " +
-        profesion.nombre,
-
-        "baja"
-
-    );
-
-
-
-
-
-
-
-
-    if(
-        profesion.experiencia >= 100
-    ){
-
-        subirNivel(
-            habitante_id
-        );
-
-    }
-
-
-
-
-
-    return profesion;
-
-
-}
-
-
-
-
-
-
-
-
-// =================================
-// SUBIR NIVEL
-// =================================
-
-function subirNivel(
-    habitante_id
-){
-
-
-    const profesion =
-    obtenerProfesion(
-        habitante_id
-    );
-
-
-
-    if(!profesion){
-
-        return null;
-
-    }
-
-
-
-
-    profesion.nivel++;
-
-    profesion.experiencia=0;
-
-
-
-
-
-    crearEvento(
-
-        "subida_nivel_profesion",
-
-        [
-            habitante_id
-        ],
-
-        {
-
-            profesion:
-            profesion.nombre,
-
-            nivel:
-            profesion.nivel
-
-        }
-
-    );
-
-
-
-
-
-    return profesion;
-
-
-}
-
-
-
-
-
-
-
-
-module.exports = {
+module.exports={
 
 
     buscarProfesion,
 
     asignarProfesion,
 
-    cambiarProfesion,
+    trabajarHabitante,
 
     obtenerProfesion,
-
-    trabajarHabitante,
 
     subirNivel
 
