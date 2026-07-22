@@ -18,6 +18,7 @@ require("./memorias.js");
 
 
 
+
 // =================================
 // OBTENER EMOCIONES
 // =================================
@@ -28,29 +29,32 @@ habitante_id
 ){
 
 
-    const datos =
-    cargarArchivo("../datos/emociones.json");
+const datos =
+cargarArchivo("../datos/emociones.json");
 
 
 
-    if(!datos){
+if(
+!datos ||
+!datos.emociones
+){
 
-        return null;
+return null;
 
-    }
-
-
+}
 
 
-    return datos.emociones.find(
 
-        e=>
-        e.habitante_id===habitante_id
 
-    ) || null;
+return datos.emociones.find(
+
+e=>e.habitante_id===habitante_id
+
+)||null;
 
 
 }
+
 
 
 
@@ -69,111 +73,136 @@ habitante_id
 ){
 
 
-    const datos =
-    cargarArchivo("../datos/emociones.json");
+const datos =
+cargarArchivo("../datos/emociones.json");
 
 
 
-    if(!datos){
+if(
+!datos
+){
 
-        return null;
+return null;
 
-    }
+}
 
 
 
-    const existe =
-    obtenerEmociones(
-        habitante_id
-    );
+if(!datos.emociones){
 
+datos.emociones=[];
 
+}
 
-    if(existe){
 
-        return existe;
 
-    }
 
+const existente =
+obtenerEmociones(
+habitante_id
+);
 
 
 
+if(existente){
 
-    const nueva={
+return existente;
 
+}
 
-        habitante_id,
 
 
-        felicidad:50,
 
 
-        confianza:50,
 
+const nueva={
 
-        miedo:0,
 
+habitante_id,
 
-        tristeza:0,
 
 
-        ira:0,
+felicidad:50,
 
+confianza:50,
 
-        calma:50,
 
+miedo:0,
 
+tristeza:0,
 
-        emociones_secundarias:{
+ira:0,
 
 
-            amor:0,
+calma:50,
 
-            soledad:0,
 
-            orgullo:0,
 
-            estres:0,
+emociones_secundarias:{
 
-            aburrimiento:0
 
+amor:0,
 
-        },
+soledad:0,
 
+orgullo:0,
 
+estres:0,
 
-        emocion_actual:
-        "neutral",
+aburrimiento:0,
 
+curiosidad:0,
 
+esperanza:0,
 
-        estabilidad_emocional:50
+motivacion:0
 
 
+},
 
-    };
 
 
+emocion_actual:"neutral",
 
 
 
-    datos.emociones.push(
-        nueva
-    );
+intensidad:50,
 
 
 
-    guardarArchivo(
+estabilidad_emocional:50,
 
-        "../datos/emociones.json",
 
-        datos
 
-    );
+ultima_actualizacion:null
 
 
+};
 
-    return nueva;
+
+
+
+
+
+datos.emociones.push(
+nueva
+);
+
+
+
+guardarArchivo(
+
+"../datos/emociones.json",
+
+datos
+
+);
+
+
+
+
+
+return nueva;
 
 
 }
@@ -200,126 +229,148 @@ motivo=""
 
 
 
-    const datos =
-    cargarArchivo("../datos/emociones.json");
+const datos =
+cargarArchivo("../datos/emociones.json");
 
 
 
-    if(!datos){
+if(
+!datos
+){
 
-        return null;
+return null;
 
-    }
+}
 
 
 
-    let estado =
-    obtenerEmociones(
-        habitante_id
-    );
+let estado =
+obtenerEmociones(
+habitante_id
+);
 
 
 
-    if(!estado){
 
-        estado =
-        crearEmocion(
-            habitante_id
-        );
+if(!estado){
 
-    }
 
+estado =
+crearEmocion(
+habitante_id
+);
 
 
+}
 
 
-    if(
-        estado[emocion] !== undefined
-    ){
 
-        estado[emocion]+=cantidad;
 
-    }
 
-    else{
 
+// Emociones principales
 
-        if(
-        !estado.emociones_secundarias
-        ){
+if(
+estado[emocion] !== undefined &&
+typeof estado[emocion]==="number"
+){
 
-            estado.emociones_secundarias={};
 
-        }
+estado[emocion]+=cantidad;
 
 
+}
 
-        if(
-        !estado.emociones_secundarias[emocion]
-        ){
+else{
 
-            estado.emociones_secundarias[emocion]=0;
 
-        }
+if(
+!estado.emociones_secundarias
+){
 
+estado.emociones_secundarias={};
 
+}
 
-        estado.emociones_secundarias[emocion]+=cantidad;
 
 
-    }
+if(
+!estado.emociones_secundarias[emocion]
+){
 
+estado.emociones_secundarias[emocion]=0;
 
+}
 
 
 
+estado.emociones_secundarias[emocion]+=cantidad;
 
 
-    limitarEmociones(
-        estado
-    );
+}
 
 
 
-    actualizarEmocionActual(
-        estado
-    );
 
 
 
 
 
-    guardarArchivo(
+limitarEmociones(
+estado
+);
 
-        "../datos/emociones.json",
 
-        datos
 
-    );
+actualizarEmocionActual(
+estado
+);
 
 
 
 
+estado.ultima_actualizacion =
+new Date().toISOString();
 
 
-    crearMemoria(
 
-        habitante_id,
 
-        "emocion",
 
-        "Sintió "+emocion+
-        " por "+motivo,
 
-        "baja"
+guardarArchivo(
 
-    );
+"../datos/emociones.json",
 
+datos
 
+);
 
 
 
-    return estado;
+
+
+
+
+crearMemoria(
+
+habitante_id,
+
+"emocion",
+
+"Sintió "+emocion+
+" por "+motivo,
+
+"baja"
+
+);
+
+
+
+
+
+
+
+return estado;
 
 
 }
@@ -343,89 +394,144 @@ estado
 
 
 
-    const emociones={
-
-
-        felicidad:
-        estado.felicidad,
-
-
-        miedo:
-        estado.miedo,
-
-
-        tristeza:
-        estado.tristeza,
-
-
-        ira:
-        estado.ira,
-
-
-        calma:
-        estado.calma
-
-
-    };
+const emociones={
 
 
 
+felicidad:
+estado.felicidad,
 
 
-    let mayor =
-    "neutral";
+miedo:
+estado.miedo,
 
 
-    let valor=0;
+tristeza:
+estado.tristeza,
+
+
+ira:
+estado.ira,
+
+
+calma:
+estado.calma,
 
 
 
-
-    Object.keys(emociones)
-    .forEach(
-
-        e=>{
+amor:
+estado.emociones_secundarias?.amor || 0,
 
 
-            if(emociones[e]>valor){
-
-                valor=
-                emociones[e];
-
-                mayor=e;
-
-            }
+soledad:
+estado.emociones_secundarias?.soledad || 0,
 
 
-        }
+estres:
+estado.emociones_secundarias?.estres || 0,
 
-    );
+
+curiosidad:
+estado.emociones_secundarias?.curiosidad || 0
+
+
+};
 
 
 
 
-    estado.emocion_actual =
-    mayor;
 
 
 
-    estado.estabilidad_emocional =
-    100 -
+let mayor="neutral";
 
-    (
 
-    estado.tristeza+
-    estado.miedo+
-    estado.ira
-
-    )/3;
+let valor=0;
 
 
 
-    limitarEmociones(
-        estado
-    );
 
+
+
+Object.keys(emociones)
+.forEach(
+
+emocion=>{
+
+
+if(
+emociones[emocion]>valor
+){
+
+valor=
+emociones[emocion];
+
+
+mayor=emocion;
+
+
+}
+
+
+}
+
+);
+
+
+
+
+
+
+estado.emocion_actual =
+mayor;
+
+
+
+
+
+
+estado.intensidad =
+valor;
+
+
+
+
+
+
+estado.estabilidad_emocional =
+
+Math.max(
+
+0,
+
+100-
+
+(
+
+estado.tristeza+
+
+estado.miedo+
+
+estado.ira+
+
+estado.emociones_secundarias.estres
+
+)/4
+
+);
+
+
+
+
+
+
+limitarEmociones(
+estado
+);
+
+
+
+return estado;
 
 
 }
@@ -449,46 +555,86 @@ habitante_id
 
 
 
-    const estado =
-    obtenerEmociones(
-        habitante_id
-    );
+const estado =
+obtenerEmociones(
+habitante_id
+);
 
 
 
-    if(!estado){
+if(!estado){
 
-        return null;
+return null;
 
-    }
-
-
-
-    estado.tristeza-=1;
-
-    estado.ira-=1;
-
-    estado.miedo-=1;
+}
 
 
 
-    estado.calma+=1;
 
 
 
-    limitarEmociones(
-        estado
-    );
+estado.tristeza-=1;
+
+
+estado.ira-=1;
+
+
+estado.miedo-=1;
+
+
+estado.emociones_secundarias.estres-=1;
 
 
 
-    actualizarEmocionActual(
-        estado
-    );
+estado.calma+=1;
 
 
 
-    return estado;
+
+
+
+limitarEmociones(
+estado
+);
+
+
+
+actualizarEmocionActual(
+estado
+);
+
+
+
+
+estado.ultima_actualizacion =
+new Date().toISOString();
+
+
+
+
+
+
+
+const datos =
+cargarArchivo("../datos/emociones.json");
+
+
+
+guardarArchivo(
+
+"../datos/emociones.json",
+
+datos
+
+);
+
+
+
+
+
+
+
+return estado;
 
 
 }
@@ -502,7 +648,7 @@ habitante_id
 
 
 // =================================
-// LIMITAR
+// LIMITAR VALORES
 // =================================
 
 
@@ -512,50 +658,55 @@ obj
 
 
 
-    Object.keys(obj)
-    .forEach(
+Object.keys(obj)
+.forEach(
 
-        key=>{
-
-
-            if(
-                typeof obj[key]==="number"
-            ){
+key=>{
 
 
-                obj[key]=Math.max(
-
-                    0,
-
-                    Math.min(
-
-                        100,
-
-                        obj[key]
-
-                    )
-
-                );
+if(
+typeof obj[key]==="number"
+){
 
 
-            }
+obj[key]=Math.max(
+
+0,
+
+Math.min(
+
+100,
+
+obj[key]
+
+)
+
+);
+
+
+}
 
 
 
-            if(
-                typeof obj[key]==="object"
-            ){
-
-                limitarEmociones(
-                    obj[key]
-                );
-
-            }
 
 
-        }
+else if(
+typeof obj[key]==="object" &&
+obj[key]!==null
+){
 
-    );
+
+limitarEmociones(
+obj[key]
+);
+
+
+}
+
+
+}
+
+);
 
 
 }
@@ -579,76 +730,148 @@ necesidades
 ){
 
 
-    if(!necesidades){
 
-        return null;
+if(!necesidades){
 
-    }
+return null;
 
-
-
-
-    if(necesidades.hambre<30){
-
-        cambiarEmocion(
-
-            habitante_id,
-
-            "tristeza",
-
-            5,
-
-            "hambre"
-
-        );
-
-    }
+}
 
 
 
 
 
-    if(necesidades.energia<30){
 
-        cambiarEmocion(
-
-            habitante_id,
-
-            "estres",
-
-            5,
-
-            "cansancio"
-
-        );
-
-    }
+if(
+necesidades.hambre<30
+){
 
 
+cambiarEmocion(
+
+habitante_id,
+
+"tristeza",
+
+5,
+
+"hambre"
+
+);
 
 
-
-    if(necesidades.social<30){
-
-        cambiarEmocion(
-
-            habitante_id,
-
-            "soledad",
-
-            5,
-
-            "soledad"
-
-        );
-
-    }
+}
 
 
 
-    return obtenerEmociones(
-        habitante_id
-    );
+
+
+
+
+if(
+necesidades.energia<30
+){
+
+
+cambiarEmocion(
+
+habitante_id,
+
+"estres",
+
+5,
+
+"cansancio"
+
+);
+
+
+}
+
+
+
+
+
+
+
+if(
+necesidades.social<30
+){
+
+
+cambiarEmocion(
+
+habitante_id,
+
+"soledad",
+
+5,
+
+"falta de compañía"
+
+);
+
+
+}
+
+
+
+
+
+
+
+if(
+necesidades.carino<30
+){
+
+
+cambiarEmocion(
+
+habitante_id,
+
+"soledad",
+
+5,
+
+"falta de cariño"
+
+);
+
+
+}
+
+
+
+
+
+
+if(
+necesidades.diversion>80
+){
+
+
+cambiarEmocion(
+
+habitante_id,
+
+"felicidad",
+
+2,
+
+"diversión"
+
+);
+
+
+}
+
+
+
+
+
+return obtenerEmociones(
+habitante_id
+);
 
 
 }
@@ -663,15 +886,19 @@ necesidades
 module.exports={
 
 
-    obtenerEmociones,
+obtenerEmociones,
 
-    crearEmocion,
 
-    cambiarEmocion,
+crearEmocion,
 
-    evolucionarEmociones,
 
-    actualizarEmocionesPorNecesidades
+cambiarEmocion,
+
+
+evolucionarEmociones,
+
+
+actualizarEmocionesPorNecesidades
 
 
 };
