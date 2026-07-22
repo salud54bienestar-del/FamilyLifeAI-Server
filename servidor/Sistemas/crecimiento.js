@@ -18,10 +18,10 @@ require("./memorias.js");
 
 
 const {
-    actualizarEtapa
+    cumplirAño
 }
 =
-require("./etapas_vida.js");
+require("./etapas.js");
 
 
 
@@ -37,9 +37,7 @@ require("./etapas_vida.js");
 const DIAS_MINECRAFT_POR_AÑO = 20;
 
 
-
 const CRECIMIENTO_ACTIVO = true;
-
 
 
 
@@ -73,8 +71,10 @@ function actualizarCrecimiento(){
 
 
 
+
     if(
         !almas ||
+        !almas.almas ||
         !tiempoDatos
     ){
 
@@ -86,12 +86,26 @@ function actualizarCrecimiento(){
 
 
 
+
     const tiempo =
     tiempoDatos.tiempo;
 
 
 
 
+
+    if(!tiempo){
+
+        return null;
+
+    }
+
+
+
+
+
+
+    // Solo crecer una vez por día Minecraft
 
     if(
         tiempo.nuevo_dia_minecraft !== true
@@ -125,11 +139,12 @@ function actualizarCrecimiento(){
 
 
 
+
             if(
                 habitante.contador_vida === undefined
             ){
 
-                habitante.contador_vida=0;
+                habitante.contador_vida = 0;
 
             }
 
@@ -153,18 +168,23 @@ function actualizarCrecimiento(){
 
 
 
-                habitante.contador_vida=0;
-
-
-
-                habitante.edad++;
+                habitante.contador_vida = 0;
 
 
 
 
 
+                const edadAnterior =
+                habitante.edad;
 
-                actualizarEtapa(
+
+
+
+
+
+                // Usa el sistema de etapas
+
+                cumplirAño(
                     habitante
                 );
 
@@ -185,12 +205,15 @@ function actualizarCrecimiento(){
                     {
 
                         edad:
-                        habitante.edad
+                        habitante.edad,
+
+
+                        edad_anterior:
+                        edadAnterior
 
                     }
 
                 );
-
 
 
 
@@ -206,11 +229,13 @@ function actualizarCrecimiento(){
 
                     "Cumplió "+
                     habitante.edad+
-                    " años.",
+                    " años y continúa creciendo.",
 
                     "media"
 
                 );
+
+
 
 
 
@@ -228,7 +253,42 @@ function actualizarCrecimiento(){
 
 
 
+
+
+
+                // Cambio importante de etapa
+
+                if(
+                    edadAnterior !== habitante.edad
+                    &&
+                    habitante.etapa_vida
+                ){
+
+
+                    crearMemoria(
+
+                        habitante.id,
+
+                        "etapa_vida",
+
+                        "Ahora pertenece a la etapa "+
+                        habitante.etapa_vida,
+
+                        "alta"
+
+                    );
+
+
+                }
+
+
+
+
+
+
             }
+
+
 
 
 
@@ -268,10 +328,58 @@ function actualizarCrecimiento(){
 
 
 
+// =================================
+// OBTENER EDAD DE CRECIMIENTO
+// =================================
+
+function obtenerProgresoCrecimiento(
+habitante
+){
+
+
+    if(!habitante){
+
+        return null;
+
+    }
+
+
+
+
+    return {
+
+
+        edad:
+
+        habitante.edad || 0,
+
+
+        dias_para_crecer:
+
+        DIAS_MINECRAFT_POR_AÑO -
+        (
+            habitante.contador_vida || 0
+        )
+
+
+    };
+
+
+}
+
+
+
+
+
+
+
+
 module.exports={
 
 
-    actualizarCrecimiento
+    actualizarCrecimiento,
+
+    obtenerProgresoCrecimiento
 
 
 };
