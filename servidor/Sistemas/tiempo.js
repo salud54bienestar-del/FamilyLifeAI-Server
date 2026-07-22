@@ -21,20 +21,77 @@ require("./eventos.js");
 // =================================
 
 
-// Minutos reales necesarios para un día Village Soul
+// Minutos reales para completar un día Village Soul
 
 const MINUTOS_REALES_POR_DIA = 20;
 
 
-// Minutos del mundo que pasan por minuto real
+// Cuántos minutos del mundo pasan por minuto real
 
 const MINUTOS_MUNDO_POR_MINUTO_REAL = 3;
 
 
 const DIAS_POR_MES = 30;
 
-
 const MESES_POR_AÑO = 12;
+
+
+
+
+
+
+
+
+// =================================
+// PREPARAR TIEMPO
+// =================================
+
+function prepararTiempo(datos){
+
+
+    if(!datos.tiempo){
+
+        datos.tiempo={};
+
+    }
+
+
+
+    const tiempo = datos.tiempo;
+
+
+
+    if(tiempo.dia===undefined)
+        tiempo.dia=1;
+
+
+    if(tiempo.mes===undefined)
+        tiempo.mes=1;
+
+
+    if(tiempo.año===undefined)
+        tiempo.año=1;
+
+
+    if(tiempo.hora===undefined)
+        tiempo.hora=6;
+
+
+    if(tiempo.minuto===undefined)
+        tiempo.minuto=0;
+
+
+    if(tiempo.contador_real===undefined)
+        tiempo.contador_real=0;
+
+
+    if(!tiempo.estacion)
+        tiempo.estacion="primavera";
+
+
+    return tiempo;
+
+}
 
 
 
@@ -66,104 +123,7 @@ function obtenerTiempo(){
 
 
 
-    prepararTiempo(datos);
-
-
-
-    guardarArchivo(
-
-        "../datos/tiempo.json",
-
-        datos
-
-    );
-
-
-
-    return datos.tiempo;
-
-
-}
-
-
-
-
-
-
-
-
-
-// =================================
-// PREPARAR DATOS
-// =================================
-
-function prepararTiempo(
-datos
-){
-
-
-
-    if(!datos.tiempo){
-
-        datos.tiempo={};
-
-    }
-
-
-
-    const tiempo =
-    datos.tiempo;
-
-
-
-
-
-    if(tiempo.dia===undefined)
-
-        tiempo.dia=1;
-
-
-
-
-    if(tiempo.mes===undefined)
-
-        tiempo.mes=1;
-
-
-
-
-    if(tiempo.año===undefined)
-
-        tiempo.año=1;
-
-
-
-
-    if(tiempo.hora===undefined)
-
-        tiempo.hora=6;
-
-
-
-
-    if(tiempo.minuto===undefined)
-
-        tiempo.minuto=0;
-
-
-
-
-    if(tiempo.contador_real===undefined)
-
-        tiempo.contador_real=0;
-
-
-
-
-    if(!tiempo.estacion)
-
-        tiempo.estacion="primavera";
-
+    return prepararTiempo(datos);
 
 
 }
@@ -181,9 +141,8 @@ datos
 // =================================
 
 function avanzarTiempo(
-minutosReales=1
+    minutosReales=1
 ){
-
 
 
     const datos =
@@ -201,21 +160,13 @@ minutosReales=1
 
 
 
-
+    const tiempo =
     prepararTiempo(datos);
 
 
 
 
-    const tiempo =
-    datos.tiempo;
-
-
-
-
-
-
-    let nuevoDiaMinecraft=false;
+    let diasPasados=0;
 
 
 
@@ -227,38 +178,22 @@ minutosReales=1
 
 
 
-    // Control de día Village Soul
-
-    if(
+    while(
         tiempo.contador_real >=
         MINUTOS_REALES_POR_DIA
     ){
 
 
-
-        tiempo.contador_real=0;
-
-
-        tiempo.dia++;
+        tiempo.contador_real -=
+        MINUTOS_REALES_POR_DIA;
 
 
-        nuevoDiaMinecraft=true;
-
-
-        crearEvento(
-
-            "nuevo_dia",
-
-            [],
-
-            {
-
-                dia:
-                tiempo.dia
-
-            }
-
+        avanzarDia(
+            tiempo
         );
+
+
+        diasPasados++;
 
 
     }
@@ -270,14 +205,14 @@ minutosReales=1
 
 
 
-
-    // Avance de reloj interno
-
-
     tiempo.minuto +=
 
-    MINUTOS_MUNDO_POR_MINUTO_REAL *
-    minutosReales;
+    minutosReales *
+
+    MINUTOS_MUNDO_POR_MINUTO_REAL;
+
+
+
 
 
 
@@ -301,6 +236,7 @@ minutosReales=1
 
 
 
+
     while(
         tiempo.hora>=24
     ){
@@ -310,6 +246,7 @@ minutosReales=1
 
 
     }
+
 
 
 
@@ -331,28 +268,6 @@ minutosReales=1
 
 
 
-    const resultado={
-
-
-        ...tiempo,
-
-
-        nuevo_dia_minecraft:
-        nuevoDiaMinecraft,
-
-
-        periodo:
-        obtenerPeriodo(
-            tiempo
-        )
-
-    };
-
-
-
-
-
-
 
     guardarArchivo(
 
@@ -367,7 +282,64 @@ minutosReales=1
 
 
 
-    return resultado;
+
+    return {
+
+
+        ...tiempo,
+
+
+        dias_pasados:
+        diasPasados,
+
+
+        periodo:
+        obtenerPeriodo(tiempo)
+
+
+    };
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// AVANZAR DÍA
+// =================================
+
+function avanzarDia(
+tiempo
+){
+
+
+    tiempo.dia++;
+
+
+
+
+
+    crearEvento(
+
+        "nuevo_dia",
+
+        [],
+
+        {
+
+            dia:
+            tiempo.dia
+
+        }
+
+    );
+
 
 
 }
@@ -390,10 +362,7 @@ tiempo
 
 
 
-    if(
-        tiempo.dia >
-        DIAS_POR_MES
-    ){
+    if(tiempo.dia > DIAS_POR_MES){
 
 
         tiempo.dia=1;
@@ -425,17 +394,13 @@ tiempo
 
 
 
-    if(
-        tiempo.mes >
-        MESES_POR_AÑO
-    ){
+    if(tiempo.mes > MESES_POR_AÑO){
 
 
         tiempo.mes=1;
 
 
         tiempo.año++;
-
 
 
 
@@ -458,7 +423,6 @@ tiempo
     }
 
 
-
 }
 
 
@@ -479,7 +443,7 @@ tiempo
 
 
 
-    let nuevaEstacion;
+    let nueva;
 
 
 
@@ -488,7 +452,7 @@ tiempo
         tiempo.mes<=5
     ){
 
-        nuevaEstacion="primavera";
+        nueva="primavera";
 
     }
 
@@ -497,7 +461,7 @@ tiempo
         tiempo.mes<=8
     ){
 
-        nuevaEstacion="verano";
+        nueva="verano";
 
     }
 
@@ -506,15 +470,16 @@ tiempo
         tiempo.mes<=11
     ){
 
-        nuevaEstacion="otoño";
+        nueva="otoño";
 
     }
 
     else{
 
-        nuevaEstacion="invierno";
+        nueva="invierno";
 
     }
+
 
 
 
@@ -522,13 +487,11 @@ tiempo
 
 
     if(
-        tiempo.estacion !== nuevaEstacion
+        tiempo.estacion !== nueva
     ){
 
 
-
-        tiempo.estacion =
-        nuevaEstacion;
+        tiempo.estacion=nueva;
 
 
 
@@ -540,8 +503,7 @@ tiempo
 
             {
 
-                estacion:
-                nuevaEstacion
+                estacion:nueva
 
             }
 
@@ -551,6 +513,8 @@ tiempo
     }
 
 
+
+    return nueva;
 
 
 }
@@ -564,7 +528,7 @@ tiempo
 
 
 // =================================
-// MOMENTO DEL DÍA
+// PERIODO DEL DÍA
 // =================================
 
 function obtenerPeriodo(
@@ -572,41 +536,42 @@ tiempo
 ){
 
 
+    const hora =
+    tiempo.hora;
+
+
 
     if(
-        tiempo.hora>=6 &&
-        tiempo.hora<12
-    ){
+        hora>=0 &&
+        hora<6
+    )
+
+        return "madrugada";
+
+
+
+
+    if(
+        hora>=6 &&
+        hora<12
+    )
 
         return "mañana";
 
-    }
 
 
 
     if(
-        tiempo.hora>=12 &&
-        tiempo.hora<18
-    ){
+        hora>=12 &&
+        hora<18
+    )
 
         return "tarde";
 
-    }
 
 
 
-    if(
-        tiempo.hora>=18 &&
-        tiempo.hora<24
-    ){
-
-        return "noche";
-
-    }
-
-
-
-    return "madrugada";
+    return "noche";
 
 
 }
@@ -674,10 +639,10 @@ module.exports={
     avanzarTiempo,
 
 
-    generarFechaTexto,
-
-
     actualizarEstacion,
+
+
+    generarFechaTexto,
 
 
     obtenerPeriodo
