@@ -1,6 +1,40 @@
 {
   "name": "village-soul-server",
+
   "version": "0.1.0",
-  "description": "Servidor de almas, memorias e inteligencia artificial para Village Soul",
-  "main": "soul_engine.js"
+
+  "description": "Servidor de almas, memorias, familias e inteligencia artificial para Village Soul",
+
+  "main": "app.js",
+
+  "scripts": {
+
+    "start": "node app.js",
+
+    "dev": "node app.js"
+
+  },
+
+  "keywords": [
+
+    "minecraft",
+
+    "bedrock",
+
+    "npc",
+
+    "ia",
+
+    "almas",
+
+    "simulacion"
+
+  ],
+
+  "author": "Village Soul",
+
+  "license": "MIT",
+
+  "dependencies": {}
+
 }
