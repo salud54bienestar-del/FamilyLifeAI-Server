@@ -23,12 +23,9 @@ require("./ubicaciones.js");
 
 
 
-
-
 // =================================
 // OBTENER MOVIMIENTO
 // =================================
-
 
 function obtenerMovimiento(
 habitante_id
@@ -72,17 +69,14 @@ m=>m.habitante_id===habitante_id
 
 
 
-
 // =================================
 // CREAR MOVIMIENTO
 // =================================
-
 
 function crearMovimiento(
 habitante_id,
 posicionInicial={}
 ){
-
 
 
 const datos =
@@ -106,8 +100,6 @@ datos.movimientos=[];
 
 
 
-
-
 const existente =
 obtenerMovimiento(
 habitante_id
@@ -120,8 +112,6 @@ if(existente){
 return existente;
 
 }
-
-
 
 
 
@@ -141,11 +131,11 @@ habitante_id,
 posicion_actual:{
 
 
-x:posicionInicial.x || 0,
+x:posicionInicial.x ?? 0,
 
-y:posicionInicial.y || 0,
+y:posicionInicial.y ?? 0,
 
-z:posicionInicial.z || 0
+z:posicionInicial.z ?? 0
 
 
 },
@@ -159,21 +149,16 @@ ultima_ubicacion:"inicio",
 destino:null,
 
 
-
 tipo_destino:null,
-
 
 
 estado:"quieto",
 
 
-
 velocidad:1,
 
 
-
 siguiendo:null,
-
 
 
 ultima_actualizacion:
@@ -205,7 +190,7 @@ datos
 
 
 
-// Crear ubicación relacionada
+// Crear memoria espacial
 
 ubicaciones.crearUbicacion(
 habitante_id
@@ -248,7 +233,6 @@ return movimiento;
 // ESTABLECER DESTINO
 // =================================
 
-
 function establecerDestino(
 habitante_id,
 destino,
@@ -266,16 +250,12 @@ habitante_id
 
 if(!movimiento){
 
-
 movimiento =
 crearMovimiento(
 habitante_id
 );
 
-
 }
-
-
 
 
 
@@ -283,11 +263,11 @@ habitante_id
 movimiento.destino={
 
 
-x:destino.x || 0,
+x:destino.x ?? 0,
 
-y:destino.y || 0,
+y:destino.y ?? 0,
 
-z:destino.z || 0
+z:destino.z ?? 0
 
 
 };
@@ -295,10 +275,8 @@ z:destino.z || 0
 
 
 
-
 movimiento.tipo_destino =
 tipo;
-
 
 
 movimiento.estado =
@@ -312,7 +290,6 @@ movimiento.siguiendo=null;
 
 movimiento.ultima_actualizacion =
 new Date().toISOString();
-
 
 
 
@@ -345,6 +322,22 @@ tipo
 
 
 
+crearMemoria(
+
+habitante_id,
+
+"movimiento",
+
+"Se dirigió hacia "+tipo,
+
+"baja"
+
+);
+
+
+
+
+
 return movimiento;
 
 
@@ -362,12 +355,10 @@ return movimiento;
 // IR A UBICACIÓN
 // =================================
 
-
 function irAUbicacion(
 habitante_id,
 tipo
 ){
-
 
 
 const destino =
@@ -381,13 +372,11 @@ tipo
 
 
 
-
 if(!destino){
 
 return null;
 
 }
-
 
 
 
@@ -440,9 +429,8 @@ return irAUbicacion(id,"escuela");
 
 
 // =================================
-// VISITAR HABITANTE
+// VISITAR AMIGO
 // =================================
-
 
 function irAVisitarAmigo(
 habitante_id,
@@ -450,9 +438,8 @@ amigo_id
 ){
 
 
-
 const amigo =
-ubicaciones.obtenerUbicaciones(
+ubicaciones.obtenerUbicacion(
 amigo_id
 );
 
@@ -485,6 +472,7 @@ habitante_id,
 
 
 
+
 return establecerDestino(
 
 habitante_id,
@@ -510,12 +498,10 @@ amigo.hogar,
 // SEGUIR HABITANTE
 // =================================
 
-
 function seguirHabitante(
 habitante_id,
 objetivo_id
 ){
-
 
 
 const movimiento =
@@ -538,7 +524,6 @@ movimiento.siguiendo =
 objetivo_id;
 
 
-
 movimiento.estado =
 "siguiendo";
 
@@ -547,7 +532,6 @@ movimiento.estado =
 guardarMovimiento(
 movimiento
 );
-
 
 
 
@@ -581,12 +565,10 @@ return movimiento;
 // ACTUALIZAR POSICIÓN
 // =================================
 
-
 function actualizarPosicion(
 habitante_id,
 posicion
 ){
-
 
 
 const movimiento =
@@ -605,18 +587,18 @@ return null;
 
 
 
+
 movimiento.posicion_actual={
 
 
-x:posicion.x || 0,
+x:posicion.x ?? 0,
 
-y:posicion.y || 0,
+y:posicion.y ?? 0,
 
-z:posicion.z || 0
+z:posicion.z ?? 0
 
 
 };
-
 
 
 
@@ -659,7 +641,6 @@ return movimiento;
 // VERIFICAR LLEGADA
 // =================================
 
-
 function verificarLlegada(
 movimiento
 ){
@@ -674,9 +655,10 @@ return false;
 
 
 
-const distancia =
-Math.sqrt(
 
+const distancia =
+
+Math.sqrt(
 
 Math.pow(
 movimiento.posicion_actual.x -
@@ -697,9 +679,7 @@ movimiento.posicion_actual.z -
 movimiento.destino.z,
 2)
 
-
 );
-
 
 
 
@@ -710,15 +690,11 @@ if(distancia<=1){
 
 
 
-movimiento.estado =
-"llegado";
-
+movimiento.estado="llegado";
 
 
 movimiento.ultima_ubicacion =
 movimiento.tipo_destino;
-
-
 
 
 
@@ -738,8 +714,6 @@ movimiento.tipo_destino
 }
 
 );
-
-
 
 
 
@@ -778,9 +752,8 @@ return false;
 
 
 // =================================
-// DETENER
+// DETENER MOVIMIENTO
 // =================================
-
 
 function detenerMovimiento(
 habitante_id
@@ -804,7 +777,9 @@ return null;
 
 movimiento.estado="quieto";
 
+
 movimiento.destino=null;
+
 
 movimiento.siguiendo=null;
 
@@ -833,7 +808,6 @@ return movimiento;
 // GUARDAR
 // =================================
 
-
 function guardarMovimiento(
 movimiento
 ){
@@ -849,6 +823,15 @@ if(!datos){
 return null;
 
 }
+
+
+
+if(!datos.movimientos){
+
+datos.movimientos=[];
+
+}
+
 
 
 
