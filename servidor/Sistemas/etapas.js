@@ -1,8 +1,19 @@
-// Sistema de etapas de vida - Village Soul
+// Sistema avanzado de etapas de vida - Village Soul
 
-const cargarArchivo = require("./cargador_datos.js");
-const crearMemoria = require("./memorias.js");
-const crearEvento = require("./eventos.js");
+
+const cargarArchivo =
+require("./cargador_datos.js");
+
+
+const crearMemoria =
+require("./memorias.js");
+
+
+const crearEvento =
+require("./eventos.js");
+
+
+
 
 
 
@@ -11,19 +22,19 @@ const crearEvento = require("./eventos.js");
 // OBTENER ETAPA POR EDAD
 // =================================
 
-function obtenerEtapaPorEdad(edad){
+function obtenerEtapaPorEdad(
+    edad
+){
 
 
     const datos =
-    cargarArchivo("../datos/etapas_vida.json");
+    cargarArchivo(
+        "../datos/etapas_vida.json"
+    );
 
 
 
     if(!datos){
-
-        console.log(
-            "No se pudieron cargar las etapas de vida."
-        );
 
         return null;
 
@@ -36,6 +47,7 @@ function obtenerEtapaPorEdad(edad){
         etapa =>
 
         edad >= etapa.edad_minima &&
+
         edad <= etapa.edad_maxima
 
     ) || null;
@@ -47,11 +59,17 @@ function obtenerEtapaPorEdad(edad){
 
 
 
+
+
+
+
 // =================================
-// OBTENER ETAPA DE HABITANTE
+// OBTENER ETAPA HABITANTE
 // =================================
 
-function obtenerEtapaHabitante(habitante){
+function obtenerEtapaHabitante(
+    habitante
+){
 
 
     if(!habitante){
@@ -75,11 +93,17 @@ function obtenerEtapaHabitante(habitante){
 
 
 
+
+
+
+
 // =================================
 // ACTUALIZAR ETAPA
 // =================================
 
-function actualizarEtapa(habitante){
+function actualizarEtapa(
+    habitante
+){
 
 
     if(!habitante){
@@ -90,14 +114,15 @@ function actualizarEtapa(habitante){
 
 
 
-    const nuevaEtapa =
+    const etapaNueva =
+
     obtenerEtapaHabitante(
         habitante
     );
 
 
 
-    if(!nuevaEtapa){
+    if(!etapaNueva){
 
         return habitante;
 
@@ -106,20 +131,28 @@ function actualizarEtapa(habitante){
 
 
 
-    const etapaAnterior =
-    habitante.etapa || null;
+
+    const anterior =
+
+    habitante.etapa_vida || null;
 
 
 
-    habitante.etapa =
-    nuevaEtapa.nombre;
+
+
+    habitante.etapa_vida =
+
+    etapaNueva.nombre;
+
+
 
 
 
 
     if(
-        etapaAnterior !== nuevaEtapa.nombre
+        anterior !== etapaNueva.nombre
     ){
+
 
 
         crearEvento(
@@ -132,11 +165,10 @@ function actualizarEtapa(habitante){
 
             {
 
-                anterior:
-                etapaAnterior,
+                anterior,
 
                 nueva:
-                nuevaEtapa.nombre
+                etapaNueva.nombre
 
             }
 
@@ -152,15 +184,62 @@ function actualizarEtapa(habitante){
 
             "crecimiento",
 
-            "Alcanzó la etapa de " +
-            nuevaEtapa.nombre,
+            "Ahora está en la etapa: "+
+            etapaNueva.nombre,
 
             "alta"
 
         );
 
 
+
+
+
+
+
+        // Mayoría de edad
+
+
+        if(
+            etapaNueva.nombre==="adulto"
+        ){
+
+
+            crearEvento(
+
+                "mayoria_edad",
+
+                [
+                    habitante.id
+                ],
+
+                {}
+
+            );
+
+
+
+            crearMemoria(
+
+                habitante.id,
+
+                "vida",
+
+                "Llegó a la adultez.",
+
+                "alta"
+
+            );
+
+
+        }
+
+
+
+
     }
+
+
 
 
 
@@ -173,14 +252,64 @@ function actualizarEtapa(habitante){
 
 
 
+
+
+
+
 // =================================
-// OBTENER ACCIONES DISPONIBLES
+// AUMENTAR EDAD
 // =================================
 
-function obtenerAccionesEtapa(habitante){
+function cumplirAño(
+    habitante
+){
+
+
+    if(!habitante){
+
+        return null;
+
+    }
+
+
+
+    habitante.edad++;
+
+
+
+
+    actualizarEtapa(
+        habitante
+    );
+
+
+
+
+    return habitante;
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// ACCIONES DISPONIBLES
+// =================================
+
+function obtenerAccionesEtapa(
+    habitante
+){
+
 
 
     const etapa =
+
     obtenerEtapaHabitante(
         habitante
     );
@@ -197,14 +326,19 @@ function obtenerAccionesEtapa(habitante){
 
     return etapa.puede || [];
 
+
 }
 
 
 
 
 
+
+
+
+
 // =================================
-// VERIFICAR SI PUEDE HACER ALGO
+// VERIFICAR ACCIÓN
 // =================================
 
 function puedeRealizarAccion(
@@ -214,6 +348,7 @@ function puedeRealizarAccion(
 
 
     const acciones =
+
     obtenerAccionesEtapa(
         habitante
     );
@@ -231,7 +366,54 @@ function puedeRealizarAccion(
 
 
 
-module.exports = {
+
+
+
+
+// =================================
+// VERIFICAR ADULTO
+// =================================
+
+function esAdulto(
+    habitante
+){
+
+
+    const etapa =
+
+    obtenerEtapaHabitante(
+        habitante
+    );
+
+
+
+    return (
+
+        etapa &&
+
+        (
+            etapa.nombre==="adulto"
+
+            ||
+
+            etapa.nombre==="adulto_mayor"
+
+        )
+
+    );
+
+
+}
+
+
+
+
+
+
+
+
+
+module.exports={
 
 
     obtenerEtapaPorEdad,
@@ -240,9 +422,13 @@ module.exports = {
 
     actualizarEtapa,
 
+    cumplirAño,
+
     obtenerAccionesEtapa,
 
-    puedeRealizarAccion
+    puedeRealizarAccion,
+
+    esAdulto
 
 
 };
