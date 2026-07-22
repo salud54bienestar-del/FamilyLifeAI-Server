@@ -13,6 +13,10 @@ const crearMemoria =
 require("./memorias.js");
 
 
+const crearEvento =
+require("./eventos.js");
+
+
 const cambiarEmocion =
 require("./emociones.js").cambiarEmocion;
 
@@ -24,49 +28,52 @@ require("./etapas_vida.js").obtenerEtapaHabitante;
 
 
 
-
 // =================================
 // OBTENER RELACIÓN
 // =================================
 
 function obtenerRelacion(
-    habitante_a,
-    habitante_b
+habitante_a,
+habitante_b
 ){
 
 
-    const datos =
-    cargarArchivo("../datos/relaciones.json");
+const datos =
+cargarArchivo("../datos/relaciones.json");
 
 
-    if(!datos){
+if(!datos){
 
-        return null;
+return null;
 
-    }
+}
 
 
 
-    return datos.relaciones.find(
+return datos.relaciones.find(
 
-        r =>
+r =>
 
-        (
-            r.habitante_a === habitante_a &&
-            r.habitante_b === habitante_b
-        )
+(
+r.habitante_a===habitante_a &&
+r.habitante_b===habitante_b
+)
 
-        ||
+||
 
-        (
-            r.habitante_a === habitante_b &&
-            r.habitante_b === habitante_a
-        )
+(
+r.habitante_a===habitante_b &&
+r.habitante_b===habitante_a
+)
 
-    ) || null;
+)
+
+|| null;
 
 
 }
+
+
 
 
 
@@ -79,168 +86,216 @@ function obtenerRelacion(
 // =================================
 
 function crearRelacion(
-    habitante_a,
-    habitante_b,
-    tipo="desconocidos"
+habitante_a,
+habitante_b,
+tipo="desconocidos"
 ){
 
 
-    const datos =
-    cargarArchivo("../datos/relaciones.json");
+const datos =
+cargarArchivo("../datos/relaciones.json");
 
 
-    if(!datos){
+if(!datos){
 
-        return null;
+return null;
 
-    }
+}
 
 
 
-    const existente =
-    obtenerRelacion(
-        habitante_a,
-        habitante_b
-    );
+if(!datos.relaciones){
 
+datos.relaciones=[];
 
-    if(existente){
+}
 
-        return existente;
 
-    }
 
+const existente =
+obtenerRelacion(
+habitante_a,
+habitante_b
+);
 
 
+if(existente){
 
+return existente;
 
-    const nuevoId =
+}
 
-    datos.relaciones.length > 0
 
-    ?
 
-    Math.max(
-        ...datos.relaciones.map(
-            r=>r.id
-        )
-    ) + 1
 
-    :
 
-    1;
+const id =
 
+datos.relaciones.length > 0
 
+?
 
+Math.max(
+...datos.relaciones.map(
+r=>r.id
+)
+)+1
 
+:
 
-    const relacion = {
+1;
 
 
-        id:nuevoId,
 
 
-        habitante_a,
 
 
-        habitante_b,
+const relacion={
 
 
-        tipo,
+id,
 
 
-        nivel:"nuevo",
+habitante_a,
 
 
-        confianza:0,
+habitante_b,
 
-        afinidad:50,
 
-        respeto:50,
+tipo,
 
-        amistad:0,
 
-        romance:0,
+nivel:"nuevo",
 
-        compromiso:0,
 
 
-        estado_pareja:"ninguno",
+confianza:0,
 
+afinidad:50,
 
-        conviven:false,
+respeto:50,
 
+amistad:0,
 
-        fecha_inicio:null,
 
+romance:0,
 
-        fecha_matrimonio:null,
 
+compromiso:0,
 
-        familia:{
 
-            parentesco:false,
 
-            tipo:null
+estado_pareja:"ninguno",
 
-        },
 
 
-        historial:[
+conviven:false,
 
-            "Primer encuentro"
 
-        ]
 
-    };
+familia:{
 
 
+parentesco:false,
 
+tipo:null
 
-    datos.relaciones.push(
-        relacion
-    );
 
+},
 
 
-    guardarArchivo(
 
-        "../datos/relaciones.json",
+historial:[
 
-        datos
+{
 
-    );
+evento:"Primer encuentro",
 
+fecha:new Date().toISOString()
 
+}
 
-    crearMemoria(
+]
 
-        habitante_a,
 
-        "relacion",
 
-        "Conoció a un nuevo habitante.",
+};
 
-        "media"
 
-    );
 
 
-    crearMemoria(
 
-        habitante_b,
 
-        "relacion",
+datos.relaciones.push(
+relacion
+);
 
-        "Conoció a un nuevo habitante.",
 
-        "media"
 
-    );
+guardarArchivo(
 
+"../datos/relaciones.json",
 
+datos
 
-    return relacion;
+);
+
+
+
+
+
+
+crearMemoria(
+
+habitante_a,
+
+"relacion",
+
+"Conoció a un nuevo habitante.",
+
+"media",
+
+[habitante_b]
+
+);
+
+
+
+crearMemoria(
+
+habitante_b,
+
+"relacion",
+
+"Conoció a un nuevo habitante.",
+
+"media",
+
+[habitante_a]
+
+);
+
+
+
+
+crearEvento(
+
+"nueva_relacion",
+
+[habitante_a,habitante_b],
+
+{
+
+tipo
+
+}
+
+);
+
+
+
+
+return relacion;
 
 
 }
@@ -252,68 +307,69 @@ function crearRelacion(
 
 
 
+
 // =================================
-// VERIFICAR ROMANCE POR EDAD
+// COMPROBAR EDAD ROMANCE
 // =================================
 
 function puedeTenerRomance(
-    habitante_id
+habitante_id
 ){
 
 
-    const almas =
-    cargarArchivo("../datos/almas.json");
+const almas =
+cargarArchivo("../datos/almas.json");
 
 
-    if(!almas){
+if(!almas){
 
-        return false;
+return false;
 
-    }
-
-
-
-    const habitante =
-    almas.almas.find(
-
-        a=>a.id===habitante_id
-
-    );
+}
 
 
 
-    if(!habitante){
+const habitante =
+almas.almas.find(
 
-        return false;
+a=>a.id===habitante_id
 
-    }
-
-
-
-    const etapa =
-    obtenerEtapaHabitante(
-        habitante
-    );
+);
 
 
 
-    if(!etapa){
+if(!habitante){
 
-        return false;
+return false;
 
-    }
+}
 
 
 
-    return (
+const etapa =
+obtenerEtapaHabitante(
+habitante
+);
 
-        etapa.nombre==="adulto"
 
-        ||
 
-        etapa.nombre==="adulto_mayor"
+if(!etapa){
 
-    );
+return false;
+
+}
+
+
+
+return (
+
+etapa.nombre==="adulto"
+
+||
+
+etapa.nombre==="adulto_mayor"
+
+);
 
 
 }
@@ -331,42 +387,54 @@ function puedeTenerRomance(
 // =================================
 
 function aumentarConfianza(
-    habitante_a,
-    habitante_b,
-    cantidad
+a,
+b,
+cantidad
 ){
 
 
-    const relacion =
-    obtenerRelacion(
-        habitante_a,
-        habitante_b
-    );
-
-
-    if(!relacion){
-
-        return null;
-
-    }
+const relacion =
+obtenerRelacion(a,b);
 
 
 
-    relacion.confianza += cantidad;
+if(!relacion){
+
+return null;
+
+}
 
 
-    limitarRelacion(
-        relacion
-    );
+
+relacion.confianza += cantidad;
 
 
-    guardarRelaciones();
+
+actualizarNivelRelacion(
+relacion
+);
 
 
-    return relacion;
+
+agregarHistorial(
+
+relacion,
+
+"Aumentó la confianza"
+
+);
+
+
+
+guardarRelaciones();
+
+
+
+return relacion;
 
 
 }
+
 
 
 
@@ -380,59 +448,99 @@ function aumentarConfianza(
 // =================================
 
 function aumentarAmistad(
-    habitante_a,
-    habitante_b,
-    cantidad
+a,
+b,
+cantidad
 ){
 
 
-    const relacion =
-    obtenerRelacion(
-        habitante_a,
-        habitante_b
-    );
-
-
-    if(!relacion){
-
-        return null;
-
-    }
+const relacion =
+obtenerRelacion(a,b);
 
 
 
-    relacion.amistad += cantidad;
+if(!relacion){
 
+return null;
 
-    relacion.confianza += cantidad / 2;
-
-
-
-    limitarRelacion(
-        relacion
-    );
+}
 
 
 
-    cambiarEmocion(
+relacion.amistad += cantidad;
 
-        habitante_a,
 
-        "felicidad",
-
-        cantidad / 2,
-
-        "amistad"
-
-    );
+relacion.confianza += cantidad/2;
 
 
 
-    guardarRelaciones();
+actualizarNivelRelacion(
+relacion
+);
 
 
 
-    return relacion;
+cambiarEmocion(
+
+a,
+
+"felicidad",
+
+cantidad/2,
+
+"amistad"
+
+);
+
+
+
+cambiarEmocion(
+
+b,
+
+"felicidad",
+
+cantidad/2,
+
+"amistad"
+
+);
+
+
+
+
+agregarHistorial(
+
+relacion,
+
+"Fortalecieron su amistad"
+
+);
+
+
+
+crearEvento(
+
+"amistad_crecida",
+
+[a,b],
+
+{
+
+nivel:
+relacion.nivel
+
+}
+
+);
+
+
+
+guardarRelaciones();
+
+
+
+return relacion;
 
 
 }
@@ -450,89 +558,151 @@ function aumentarAmistad(
 // =================================
 
 function aumentarRomance(
-    habitante_a,
-    habitante_b,
-    cantidad
+a,
+b,
+cantidad
 ){
 
 
+if(
 
-    if(
+!puedeTenerRomance(a)
 
-        !puedeTenerRomance(habitante_a)
+||
 
-        ||
+!puedeTenerRomance(b)
 
-        !puedeTenerRomance(habitante_b)
+){
 
-    ){
+return null;
 
-        return null;
-
-    }
-
-
-
-    const relacion =
-    obtenerRelacion(
-        habitante_a,
-        habitante_b
-    );
+}
 
 
 
-    if(!relacion){
-
-        return null;
-
-    }
+const relacion =
+obtenerRelacion(a,b);
 
 
 
-    if(relacion.familia.parentesco){
+if(!relacion){
 
-        return null;
+return null;
 
-    }
-
-
-
-    relacion.romance += cantidad;
+}
 
 
 
-    relacion.compromiso += cantidad/2;
+if(relacion.familia.parentesco){
+
+return null;
+
+}
 
 
 
-    limitarRelacion(
-        relacion
-    );
+
+
+relacion.romance += cantidad;
+
+
+relacion.compromiso += cantidad/2;
 
 
 
-    cambiarEmocion(
+if(relacion.romance>=70){
 
-        habitante_a,
+relacion.estado_pareja="pareja";
 
-        "felicidad",
-
-        cantidad / 2,
-
-        "romance"
-
-    );
+}
 
 
 
-    guardarRelaciones();
+if(relacion.romance>=90){
+
+relacion.estado_pareja="comprometidos";
+
+}
 
 
 
-    return relacion;
+actualizarNivelRelacion(
+relacion
+);
+
+
+
+
+cambiarEmocion(
+
+a,
+
+"amor",
+
+cantidad,
+
+"romance"
+
+);
+
+
+cambiarEmocion(
+
+b,
+
+"amor",
+
+cantidad,
+
+"romance"
+
+);
+
+
+
+
+
+agregarHistorial(
+
+relacion,
+
+"Momento romántico"
+
+);
+
+
+
+
+
+crearEvento(
+
+"romance",
+
+[a,b],
+
+{
+
+estado:
+relacion.estado_pareja
+
+}
+
+);
+
+
+
+
+
+guardarRelaciones();
+
+
+
+return relacion;
 
 
 }
+
+
 
 
 
@@ -545,50 +715,67 @@ function aumentarRomance(
 // =================================
 
 function terminarRelacion(
-    habitante_a,
-    habitante_b
+a,
+b
 ){
 
 
-    const relacion =
-    obtenerRelacion(
-        habitante_a,
-        habitante_b
-    );
-
-
-    if(!relacion){
-
-        return null;
-
-    }
+const relacion =
+obtenerRelacion(a,b);
 
 
 
-    relacion.estado_pareja =
-    "terminada";
+if(!relacion){
 
+return null;
 
-    relacion.romance = 0;
-
-
-    relacion.compromiso = 0;
-
-
-    relacion.historial.push(
-        "Relación terminada"
-    );
+}
 
 
 
-    guardarRelaciones();
+
+relacion.estado_pareja="terminada";
+
+
+relacion.romance=0;
+
+
+relacion.compromiso=0;
 
 
 
-    return relacion;
+agregarHistorial(
+
+relacion,
+
+"Relación terminada"
+
+);
+
+
+
+
+crearEvento(
+
+"ruptura",
+
+[a,b],
+
+{}
+
+);
+
+
+
+guardarRelaciones();
+
+
+
+return relacion;
 
 
 }
+
 
 
 
@@ -602,53 +789,52 @@ function terminarRelacion(
 // =================================
 
 function actualizarNivelRelacion(
-    relacion
+relacion
 ){
 
 
-    const valor =
 
-    (
+const valor =
 
-        relacion.confianza +
+(
 
-        relacion.afinidad +
+relacion.confianza+
 
-        relacion.amistad +
+relacion.afinidad+
 
-        relacion.romance
+relacion.amistad+
 
-    ) / 4;
+relacion.romance
+
+)/4;
 
 
 
-    if(valor >=80){
 
-        relacion.nivel =
-        "muy_cercanos";
+if(valor>=85){
 
-    }
+relacion.nivel="alma_cercana";
 
-    else if(valor >=60){
+}
 
-        relacion.nivel =
-        "amigos";
+else if(valor>=65){
 
-    }
+relacion.nivel="amigos";
 
-    else if(valor >=40){
+}
 
-        relacion.nivel =
-        "conocidos";
+else if(valor>=40){
 
-    }
+relacion.nivel="conocidos";
 
-    else{
+}
 
-        relacion.nivel =
-        "nuevo";
+else{
 
-    }
+relacion.nivel="nuevo";
+
+}
+
 
 
 }
@@ -660,50 +846,37 @@ function actualizarNivelRelacion(
 
 
 
+
 // =================================
-// LIMITAR
+// HISTORIAL
 // =================================
 
-function limitarRelacion(
-    relacion
+function agregarHistorial(
+relacion,
+texto
 ){
 
 
-    [
+relacion.historial.push({
 
-        "confianza",
+evento:texto,
 
-        "afinidad",
+fecha:new Date().toISOString()
 
-        "respeto",
-
-        "amistad",
-
-        "romance",
-
-        "compromiso"
-
-    ].forEach(
-
-        valor=>{
+});
 
 
-            if(relacion[valor]>100)
 
-                relacion[valor]=100;
+if(relacion.historial.length>100){
 
+relacion.historial.shift();
 
-            if(relacion[valor]<0)
+}
 
-                relacion[valor]=0;
-
-
-        }
-
-    );
 
 
 }
+
 
 
 
@@ -719,18 +892,17 @@ function limitarRelacion(
 function guardarRelaciones(){
 
 
-    const datos =
-    cargarArchivo("../datos/relaciones.json");
+const datos =
+cargarArchivo("../datos/relaciones.json");
 
 
+guardarArchivo(
 
-    guardarArchivo(
+"../datos/relaciones.json",
 
-        "../datos/relaciones.json",
+datos
 
-        datos
-
-    );
+);
 
 
 }
@@ -741,22 +913,23 @@ function guardarRelaciones(){
 
 
 
+
 module.exports={
 
 
-    obtenerRelacion,
+obtenerRelacion,
 
-    crearRelacion,
+crearRelacion,
 
-    aumentarConfianza,
+aumentarConfianza,
 
-    aumentarAmistad,
+aumentarAmistad,
 
-    aumentarRomance,
+aumentarRomance,
 
-    terminarRelacion,
+terminarRelacion,
 
-    puedeTenerRomance
+puedeTenerRomance
 
 
 };
