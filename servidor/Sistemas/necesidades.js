@@ -36,9 +36,11 @@ require("./etapas.js");
 
 
 
+
 // =================================
 // OBTENER NECESIDADES
 // =================================
+
 
 function obtenerNecesidades(
 habitante_id
@@ -49,11 +51,7 @@ const datos =
 cargarArchivo("../datos/necesidades.json");
 
 
-
-if(
-!datos ||
-!datos.necesidades
-){
+if(!datos){
 
 return null;
 
@@ -82,6 +80,7 @@ n=>n.habitante_id===habitante_id
 // CREAR NECESIDADES
 // =================================
 
+
 function crearNecesidades(
 habitante_id,
 etapa="adulto"
@@ -90,7 +89,6 @@ etapa="adulto"
 
 const datos =
 cargarArchivo("../datos/necesidades.json");
-
 
 
 if(!datos){
@@ -106,6 +104,7 @@ if(!datos.necesidades){
 datos.necesidades=[];
 
 }
+
 
 
 
@@ -126,6 +125,7 @@ return existente;
 
 
 
+
 const necesidad={
 
 
@@ -134,28 +134,42 @@ habitante_id,
 
 hambre:100,
 
+
 energia:100,
+
 
 higiene:100,
 
+
 diversion:80,
+
 
 social:70,
 
+
 carino:80,
+
 
 seguridad:100,
 
+
 descanso:100,
+
 
 estres:0,
 
+
 estado:"estable",
+
+
+etapa,
+
 
 ultima_actualizacion:null
 
 
 };
+
 
 
 
@@ -177,6 +191,8 @@ datos
 
 
 
+
+
 return necesidad;
 
 
@@ -193,6 +209,7 @@ return necesidad;
 // =================================
 // ACTUALIZAR NECESIDADES
 // =================================
+
 
 function actualizarNecesidades(
 habitante_id,
@@ -223,12 +240,36 @@ cargarArchivo("../datos/almas.json");
 
 
 
-const alma =
+
+const habitante =
 almas?.almas.find(
 
 a=>a.id===habitante_id
 
 );
+
+
+
+
+if(!habitante){
+
+return null;
+
+}
+
+
+
+
+
+
+// Obtener etapa correctamente
+
+const etapa =
+obtenerEtapaHabitante(
+habitante
+);
+
+
 
 
 
@@ -240,45 +281,21 @@ let consumo=1;
 
 
 
-// Profesión
-
-if(
-alma?.profesion &&
-alma.profesion.nombre!=="ninguna"
-){
-
-consumo+=1;
-
-}
 
 
+// ===============================
+// EFECTOS POR EDAD
+// ===============================
 
 
-
-
-
-// Etapa de vida
-
-const etapa =
-alma
-?
-obtenerEtapaHabitante(alma)
-:
-null;
-
-
-
-
-
-if(etapa){
-
-
-switch(etapa.nombre){
+switch(etapa?.nombre){
 
 
 case "bebe":
 
 consumo=0.5;
+
+necesidad.carino-=1*ciclo;
 
 break;
 
@@ -288,21 +305,66 @@ case "niño":
 
 consumo=0.8;
 
+necesidad.diversion-=0.5*ciclo;
+
 break;
 
 
 
-case "adulto_mayor":
+case "adolescente":
+
+consumo=1;
+
+necesidad.social-=1*ciclo;
+
+break;
+
+
+
+case "adulto":
 
 consumo=1.2;
 
 break;
 
 
+
+case "adulto_mayor":
+
+consumo=0.9;
+
+necesidad.descanso-=1*ciclo;
+
+break;
+
+
 }
 
 
 
+
+
+
+
+
+
+// ===============================
+// PROFESIÓN
+// ===============================
+
+
+if(
+habitante.profesion &&
+habitante.profesion.nombre!=="ninguna"
+){
+
+
+consumo+=0.5;
+
+
+necesidad.estres+=1*ciclo;
+
+
 }
 
 
@@ -311,28 +373,36 @@ break;
 
 
 
-necesidad.hambre -=
+
+
+// ===============================
+// CONSUMO GENERAL
+// ===============================
+
+
+necesidad.hambre-=
 2*ciclo*consumo;
 
 
-necesidad.energia -=
+necesidad.energia-=
 1*ciclo*consumo;
 
 
-necesidad.higiene -=
+necesidad.higiene-=
 1*ciclo;
 
 
-necesidad.diversion -=
+necesidad.diversion-=
 0.5*ciclo;
 
 
-necesidad.social -=
+necesidad.social-=
 0.5*ciclo;
 
 
-necesidad.descanso -=
+necesidad.descanso-=
 1*ciclo;
+
 
 
 
@@ -343,8 +413,6 @@ necesidad.descanso -=
 limitar(
 necesidad
 );
-
-
 
 
 
@@ -360,11 +428,9 @@ necesidad
 
 
 
-
 actualizarEstado(
 necesidad
 );
-
 
 
 
@@ -396,8 +462,9 @@ return necesidad;
 
 
 // =================================
-// ESTADOS CRÍTICOS
+// REVISAR ESTADOS CRÍTICOS
 // =================================
+
 
 function revisarEstados(
 habitante_id,
@@ -407,9 +474,8 @@ necesidad
 
 
 if(
-necesidad.hambre <20
+necesidad.hambre<20
 ){
-
 
 
 crearEvento(
@@ -435,17 +501,16 @@ habitante_id,
 );
 
 
-
 }
 
 
 
 
 
-if(
-necesidad.energia <20
-){
 
+if(
+necesidad.energia<20
+){
 
 
 cambiarEmocion(
@@ -461,17 +526,17 @@ habitante_id,
 );
 
 
-
 }
 
 
 
 
 
-if(
-necesidad.social <20
-){
 
+
+if(
+necesidad.social<20
+){
 
 
 cambiarEmocion(
@@ -487,9 +552,32 @@ habitante_id,
 );
 
 
-
 }
 
+
+
+
+
+
+if(
+necesidad.carino<20
+){
+
+
+cambiarEmocion(
+
+habitante_id,
+
+"soledad",
+
+5,
+
+"falta de cariño"
+
+);
+
+
+}
 
 
 }
@@ -503,8 +591,9 @@ habitante_id,
 
 
 // =================================
-// RECUPERAR NECESIDAD
+// SATISFACER NECESIDAD
 // =================================
+
 
 function satisfacerNecesidad(
 habitante_id,
@@ -529,6 +618,7 @@ return null;
 
 
 
+
 switch(tipo){
 
 
@@ -537,6 +627,7 @@ case "comida":
 necesidad.hambre=100;
 
 break;
+
 
 
 
@@ -550,6 +641,7 @@ break;
 
 
 
+
 case "familia":
 
 necesidad.social=100;
@@ -560,11 +652,22 @@ break;
 
 
 
+
 case "diversion":
 
 necesidad.diversion=100;
 
 break;
+
+
+
+
+case "seguridad":
+
+necesidad.seguridad=100;
+
+break;
+
 
 
 }
@@ -592,6 +695,7 @@ habitante_id,
 
 
 
+
 guardarNecesidades();
 
 
@@ -612,6 +716,7 @@ return necesidad;
 // =================================
 // LIMITAR VALORES
 // =================================
+
 
 function limitar(
 objeto
@@ -666,6 +771,7 @@ objeto[key]
 // ESTADO GENERAL
 // =================================
 
+
 function actualizarEstado(
 n
 ){
@@ -679,8 +785,10 @@ n.hambre+
 n.energia+
 n.higiene+
 n.diversion+
-n.social
-)/5;
+n.social+
+n.seguridad
+)/6;
+
 
 
 
@@ -691,9 +799,11 @@ if(promedio>=80)
 n.estado="feliz";
 
 
+
 else if(promedio>=50)
 
 n.estado="normal";
+
 
 
 else if(promedio>=25)
@@ -701,9 +811,11 @@ else if(promedio>=25)
 n.estado="preocupado";
 
 
+
 else
 
 n.estado="critico";
+
 
 
 
@@ -720,11 +832,17 @@ return n;
 
 
 
+// =================================
+// GUARDAR
+// =================================
+
+
 function guardarNecesidades(){
 
 
 const datos =
 cargarArchivo("../datos/necesidades.json");
+
 
 
 guardarArchivo(
@@ -737,6 +855,7 @@ datos
 
 
 }
+
 
 
 
