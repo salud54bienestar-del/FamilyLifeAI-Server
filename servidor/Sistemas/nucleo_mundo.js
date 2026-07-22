@@ -1,8 +1,20 @@
-// Sistema núcleo del mundo - Village Soul
+// Sistema núcleo avanzado del mundo - Village Soul
 
 
 const cargarArchivo =
 require("./cargador_datos.js");
+
+
+const guardarArchivo =
+require("./guardador_datos.js");
+
+
+const crearEvento =
+require("./eventos.js");
+
+
+
+
 
 
 
@@ -42,6 +54,8 @@ function obtenerNucleo(){
 
 
 
+
+
 // =================================
 // OBTENER SISTEMAS ACTIVOS
 // =================================
@@ -64,7 +78,10 @@ function obtenerSistemas(){
 
     return nucleo.sistemas || [];
 
+
 }
+
+
 
 
 
@@ -81,17 +98,101 @@ function sistemaActivo(
 ){
 
 
-    const sistemas =
+    return obtenerSistemas()
+    .includes(nombre);
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// VERIFICAR SISTEMAS NECESARIOS
+// =================================
+
+function verificarSistemas(){
+
+
+    const requeridos=[
+
+
+        "tiempo",
+
+        "almas",
+
+        "memorias",
+
+        "emociones",
+
+        "relaciones",
+
+        "familias",
+
+        "objetivos",
+
+        "decisiones",
+
+        "profesiones",
+
+        "recursos",
+
+        "cultura",
+
+        "historia"
+
+
+    ];
+
+
+
+
+
+    const activos =
     obtenerSistemas();
 
 
 
-    return sistemas.includes(
-        nombre
-    );
+
+
+    return {
+
+
+        activos,
+
+
+        faltantes:
+
+        requeridos.filter(
+
+            sistema =>
+            !activos.includes(sistema)
+
+        ),
+
+
+
+        correcto:
+
+        requeridos.every(
+
+            sistema =>
+            activos.includes(sistema)
+
+        )
+
+
+    };
 
 
 }
+
+
 
 
 
@@ -104,6 +205,7 @@ function sistemaActivo(
 // =================================
 
 function obtenerInformacionMundo(){
+
 
 
     const mundo =
@@ -119,35 +221,43 @@ function obtenerInformacionMundo(){
 
 
 
+
+
     return {
 
 
         nombre:
-        mundo.nombre,
+        mundo.nombre || "Sin nombre",
+
 
 
         dia:
-        mundo.dia_actual,
+        mundo.dia_actual || 1,
+
 
 
         estacion:
-        mundo.estacion,
+        mundo.estacion || "primavera",
+
 
 
         estado:
-        mundo.estado,
+        mundo.estado || "tranquilo",
+
 
 
         poblacion:
-        mundo.poblacion,
+        mundo.poblacion || 0,
+
 
 
         aldeas:
-        mundo.aldeas,
+        mundo.aldeas || [],
+
 
 
         epoca:
-        mundo.epoca
+        mundo.epoca || "inicio"
 
 
     };
@@ -161,11 +271,144 @@ function obtenerInformacionMundo(){
 
 
 
+
+
+// =================================
+// ESTADÍSTICAS DEL MUNDO
+// =================================
+
+function obtenerEstadisticas(){
+
+
+
+    const almas =
+    cargarArchivo("../datos/almas.json");
+
+
+
+    const familias =
+    cargarArchivo("../datos/familias.json");
+
+
+
+    const recursos =
+    cargarArchivo("../datos/recursos.json");
+
+
+
+
+
+    return {
+
+
+        habitantes:
+
+        almas?.almas.length || 0,
+
+
+
+        familias:
+
+        familias?.familias.length || 0,
+
+
+
+        recursos:
+
+        recursos?.recursos || {}
+
+
+
+    };
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// ACTUALIZAR ESTADO DEL MUNDO
+// =================================
+
+function actualizarEstado(
+nuevoEstado
+){
+
+
+
+    const datos =
+    cargarArchivo("../datos/mundo.json");
+
+
+
+    if(!datos){
+
+        return null;
+
+    }
+
+
+
+    datos.estado =
+    nuevoEstado;
+
+
+
+
+    guardarArchivo(
+
+        "../datos/mundo.json",
+
+        datos
+
+    );
+
+
+
+
+    crearEvento(
+
+        "cambio_estado_mundo",
+
+        [],
+
+        {
+
+            estado:
+            nuevoEstado
+
+        }
+
+    );
+
+
+
+
+
+    return datos;
+
+}
+
+
+
+
+
+
+
+
+
 // =================================
 // INICIALIZAR MUNDO
 // =================================
 
 function iniciarMundo(){
+
 
 
     const nucleo =
@@ -189,9 +432,26 @@ function iniciarMundo(){
 
 
 
+
+
+
+    const sistemas =
+    verificarSistemas();
+
+
+
+
+
+
     console.log("===============================");
-    console.log("     VILLAGE SOUL INICIADO");
+
+    console.log(
+        "     VILLAGE SOUL INICIADO"
+    );
+
     console.log("===============================");
+
+
 
 
 
@@ -201,10 +461,12 @@ function iniciarMundo(){
     );
 
 
+
     console.log(
         "Día:",
         mundo.dia
     );
+
 
 
     console.log(
@@ -213,18 +475,65 @@ function iniciarMundo(){
     );
 
 
+
     console.log(
-        "Sistemas:",
-        nucleo.sistemas
+        "Sistemas activos:",
+        sistemas.activos.length
     );
+
+
+
+
+
+    if(
+        !sistemas.correcto
+    ){
+
+        console.log(
+            "Sistemas faltantes:",
+            sistemas.faltantes
+        );
+
+    }
+
+
+
+
+
+
+
+    crearEvento(
+
+        "inicio_mundo",
+
+        [],
+
+        {
+
+            mundo:
+            mundo.nombre
+
+        }
+
+    );
+
+
+
+
 
 
 
     return {
 
+
         nucleo,
 
-        mundo
+
+        mundo,
+
+
+        sistemas
+
 
     };
 
@@ -237,7 +546,8 @@ function iniciarMundo(){
 
 
 
-module.exports = {
+
+module.exports={
 
 
     obtenerNucleo,
@@ -246,7 +556,13 @@ module.exports = {
 
     sistemaActivo,
 
+    verificarSistemas,
+
     obtenerInformacionMundo,
+
+    obtenerEstadisticas,
+
+    actualizarEstado,
 
     iniciarMundo
 
