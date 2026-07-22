@@ -23,18 +23,19 @@ require("./ubicaciones.js");
 
 
 
+
+
 // =================================
 // OBTENER MOVIMIENTO
 // =================================
 
 function obtenerMovimiento(
-    habitante_id
+habitante_id
 ){
 
 
     const datos =
     cargarArchivo("../datos/movimientos.json");
-
 
 
     if(!datos){
@@ -60,19 +61,19 @@ function obtenerMovimiento(
 
 
 
+
 // =================================
 // CREAR MOVIMIENTO
 // =================================
 
 function crearMovimiento(
-    habitante_id,
-    posicionInicial={}
+habitante_id,
+posicionInicial={}
 ){
 
 
     const datos =
     cargarArchivo("../datos/movimientos.json");
-
 
 
     if(!datos){
@@ -83,8 +84,7 @@ function crearMovimiento(
 
 
 
-
-    const existente =
+    let existente =
     obtenerMovimiento(
         habitante_id
     );
@@ -96,7 +96,6 @@ function crearMovimiento(
         return existente;
 
     }
-
 
 
 
@@ -127,31 +126,26 @@ function crearMovimiento(
 
 
 
-        destino:null,
+        ultima_ubicacion:"inicio",
 
+
+        destino:null,
 
 
         tipo_destino:null,
 
 
-
-        ultima_ubicacion:null,
-
-
-
         estado:"quieto",
-
 
 
         velocidad:1,
 
 
-
-        siguiendo:false,
-
+        siguiendo:null,
 
 
-        ultima_actualizacion:null
+        ultima_actualizacion:
+        new Date().toISOString()
 
 
     };
@@ -177,6 +171,16 @@ function crearMovimiento(
 
     );
 
+
+
+
+
+
+    // Crear perfil de ubicación si no existe
+
+    ubicaciones.crearUbicaciones(
+        habitante_id
+    );
 
 
 
@@ -216,11 +220,10 @@ function crearMovimiento(
 // =================================
 
 function establecerDestino(
-    habitante_id,
-    destino,
-    tipo="desconocido"
+habitante_id,
+destino,
+tipo="desconocido"
 ){
-
 
 
     const movimiento =
@@ -229,13 +232,11 @@ function establecerDestino(
     );
 
 
-
     if(!movimiento){
 
         return null;
 
     }
-
 
 
 
@@ -254,21 +255,19 @@ function establecerDestino(
 
 
 
-
-
     movimiento.tipo_destino =
     tipo;
-
 
 
     movimiento.estado =
     "caminando";
 
 
+    movimiento.siguiendo=null;
+
 
     movimiento.ultima_actualizacion =
     new Date().toISOString();
-
 
 
 
@@ -282,16 +281,12 @@ function establecerDestino(
 
 
 
-
-
     crearEvento(
 
         "movimiento_iniciado",
 
         [
-
             habitante_id
-
         ],
 
         {
@@ -303,8 +298,6 @@ function establecerDestino(
         }
 
     );
-
-
 
 
 
@@ -323,18 +316,16 @@ function establecerDestino(
 
 
 // =================================
-// IR A UBICACIÓN GUARDADA
+// IR A UBICACIÓN
 // =================================
 
 function irAUbicacion(
-    habitante_id,
-    tipo
+habitante_id,
+tipo
 ){
 
 
-
     const destino =
-
     ubicaciones.obtenerDestino(
 
         habitante_id,
@@ -345,16 +336,11 @@ function irAUbicacion(
 
 
 
-
-
     if(!destino){
 
         return null;
 
     }
-
-
-
 
 
 
@@ -381,78 +367,43 @@ function irAUbicacion(
 
 
 // =================================
-// IR A CASA
+// ATAJOS DE MOVIMIENTO
 // =================================
 
 function irAHogar(
-    habitante_id
+habitante_id
 ){
 
-
     return irAUbicacion(
-
         habitante_id,
-
         "hogar"
-
     );
-
 
 }
 
 
-
-
-
-
-
-
-
-// =================================
-// IR AL TRABAJO
-// =================================
 
 function irAlTrabajo(
-    habitante_id
+habitante_id
 ){
 
-
     return irAUbicacion(
-
         habitante_id,
-
         "trabajo"
-
     );
-
 
 }
 
 
 
-
-
-
-
-
-
-// =================================
-// IR A ESCUELA
-// =================================
-
 function irAEscuela(
-    habitante_id
+habitante_id
 ){
 
-
     return irAUbicacion(
-
         habitante_id,
-
         "escuela"
-
     );
-
 
 }
 
@@ -469,39 +420,26 @@ function irAEscuela(
 // =================================
 
 function irAVisitarAmigo(
-    habitante_id,
-    amigo_id
+habitante_id,
+amigo_id
 ){
 
 
-
     const amigo =
-
     ubicaciones.obtenerUbicaciones(
-
         amigo_id
-
     );
 
 
 
-
-
     if(
-
         !amigo ||
-
         !amigo.hogar
-
     ){
 
         return null;
 
     }
-
-
-
-
 
 
 
@@ -512,7 +450,6 @@ function irAVisitarAmigo(
         amigo.hogar,
 
         "amigo"
-
 
     );
 
@@ -532,10 +469,72 @@ function irAVisitarAmigo(
 // =================================
 
 function seguirHabitante(
-    habitante_id,
-    objetivo_id
+habitante_id,
+objetivo_id
 ){
 
+
+    const movimiento =
+    obtenerMovimiento(
+        habitante_id
+    );
+
+
+    if(!movimiento){
+
+        return null;
+
+    }
+
+
+
+    movimiento.siguiendo =
+    objetivo_id;
+
+
+    movimiento.estado =
+    "siguiendo";
+
+
+    guardarMovimiento(
+        movimiento
+    );
+
+
+
+    crearEvento(
+
+        "siguiendo_habitante",
+
+        [
+            habitante_id,
+            objetivo_id
+        ]
+
+    );
+
+
+
+    return movimiento;
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// DETENER SEGUIMIENTO
+// =================================
+
+function dejarDeSeguir(
+habitante_id
+){
 
 
     const movimiento =
@@ -553,21 +552,15 @@ function seguirHabitante(
 
 
 
-    movimiento.siguiendo =
-    objetivo_id;
+    movimiento.siguiendo=null;
 
 
-
-    movimiento.estado =
-    "siguiendo";
-
-
+    movimiento.estado="quieto";
 
 
     guardarMovimiento(
         movimiento
     );
-
 
 
 
@@ -589,10 +582,9 @@ function seguirHabitante(
 // =================================
 
 function actualizarPosicion(
-    habitante_id,
-    nuevaPosicion
+habitante_id,
+nuevaPosicion
 ){
-
 
 
     const movimiento =
@@ -601,13 +593,11 @@ function actualizarPosicion(
     );
 
 
-
     if(!movimiento){
 
         return null;
 
     }
-
 
 
 
@@ -623,8 +613,6 @@ function actualizarPosicion(
 
 
     };
-
-
 
 
 
@@ -649,8 +637,6 @@ function actualizarPosicion(
 
 
 
-
-
     return movimiento;
 
 
@@ -669,9 +655,8 @@ function actualizarPosicion(
 // =================================
 
 function verificarLlegada(
-    movimiento
+movimiento
 ){
-
 
 
     if(!movimiento.destino){
@@ -682,50 +667,28 @@ function verificarLlegada(
 
 
 
-
-
-
-    const distancia = Math.sqrt(
+    const distancia =
+    Math.sqrt(
 
 
         Math.pow(
-
-            movimiento.posicion_actual.x -
-
-            movimiento.destino.x,
-
-            2
-
-        )
-
+        movimiento.posicion_actual.x -
+        movimiento.destino.x,
+        2)
 
         +
 
-
         Math.pow(
-
-            movimiento.posicion_actual.y -
-
-            movimiento.destino.y,
-
-            2
-
-        )
-
+        movimiento.posicion_actual.y -
+        movimiento.destino.y,
+        2)
 
         +
 
-
         Math.pow(
-
-            movimiento.posicion_actual.z -
-
-            movimiento.destino.z,
-
-            2
-
-        )
-
+        movimiento.posicion_actual.z -
+        movimiento.destino.z,
+        2)
 
 
     );
@@ -734,14 +697,11 @@ function verificarLlegada(
 
 
 
-
     if(distancia <=1){
-
 
 
         movimiento.estado =
         "llegado";
-
 
 
         movimiento.ultima_ubicacion =
@@ -754,23 +714,17 @@ function verificarLlegada(
             "lugar_alcanzado",
 
             [
-
                 movimiento.habitante_id
-
             ],
 
             {
 
                 tipo:
-                movimiento.tipo_destino,
-
-                destino:
-                movimiento.destino
+                movimiento.tipo_destino
 
             }
 
         );
-
 
 
 
@@ -811,20 +765,18 @@ function verificarLlegada(
 
 
 // =================================
-// DETENER
+// DETENER MOVIMIENTO
 // =================================
 
 function detenerMovimiento(
-    habitante_id
+habitante_id
 ){
-
 
 
     const movimiento =
     obtenerMovimiento(
         habitante_id
     );
-
 
 
     if(!movimiento){
@@ -835,22 +787,19 @@ function detenerMovimiento(
 
 
 
+    movimiento.estado="quieto";
 
 
-    movimiento.estado =
-    "quieto";
+    movimiento.destino=null;
 
 
-
-    movimiento.destino =
-    null;
+    movimiento.siguiendo=null;
 
 
 
     guardarMovimiento(
         movimiento
     );
-
 
 
     return movimiento;
@@ -871,13 +820,12 @@ function detenerMovimiento(
 // =================================
 
 function guardarMovimiento(
-    movimiento
+movimiento
 ){
 
 
     const datos =
     cargarArchivo("../datos/movimientos.json");
-
 
 
     if(!datos){
@@ -889,7 +837,6 @@ function guardarMovimiento(
 
 
     const index =
-
     datos.movimientos.findIndex(
 
         m=>m.id===movimiento.id
@@ -898,15 +845,11 @@ function guardarMovimiento(
 
 
 
-
-
     if(index!==-1){
 
         datos.movimientos[index]=movimiento;
 
     }
-
-
 
 
 
@@ -952,6 +895,8 @@ module.exports={
     irAVisitarAmigo,
 
     seguirHabitante,
+
+    dejarDeSeguir,
 
     actualizarPosicion,
 
