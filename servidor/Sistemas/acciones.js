@@ -19,14 +19,12 @@ require("./memorias.js");
 
 
 
-
 // =================================
 // OBTENER UBICACIONES
 // =================================
 
-
 function obtenerUbicaciones(
-    habitante_id
+habitante_id
 ){
 
 
@@ -57,15 +55,31 @@ function obtenerUbicaciones(
 
 
 
+// =================================
+// OBTENER UBICACION HABITANTE
+// =================================
+
+function obtenerUbicacionHabitante(
+habitante_id
+){
+
+    return obtenerUbicaciones(
+        habitante_id
+    );
+
+}
+
+
+
+
 
 
 // =================================
-// CREAR PERFIL DE UBICACIONES
+// CREAR PERFIL
 // =================================
-
 
 function crearUbicaciones(
-    habitante_id
+habitante_id
 ){
 
 
@@ -79,7 +93,6 @@ function crearUbicaciones(
         return null;
 
     }
-
 
 
 
@@ -99,12 +112,11 @@ function crearUbicaciones(
 
 
 
-
-    const nueva = {
+    const nueva={
 
 
         id:
-        datos.ubicaciones.length + 1,
+        datos.ubicaciones.length+1,
 
 
         habitante_id,
@@ -121,7 +133,7 @@ function crearUbicaciones(
 
 
 
-        lugares_visitados:[],
+        ultima_posicion:null,
 
 
 
@@ -133,11 +145,16 @@ function crearUbicaciones(
 
 
 
+        lugares_visitados:[],
+
+
+
         lugares_favoritos:[],
 
 
 
-        ultima_actualizacion:null
+        ultima_actualizacion:
+        null
 
 
     };
@@ -149,8 +166,6 @@ function crearUbicaciones(
     datos.ubicaciones.push(
         nueva
     );
-
-
 
 
 
@@ -172,12 +187,11 @@ function crearUbicaciones(
 
         "ubicacion",
 
-        "Registró sus lugares importantes.",
+        "Creó su registro de lugares importantes.",
 
         "baja"
 
     );
-
 
 
 
@@ -193,22 +207,20 @@ function crearUbicaciones(
 
 
 
-
 // =================================
 // GUARDAR UBICACION
 // =================================
 
-
 function guardarUbicacion(
-    habitante_id,
-    tipo,
-    coordenadas,
-    nombre=""
+habitante_id,
+tipo,
+coordenadas,
+nombre=""
 ){
 
 
 
-    const ubicacion =
+    let ubicacion =
     obtenerUbicaciones(
         habitante_id
     );
@@ -217,9 +229,13 @@ function guardarUbicacion(
 
     if(!ubicacion){
 
-        return null;
+        ubicacion =
+        crearUbicaciones(
+            habitante_id
+        );
 
     }
+
 
 
 
@@ -230,11 +246,17 @@ function guardarUbicacion(
         nombre,
 
 
-        x:coordenadas.x || 0,
+        x:
+        coordenadas.x || 0,
 
-        y:coordenadas.y || 0,
 
-        z:coordenadas.z || 0,
+        y:
+        coordenadas.y || 0,
+
+
+        z:
+        coordenadas.z || 0,
+
 
 
         actualizado:
@@ -247,39 +269,8 @@ function guardarUbicacion(
 
 
 
-    ubicacion.ultima_actualizacion =
-    new Date().toISOString();
-
-
-
-
-
-    const datos =
-    cargarArchivo("../datos/ubicaciones.json");
-
-
-
-    const index =
-    datos.ubicaciones.findIndex(
-
-        u=>u.habitante_id===habitante_id
-
-    );
-
-
-
-
-
-    datos.ubicaciones[index]=ubicacion;
-
-
-
-    guardarArchivo(
-
-        "../datos/ubicaciones.json",
-
-        datos
-
+    actualizar(
+        ubicacion
     );
 
 
@@ -295,15 +286,11 @@ function guardarUbicacion(
         ],
 
         {
-
             tipo,
-
             nombre
-
         }
 
     );
-
 
 
 
@@ -320,17 +307,14 @@ function guardarUbicacion(
 
 
 
-
 // =================================
-// GUARDAR HOGAR
+// CASA
 // =================================
-
 
 function establecerHogar(
 habitante_id,
 coordenadas
 ){
-
 
     return guardarUbicacion(
 
@@ -344,7 +328,6 @@ coordenadas
 
     );
 
-
 }
 
 
@@ -354,18 +337,15 @@ coordenadas
 
 
 
-
 // =================================
-// GUARDAR TRABAJO
+// TRABAJO
 // =================================
-
 
 function establecerTrabajo(
 habitante_id,
 coordenadas,
 nombre
 ){
-
 
     return guardarUbicacion(
 
@@ -379,9 +359,37 @@ nombre
 
     );
 
-
 }
 
+
+
+
+
+
+
+
+// =================================
+// ESCUELA
+// =================================
+
+function establecerEscuela(
+habitante_id,
+coordenadas
+){
+
+    return guardarUbicacion(
+
+        habitante_id,
+
+        "escuela",
+
+        coordenadas,
+
+        "Escuela"
+
+    );
+
+}
 
 
 
@@ -394,15 +402,15 @@ nombre
 // GUARDAR AMIGO
 // =================================
 
-
 function guardarAmigo(
 habitante_id,
 amigo_id,
-coordenadas
+datosAmigo={}
 ){
 
 
-    const ubicacion =
+
+    let ubicacion =
     obtenerUbicaciones(
         habitante_id
     );
@@ -411,9 +419,13 @@ coordenadas
 
     if(!ubicacion){
 
-        return null;
+        ubicacion =
+        crearUbicaciones(
+            habitante_id
+        );
 
     }
+
 
 
 
@@ -421,11 +433,26 @@ coordenadas
     ubicacion.amigos[amigo_id]={
 
 
-        x:coordenadas.x,
+        relacion:
+        datosAmigo.relacion || "amigo",
 
-        y:coordenadas.y,
 
-        z:coordenadas.z
+
+        confianza:
+        datosAmigo.confianza || 0,
+
+
+
+        x:
+        datosAmigo.x || 0,
+
+
+        y:
+        datosAmigo.y || 0,
+
+
+        z:
+        datosAmigo.z || 0
 
 
     };
@@ -452,16 +479,15 @@ coordenadas
 
 
 
-
 // =================================
-// AGREGAR LUGAR VISITADO
+// REGISTRAR POSICION ACTUAL
 // =================================
 
-
-function registrarLugarVisitado(
+function actualizarPosicion(
 habitante_id,
-lugar
+coordenadas
 ){
+
 
 
     const ubicacion =
@@ -479,14 +505,64 @@ lugar
 
 
 
+    ubicacion.ultima_posicion={
 
-    ubicacion.lugares_visitados.push(
+        x:coordenadas.x,
 
-        lugar
+        y:coordenadas.y,
 
+        z:coordenadas.z
+
+    };
+
+
+
+    actualizar(
+        ubicacion
     );
 
 
+    return ubicacion.ultima_posicion;
+
+
+}
+
+
+
+
+
+
+
+
+// =================================
+// LUGAR VISITADO
+// =================================
+
+function registrarLugarVisitado(
+habitante_id,
+lugar
+){
+
+
+
+    const ubicacion =
+    obtenerUbicaciones(
+        habitante_id
+    );
+
+
+
+    if(!ubicacion){
+
+        return null;
+
+    }
+
+
+
+    ubicacion.lugares_visitados.push(
+        lugar
+    );
 
 
 
@@ -508,11 +584,9 @@ lugar
 
 
 
-
 // =================================
-// ACTUALIZAR DATOS
+// ACTUALIZAR
 // =================================
-
 
 function actualizar(
 ubicacion
@@ -559,11 +633,9 @@ ubicacion
 
 
 
-
 // =================================
 // OBTENER DESTINO
 // =================================
-
 
 function obtenerDestino(
 habitante_id,
@@ -598,11 +670,12 @@ tipo
 
 
 
-
 module.exports={
 
 
     obtenerUbicaciones,
+
+    obtenerUbicacionHabitante,
 
     crearUbicaciones,
 
@@ -610,7 +683,11 @@ module.exports={
 
     establecerTrabajo,
 
+    establecerEscuela,
+
     guardarAmigo,
+
+    actualizarPosicion,
 
     registrarLugarVisitado,
 
