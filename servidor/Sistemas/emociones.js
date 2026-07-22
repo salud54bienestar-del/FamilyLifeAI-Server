@@ -1,13 +1,18 @@
-// Sistema de emociones de Village Soul
+// Sistema avanzado de emociones - Village Soul
+
 
 const cargarArchivo =
 require("./cargador_datos.js");
 
+
 const guardarArchivo =
 require("./guardador_datos.js");
 
+
 const crearMemoria =
 require("./memorias.js");
+
+
 
 
 
@@ -17,11 +22,15 @@ require("./memorias.js");
 // OBTENER EMOCIONES
 // =================================
 
-function obtenerEmociones(habitante_id){
+
+function obtenerEmociones(
+habitante_id
+){
 
 
     const datos =
-    cargarArchivo("../datos/almas.json");
+    cargarArchivo("../datos/emociones.json");
+
 
 
     if(!datos){
@@ -32,16 +41,40 @@ function obtenerEmociones(habitante_id){
 
 
 
-    const habitante =
-    datos.almas.find(
 
-        a => a.id === habitante_id
+    return datos.emociones.find(
 
-    );
+        e=>
+        e.habitante_id===habitante_id
+
+    ) || null;
+
+
+}
 
 
 
-    if(!habitante){
+
+
+
+
+
+// =================================
+// CREAR EMOCIÓN
+// =================================
+
+
+function crearEmocion(
+habitante_id
+){
+
+
+    const datos =
+    cargarArchivo("../datos/emociones.json");
+
+
+
+    if(!datos){
 
         return null;
 
@@ -49,18 +82,102 @@ function obtenerEmociones(habitante_id){
 
 
 
-    if(!habitante.emociones){
+    const existe =
+    obtenerEmociones(
+        habitante_id
+    );
 
-        habitante.emociones={};
+
+
+    if(existe){
+
+        return existe;
 
     }
 
 
 
-    return habitante.emociones;
+
+
+    const nueva={
+
+
+        habitante_id,
+
+
+        felicidad:50,
+
+
+        confianza:50,
+
+
+        miedo:0,
+
+
+        tristeza:0,
+
+
+        ira:0,
+
+
+        calma:50,
+
+
+
+        emociones_secundarias:{
+
+
+            amor:0,
+
+            soledad:0,
+
+            orgullo:0,
+
+            estres:0,
+
+            aburrimiento:0
+
+
+        },
+
+
+
+        emocion_actual:
+        "neutral",
+
+
+
+        estabilidad_emocional:50
+
+
+
+    };
+
+
+
+
+
+    datos.emociones.push(
+        nueva
+    );
+
+
+
+    guardarArchivo(
+
+        "../datos/emociones.json",
+
+        datos
+
+    );
+
+
+
+    return nueva;
 
 
 }
+
 
 
 
@@ -73,16 +190,19 @@ function obtenerEmociones(habitante_id){
 // CAMBIAR EMOCIÓN
 // =================================
 
+
 function cambiarEmocion(
-    habitante_id,
-    emocion,
-    cantidad,
-    motivo=""
+habitante_id,
+emocion,
+cantidad,
+motivo=""
 ){
 
 
+
     const datos =
-    cargarArchivo("../datos/almas.json");
+    cargarArchivo("../datos/emociones.json");
+
 
 
     if(!datos){
@@ -93,30 +213,19 @@ function cambiarEmocion(
 
 
 
-
-    const habitante =
-    datos.almas.find(
-
-        a=>a.id===habitante_id
-
+    let estado =
+    obtenerEmociones(
+        habitante_id
     );
 
 
 
-    if(!habitante){
+    if(!estado){
 
-        return null;
-
-    }
-
-
-
-
-
-
-    if(!habitante.emociones){
-
-        habitante.emociones={};
+        estado =
+        crearEmocion(
+            habitante_id
+        );
 
     }
 
@@ -124,72 +233,38 @@ function cambiarEmocion(
 
 
 
-    // Emociones principales
+    if(
+        estado[emocion] !== undefined
+    ){
 
-    const principales=[
-
-        "felicidad",
-        "confianza",
-        "miedo",
-        "tristeza",
-        "ira",
-        "calma"
-
-    ];
-
-
-
-
-
-
-
-    if(principales.includes(emocion)){
-
-
-        if(
-            habitante.emociones[emocion]===undefined
-        ){
-
-            habitante.emociones[emocion]=0;
-
-        }
-
-
-        habitante.emociones[emocion]+=cantidad;
-
+        estado[emocion]+=cantidad;
 
     }
 
     else{
 
 
-        // Emociones secundarias
+        if(
+        !estado.emociones_secundarias
+        ){
 
-
-        if(!habitante.emociones.emociones_secundarias){
-
-
-            habitante.emociones.emociones_secundarias={};
-
+            estado.emociones_secundarias={};
 
         }
 
 
 
         if(
-            habitante.emociones.emociones_secundarias[emocion]
-            ===
-            undefined
+        !estado.emociones_secundarias[emocion]
         ){
 
-            habitante.emociones.emociones_secundarias[emocion]=0;
+            estado.emociones_secundarias[emocion]=0;
 
         }
 
 
 
-
-        habitante.emociones.emociones_secundarias[emocion]+=cantidad;
+        estado.emociones_secundarias[emocion]+=cantidad;
 
 
     }
@@ -201,11 +276,14 @@ function cambiarEmocion(
 
 
     limitarEmociones(
-
-        habitante.emociones
-
+        estado
     );
 
+
+
+    actualizarEmocionActual(
+        estado
+    );
 
 
 
@@ -213,7 +291,7 @@ function cambiarEmocion(
 
     guardarArchivo(
 
-        "../datos/almas.json",
+        "../datos/emociones.json",
 
         datos
 
@@ -224,31 +302,24 @@ function cambiarEmocion(
 
 
 
+    crearMemoria(
 
-    if(cantidad!==0){
+        habitante_id,
 
+        "emocion",
 
-        crearMemoria(
+        "Sintió "+emocion+
+        " por "+motivo,
 
-            habitante_id,
+        "baja"
 
-            "emocion",
-
-            "Sintió " + emocion +
-            " por " + motivo,
-
-            "baja"
-
-        );
-
-
-    }
+    );
 
 
 
 
 
-    return habitante.emociones;
+    return estado;
 
 
 }
@@ -262,12 +333,51 @@ function cambiarEmocion(
 
 
 // =================================
-// LIMITAR EMOCIONES
+// EMOCIÓN DOMINANTE
 // =================================
 
-function limitarEmociones(
-emociones
+
+function actualizarEmocionActual(
+estado
 ){
+
+
+
+    const emociones={
+
+
+        felicidad:
+        estado.felicidad,
+
+
+        miedo:
+        estado.miedo,
+
+
+        tristeza:
+        estado.tristeza,
+
+
+        ira:
+        estado.ira,
+
+
+        calma:
+        estado.calma
+
+
+    };
+
+
+
+
+
+    let mayor =
+    "neutral";
+
+
+    let valor=0;
+
 
 
 
@@ -277,47 +387,170 @@ emociones
         e=>{
 
 
-            if(
-                typeof emociones[e]
-                ===
-                "number"
-            ){
+            if(emociones[e]>valor){
 
+                valor=
+                emociones[e];
 
-                if(emociones[e]>100){
-
-                    emociones[e]=100;
-
-                }
-
-
-
-                if(emociones[e]<0){
-
-                    emociones[e]=0;
-
-                }
-
+                mayor=e;
 
             }
 
 
+        }
+
+    );
+
+
+
+
+    estado.emocion_actual =
+    mayor;
+
+
+
+    estado.estabilidad_emocional =
+    100 -
+
+    (
+
+    estado.tristeza+
+    estado.miedo+
+    estado.ira
+
+    )/3;
+
+
+
+    limitarEmociones(
+        estado
+    );
+
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// RECUPERACIÓN NATURAL
+// =================================
+
+
+function evolucionarEmociones(
+habitante_id
+){
+
+
+
+    const estado =
+    obtenerEmociones(
+        habitante_id
+    );
+
+
+
+    if(!estado){
+
+        return null;
+
+    }
+
+
+
+    estado.tristeza-=1;
+
+    estado.ira-=1;
+
+    estado.miedo-=1;
+
+
+
+    estado.calma+=1;
+
+
+
+    limitarEmociones(
+        estado
+    );
+
+
+
+    actualizarEmocionActual(
+        estado
+    );
+
+
+
+    return estado;
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// LIMITAR
+// =================================
+
+
+function limitarEmociones(
+obj
+){
+
+
+
+    Object.keys(obj)
+    .forEach(
+
+        key=>{
+
 
             if(
-                typeof emociones[e]
-                ===
-                "object"
+                typeof obj[key]==="number"
             ){
 
 
-                limitarEmociones(
+                obj[key]=Math.max(
 
-                    emociones[e]
+                    0,
+
+                    Math.min(
+
+                        100,
+
+                        obj[key]
+
+                    )
 
                 );
 
+
             }
 
+
+
+            if(
+                typeof obj[key]==="object"
+            ){
+
+                limitarEmociones(
+                    obj[key]
+                );
+
+            }
 
 
         }
@@ -339,6 +572,7 @@ emociones
 // NECESIDADES → EMOCIONES
 // =================================
 
+
 function actualizarEmocionesPorNecesidades(
 habitante_id,
 necesidades
@@ -353,52 +587,59 @@ necesidades
 
 
 
-    if(necesidades.hambre < 30){
+
+    if(necesidades.hambre<30){
 
         cambiarEmocion(
+
             habitante_id,
+
             "tristeza",
+
             5,
+
             "hambre"
+
         );
 
     }
 
 
 
-    if(necesidades.energia < 30){
+
+
+    if(necesidades.energia<30){
 
         cambiarEmocion(
+
             habitante_id,
+
             "estres",
+
             5,
+
             "cansancio"
+
         );
 
     }
 
 
 
-    if(necesidades.diversion < 30){
+
+
+    if(necesidades.social<30){
 
         cambiarEmocion(
+
             habitante_id,
-            "aburrimiento",
-            5,
-            "falta de diversión"
-        );
 
-    }
-
-
-
-    if(necesidades.carino < 30){
-
-        cambiarEmocion(
-            habitante_id,
             "soledad",
+
             5,
-            "falta de cariño"
+
+            "soledad"
+
         );
 
     }
@@ -418,12 +659,17 @@ necesidades
 
 
 
+
 module.exports={
 
 
     obtenerEmociones,
 
+    crearEmocion,
+
     cambiarEmocion,
+
+    evolucionarEmociones,
 
     actualizarEmocionesPorNecesidades
 
