@@ -17,13 +17,18 @@ const crearMemoria =
 require("./memorias.js");
 
 
+const registrarHistoria =
+require("./historia.js")
+.registrarHistoria;
+
+
 
 
 
 
 
 // =================================
-// OBTENER RECURSOS DEL MUNDO
+// OBTENER RECURSOS
 // =================================
 
 function obtenerRecursos(){
@@ -33,7 +38,6 @@ function obtenerRecursos(){
     cargarArchivo("../datos/recursos.json");
 
 
-
     if(!datos){
 
         return null;
@@ -41,8 +45,8 @@ function obtenerRecursos(){
     }
 
 
+    return datos.recursos || crearRecursosIniciales();
 
-    return datos.recursos;
 
 }
 
@@ -61,10 +65,8 @@ function obtenerRecursos(){
 function crearRecursosIniciales(){
 
 
-
     const datos =
     cargarArchivo("../datos/recursos.json");
-
 
 
     if(!datos){
@@ -75,79 +77,51 @@ function crearRecursosIniciales(){
 
 
 
-
-
     if(!datos.recursos){
 
-
-        datos.recursos = {
-
-
-            alimentos:{
-
-
-                trigo:0,
-
-                pan:0,
-
-                zanahoria:0,
-
-                papa:0,
-
-                carne:0,
-
-                pescado:0
-
-
-            },
-
-
-
-            materiales:{
-
-
-                madera:0,
-
-                piedra:0,
-
-                hierro:0,
-
-                oro:0,
-
-                diamante:0
-
-
-            },
-
-
-
-            economia:{
-
-
-                esmeraldas:0,
-
-                comercio:0,
-
-
-                prosperidad:50
-
-
-            },
-
-
-
-            energia:100
-
-
-
-        };
-
-
-
+        datos.recursos={};
 
     }
 
 
+
+
+    datos.recursos.alimentos ||= {
+
+        trigo:0,
+        pan:0,
+        zanahoria:0,
+        papa:0,
+        carne:0,
+        pescado:0
+
+    };
+
+
+
+    datos.recursos.materiales ||= {
+
+        madera:0,
+        piedra:0,
+        hierro:0,
+        oro:0,
+        diamante:0
+
+    };
+
+
+
+    datos.recursos.economia ||= {
+
+        esmeraldas:0,
+        comercio:0,
+        prosperidad:50
+
+    };
+
+
+
+    datos.recursos.energia ??= 100;
 
 
 
@@ -158,8 +132,6 @@ function crearRecursosIniciales(){
         datos
 
     );
-
-
 
 
 
@@ -177,7 +149,7 @@ function crearRecursosIniciales(){
 
 
 // =================================
-// AÑADIR RECURSO
+// AGREGAR RECURSO
 // =================================
 
 function agregarRecurso(
@@ -187,10 +159,8 @@ cantidad
 ){
 
 
-
     const datos =
     cargarArchivo("../datos/recursos.json");
-
 
 
     if(!datos){
@@ -201,11 +171,15 @@ cantidad
 
 
 
+    if(!datos.recursos){
+
+        crearRecursosIniciales();
+
+    }
 
 
-    if(
-        !datos.recursos[categoria]
-    ){
+
+    if(!datos.recursos[categoria]){
 
         datos.recursos[categoria]={};
 
@@ -213,10 +187,23 @@ cantidad
 
 
 
+    if(
+        datos.recursos[categoria][recurso]
+        === undefined
+    ){
+
+        datos.recursos[categoria][recurso]=0;
+
+    }
+
+
+
+    datos.recursos[categoria][recurso]+=cantidad;
+
 
 
     if(
-        !datos.recursos[categoria][recurso]
+        datos.recursos[categoria][recurso]<0
     ){
 
         datos.recursos[categoria][recurso]=0;
@@ -226,34 +213,56 @@ cantidad
 
 
 
+    guardarArchivo(
 
+        "../datos/recursos.json",
 
-    datos.recursos[categoria][recurso]
-    += cantidad;
+        datos
 
-
-
-
-
-    if(
-        datos.recursos[categoria][recurso] < 0
-    ){
-
-        datos.recursos[categoria][recurso]=0;
-
-    }
-
-
-
-
-
-
-    guardarRecursos(datos);
-
+    );
 
 
 
     return datos.recursos[categoria][recurso];
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// OBTENER CANTIDAD
+// =================================
+
+function obtenerCantidadRecurso(
+categoria,
+recurso
+){
+
+
+    const recursos =
+    obtenerRecursos();
+
+
+
+    if(
+        !recursos ||
+        !recursos[categoria]
+    ){
+
+        return 0;
+
+    }
+
+
+
+    return recursos[categoria][recurso] || 0;
 
 
 }
@@ -277,17 +286,11 @@ cantidad
 ){
 
 
-
     const actual =
     obtenerCantidadRecurso(
-
         categoria,
-
         recurso
-
     );
-
-
 
 
 
@@ -296,8 +299,6 @@ cantidad
         return false;
 
     }
-
-
 
 
 
@@ -310,9 +311,6 @@ cantidad
         -cantidad
 
     );
-
-
-
 
 
     return true;
@@ -329,49 +327,7 @@ cantidad
 
 
 // =================================
-// OBTENER CANTIDAD
-// =================================
-
-function obtenerCantidadRecurso(
-categoria,
-recurso
-){
-
-
-
-    const recursos =
-    obtenerRecursos();
-
-
-
-    if(
-        !recursos ||
-        !recursos[categoria]
-    ){
-
-        return 0;
-
-    }
-
-
-
-
-
-    return recursos[categoria][recurso] || 0;
-
-
-}
-
-
-
-
-
-
-
-
-
-// =================================
-// PRODUCCIÓN POR TRABAJO
+// PRODUCCIÓN
 // =================================
 
 function producirRecurso(
@@ -380,7 +336,6 @@ categoria,
 recurso,
 cantidad
 ){
-
 
 
     agregarRecurso(
@@ -395,29 +350,20 @@ cantidad
 
 
 
-
-
     crearEvento(
 
         "produccion_recurso",
 
-        [
-
-            habitante_id
-
-        ],
+        [habitante_id],
 
         {
 
             recurso,
-
             cantidad
 
         }
 
     );
-
-
 
 
 
@@ -427,16 +373,12 @@ cantidad
 
         "trabajo",
 
-        "Produjo " +
-        cantidad +
-        " de " +
-        recurso,
+        "Produjo "+cantidad+
+        " unidades de "+recurso,
 
         "baja"
 
     );
-
-
 
 
 
@@ -458,20 +400,19 @@ cantidad
 // =================================
 
 function comerciar(
-recurso_entregado,
+entregado,
 cantidad_entregada,
-recurso_recibido,
+recibido,
 cantidad_recibida
 ){
-
 
 
     if(
         !consumirRecurso(
 
-            recurso_entregado.categoria,
+            entregado.categoria,
 
-            recurso_entregado.nombre,
+            entregado.nombre,
 
             cantidad_entregada
 
@@ -485,18 +426,15 @@ cantidad_recibida
 
 
 
-
     agregarRecurso(
 
-        recurso_recibido.categoria,
+        recibido.categoria,
 
-        recurso_recibido.nombre,
+        recibido.nombre,
 
         cantidad_recibida
 
     );
-
-
 
 
 
@@ -509,17 +447,25 @@ cantidad_recibida
 
         {
 
-            entregado:
-            recurso_entregado,
+            entregado,
 
-            recibido:
-            recurso_recibido
+            recibido
 
         }
 
     );
 
 
+
+    registrarHistoria(
+
+        "Comercio realizado",
+
+        "La aldea intercambió recursos.",
+
+        "economia"
+
+    );
 
 
 
@@ -543,13 +489,12 @@ cantidad_recibida
 function actualizarEconomia(){
 
 
-
-    const datos =
-    cargarArchivo("../datos/recursos.json");
-
+    const recursos =
+    obtenerRecursos();
 
 
-    if(!datos){
+
+    if(!recursos){
 
         return null;
 
@@ -557,14 +502,12 @@ function actualizarEconomia(){
 
 
 
-
-
     const alimentos =
-    datos.recursos.alimentos;
+    recursos.alimentos || {};
 
 
 
-    const totalAlimentos =
+    const total =
 
     Object.values(alimentos)
     .reduce(
@@ -577,82 +520,51 @@ function actualizarEconomia(){
 
 
 
+    recursos.economia ||= {
+
+        prosperidad:50
+
+    };
 
 
-    if(totalAlimentos > 500){
 
 
-        datos.recursos.economia.prosperidad += 5;
+    if(total>500){
 
-
-    }
-
-    else if(totalAlimentos < 50){
-
-
-        datos.recursos.economia.prosperidad -= 5;
-
+        recursos.economia.prosperidad +=5;
 
     }
 
 
+    else if(total<50){
 
-
-
-    if(
-        datos.recursos.economia.prosperidad >100
-    ){
-
-        datos.recursos.economia.prosperidad=100;
-
-    }
-
-
-
-    if(
-        datos.recursos.economia.prosperidad <0
-    ){
-
-        datos.recursos.economia.prosperidad=0;
+        recursos.economia.prosperidad -=5;
 
     }
 
 
 
 
+    limitarEconomia(
+        recursos.economia
+    );
 
 
-    guardarRecursos(datos);
-
-
-
-    return datos.recursos.economia;
-
-
-}
-
-
-
-
-
-
-
-
-
-// =================================
-// GUARDAR
-// =================================
-
-function guardarRecursos(datos){
 
 
     guardarArchivo(
 
         "../datos/recursos.json",
 
-        datos
+        {
+            recursos
+        }
 
     );
+
+
+
+    return recursos.economia;
 
 
 }
@@ -663,6 +575,44 @@ function guardarRecursos(datos){
 
 
 
+
+
+// =================================
+// LIMITAR
+// =================================
+
+function limitarEconomia(
+economia
+){
+
+
+    if(economia.prosperidad>100){
+
+        economia.prosperidad=100;
+
+    }
+
+
+    if(economia.prosperidad<0){
+
+        economia.prosperidad=0;
+
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// EXPORTAR
+// =================================
 
 module.exports={
 
