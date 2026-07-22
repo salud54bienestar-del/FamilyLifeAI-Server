@@ -1,4 +1,5 @@
-// Sistema avanzado de necesidades - Village Soul
+// Sistema avanzado de necesidades - Village Soul 2.0
+// Control de necesidades físicas, sociales y emocionales
 
 
 const cargarArchivo =
@@ -33,7 +34,6 @@ require("./etapas.js");
 
 
 
-
 // =================================
 // OBTENER NECESIDADES
 // =================================
@@ -45,7 +45,9 @@ habitante_id
 
 
 const datos =
-cargarArchivo("../datos/necesidades.json");
+cargarArchivo(
+"../datos/necesidades.json"
+);
 
 
 
@@ -62,12 +64,14 @@ return null;
 
 return datos.necesidades.find(
 
-n=>n.habitante_id===habitante_id
+n=>
+n.habitante_id===habitante_id
 
 )||null;
 
 
 }
+
 
 
 
@@ -88,7 +92,9 @@ etapa="adulto"
 
 
 const datos =
-cargarArchivo("../datos/necesidades.json");
+cargarArchivo(
+"../datos/necesidades.json"
+);
 
 
 
@@ -105,6 +111,7 @@ if(!datos.necesidades){
 datos.necesidades=[];
 
 }
+
 
 
 
@@ -136,6 +143,7 @@ habitante_id,
 etapa,
 
 
+
 hambre:100,
 
 
@@ -160,6 +168,7 @@ seguridad:100,
 descanso:100,
 
 
+
 estres:0,
 
 
@@ -168,7 +177,8 @@ estado:"estable",
 
 
 
-ultima_actualizacion:null
+ultima_actualizacion:
+new Date().toISOString()
 
 
 
@@ -186,6 +196,8 @@ nueva
 
 
 
+
+
 guardarArchivo(
 
 "../datos/necesidades.json",
@@ -193,6 +205,9 @@ guardarArchivo(
 datos
 
 );
+
+
+
 
 
 
@@ -220,6 +235,7 @@ ciclo=1
 ){
 
 
+
 const necesidad =
 obtenerNecesidades(
 habitante_id
@@ -238,17 +254,22 @@ return null;
 
 
 
-const almas =
-cargarArchivo("../datos/almas.json");
+const datosAlmas =
+cargarArchivo(
+"../datos/almas.json"
+);
+
 
 
 
 const alma =
-almas?.almas.find(
+datosAlmas?.almas?.find(
 
-a=>a.id===habitante_id
+a=>
+a.id===habitante_id
 
 );
+
 
 
 
@@ -278,9 +299,11 @@ let consumo=1;
 
 
 
-// ===============================
-// ETAPA DE VIDA
-// ===============================
+
+
+// =================================
+// EFECTO DE EDAD
+// =================================
 
 
 switch(
@@ -298,6 +321,7 @@ break;
 
 
 
+
 case "niño":
 
 consumo=0.8;
@@ -305,6 +329,7 @@ consumo=0.8;
 necesidad.diversion-=0.5*ciclo;
 
 break;
+
 
 
 
@@ -318,11 +343,13 @@ break;
 
 
 
+
 case "adulto":
 
 consumo=1.2;
 
 break;
+
 
 
 
@@ -335,7 +362,6 @@ necesidad.descanso-=1*ciclo;
 break;
 
 
-
 }
 
 
@@ -344,9 +370,10 @@ break;
 
 
 
-// ===============================
-// PROFESIÓN
-// ===============================
+
+// =================================
+// EFECTO PROFESIÓN
+// =================================
 
 
 if(
@@ -356,6 +383,9 @@ alma.profesion.nombre!=="ninguna"
 
 
 consumo+=0.3;
+
+
+necesidad.energia-=1*ciclo;
 
 
 necesidad.estres+=1*ciclo;
@@ -370,15 +400,13 @@ necesidad.estres+=1*ciclo;
 
 
 
-// ===============================
-// PERSONALIDAD
-// ===============================
+// =================================
+// RASGOS DE PERSONALIDAD
+// =================================
 
 
 if(
-alma.rasgos
-&&
-alma.rasgos.includes("activo")
+alma.rasgos?.includes("activo")
 ){
 
 
@@ -388,10 +416,9 @@ necesidad.diversion-=0.5*ciclo;
 }
 
 
+
 if(
-alma.rasgos
-&&
-alma.rasgos.includes("social")
+alma.rasgos?.includes("social")
 ){
 
 
@@ -402,80 +429,87 @@ necesidad.social-=0.5*ciclo;
 
 
 
+if(
+alma.rasgos?.includes("tranquilo")
+){
 
-
-
-
-
-// ===============================
-// CONSUMO NORMAL
-// ===============================
-
-
-necesidad.hambre-=
-
-2*ciclo*consumo;
-
-
-
-necesidad.energia-=
-
-1*ciclo*consumo;
-
-
-
-necesidad.higiene-=
-
-1*ciclo;
-
-
-
-necesidad.diversion-=
-
-0.5*ciclo;
-
-
-
-necesidad.social-=
-
-0.5*ciclo;
-
-
-
-necesidad.descanso-=
-
-1*ciclo;
-
-
-
-
-
-
-
-// Recuperación natural
 
 necesidad.estres-=0.5*ciclo;
 
 
+}
 
 
 
 
 
-limitar(
+
+
+
+
+// =================================
+// CONSUMO NORMAL
+// =================================
+
+
+necesidad.hambre -=
+2*ciclo*consumo;
+
+
+
+necesidad.energia -=
+1*ciclo*consumo;
+
+
+
+necesidad.higiene -=
+1*ciclo;
+
+
+
+necesidad.diversion -=
+0.5*ciclo;
+
+
+
+necesidad.social -=
+0.5*ciclo;
+
+
+
+necesidad.descanso -=
+1*ciclo;
+
+
+
+
+
+necesidad.estres -=
+0.5*ciclo;
+
+
+
+
+
+
+
+
+limitarValores(
 necesidad
 );
 
 
 
 
-revisarEstados(
+
+analizarNecesidades(
 
 habitante_id,
 
 necesidad
 
 );
+
 
 
 
@@ -489,7 +523,6 @@ necesidad
 
 
 necesidad.ultima_actualizacion =
-
 new Date().toISOString();
 
 
@@ -497,7 +530,12 @@ new Date().toISOString();
 
 
 
-guardarNecesidades();
+guardarNecesidades(
+necesidad
+);
+
+
+
 
 
 
@@ -515,27 +553,30 @@ return necesidad;
 
 
 // =================================
-// ESTADOS CRÍTICOS
+// ANALIZAR NECESIDADES
 // =================================
 
-
-function revisarEstados(
+function analizarNecesidades(
 habitante_id,
 n
 ){
 
 
 
-if(
-n.hambre<20
-){
+if(n.hambre < 20){
 
 
 crearEvento(
 
 "hambre_critica",
 
-[habitante_id]
+[habitante_id],
+
+{
+
+nivel:n.hambre
+
+}
 
 );
 
@@ -560,10 +601,23 @@ habitante_id,
 
 
 
+if(n.energia < 20){
 
-if(
-n.energia<20
-){
+
+crearEvento(
+
+"energia_baja",
+
+[habitante_id],
+
+{
+
+nivel:n.energia
+
+}
+
+);
+
 
 
 cambiarEmocion(
@@ -585,10 +639,17 @@ habitante_id,
 
 
 
+if(n.social < 20){
 
-if(
-n.social<20
-){
+
+crearEvento(
+
+"soledad",
+
+[habitante_id]
+
+);
+
 
 
 cambiarEmocion(
@@ -599,7 +660,7 @@ habitante_id,
 
 5,
 
-"aislamiento"
+"falta de interacción social"
 
 );
 
@@ -610,9 +671,7 @@ habitante_id,
 
 
 
-if(
-n.carino<20
-){
+if(n.carino < 20){
 
 
 cambiarEmocion(
@@ -631,11 +690,54 @@ habitante_id,
 }
 
 
+
+
+
+if(n.diversion < 20){
+
+
+cambiarEmocion(
+
+habitante_id,
+
+"aburrimiento",
+
+4,
+
+"falta de diversión"
+
+);
+
+
 }
 
 
 
 
+
+if(n.seguridad < 20){
+
+
+cambiarEmocion(
+
+habitante_id,
+
+"miedo",
+
+5,
+
+"falta de seguridad"
+
+);
+
+
+}
+
+
+
+
+
+}
 
 
 
@@ -650,6 +752,7 @@ function satisfacerNecesidad(
 habitante_id,
 tipo
 ){
+
 
 
 const necesidad =
@@ -669,79 +772,107 @@ return null;
 
 
 
+let mensaje="";
+
+
+
+
+
 switch(tipo){
 
 
 
 case "comida":
 
+
 necesidad.hambre=100;
 
+
+mensaje="Comió y recuperó energía.";
+
 break;
+
+
 
 
 
 case "dormir":
 
+
 necesidad.energia=100;
+
 
 necesidad.descanso=100;
 
+
+mensaje="Descansó correctamente.";
+
 break;
+
+
+
+
+
+case "baño":
+
+
+necesidad.higiene=100;
+
+
+mensaje="Mejoró su higiene.";
+
+break;
+
+
 
 
 
 case "familia":
 
+
 necesidad.social=100;
+
 
 necesidad.carino=100;
 
+
+mensaje="Pasó tiempo con sus seres queridos.";
+
 break;
 
 
 
-case "diversion":
+
+
+case "jugar":
+
 
 necesidad.diversion=100;
 
+
+mensaje="Disfrutó una actividad divertida.";
+
 break;
+
+
 
 
 
 case "seguridad":
 
+
 necesidad.seguridad=100;
+
+
+mensaje="Se siente protegido.";
 
 break;
 
 
 
-}
 
 
-
-
-
-
-crearMemoria(
-
-habitante_id,
-
-"necesidad",
-
-"Recuperó necesidad: "+tipo,
-
-"baja"
-
-);
-
-
-
-
-
-guardarNecesidades();
-
+default:
 
 
 return necesidad;
@@ -755,173 +886,52 @@ return necesidad;
 
 
 
+crearMemoria(
 
+habitante_id,
 
-// =================================
-// LIMITAR VALORES
-// =================================
+"necesidad",
 
+mensaje,
 
-function limitar(
-obj
-){
-
-
-Object.keys(obj)
-
-.forEach(
-
-key=>{
-
-
-if(
-typeof obj[key]==="number"
-){
-
-
-obj[key]=Math.max(
-
-0,
-
-Math.min(
-
-100,
-
-obj[key]
-
-)
+"baja"
 
 );
 
 
-}
 
+
+
+
+crearEvento(
+
+"necesidad_satisfecha",
+
+[habitante_id],
+
+{
+
+tipo
 
 }
 
 );
 
 
-}
 
 
 
 
 
 
-
-
-
-// =================================
-// ESTADO GENERAL
-// =================================
-
-
-function actualizarEstado(
-n
-){
-
-
-
-const promedio=
-
-(
-
-n.hambre+
-
-n.energia+
-
-n.higiene+
-
-n.diversion+
-
-n.social+
-
-n.seguridad
-
-)/6;
-
-
-
-
-
-if(promedio>=80)
-
-n.estado="feliz";
-
-
-else if(promedio>=50)
-
-n.estado="normal";
-
-
-else if(promedio>=25)
-
-n.estado="preocupado";
-
-
-else
-
-n.estado="critico";
-
-
-
-return n;
-
-
-}
-
-
-
-
-
-
-
-
-
-// =================================
-// GUARDAR
-// =================================
-
-
-function guardarNecesidades(){
-
-
-const datos =
-cargarArchivo("../datos/necesidades.json");
-
-
-
-guardarArchivo(
-
-"../datos/necesidades.json",
-
-datos
-
+guardarNecesidades(
+necesidad
 );
 
 
-}
 
 
 
 
 
-
-
-
-module.exports={
-
-
-obtenerNecesidades,
-
-crearNecesidades,
-
-actualizarNecesidades,
-
-satisfacerNecesidad,
-
-actualizarEstado
-
-
-};
+return
