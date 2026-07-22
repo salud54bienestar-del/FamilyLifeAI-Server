@@ -1,4 +1,4 @@
-// Sistema del mundo de Village Soul
+// Sistema avanzado del mundo - Village Soul
 
 
 const cargarArchivo =
@@ -11,6 +11,14 @@ require("./guardador_datos.js");
 
 const crearEvento =
 require("./eventos.js");
+
+
+const registrarHistoria =
+require("./historia.js")
+.registrarHistoria;
+
+
+
 
 
 
@@ -40,10 +48,36 @@ function obtenerMundo(){
 
 
 
+    // Protección de datos faltantes
+
+    if(!datos.lugares){
+
+        datos.lugares=[];
+
+    }
+
+
+    if(!datos.recursos){
+
+        datos.recursos={};
+
+    }
+
+
+    if(!datos.poblacion){
+
+        datos.poblacion=0;
+
+    }
+
+
+
     return datos;
 
 
 }
+
+
 
 
 
@@ -59,6 +93,7 @@ function guardarMundo(
     mundo
 ){
 
+
     guardarArchivo(
 
         "../datos/mundo.json",
@@ -67,7 +102,10 @@ function guardarMundo(
 
     );
 
+
 }
+
+
 
 
 
@@ -95,7 +133,11 @@ function avanzarDia(){
 
 
 
+
     mundo.dia_actual++;
+
+
+
 
 
 
@@ -105,9 +147,12 @@ function avanzarDia(){
 
 
 
+
+
+
     crearEvento(
 
-        2,
+        "nuevo_dia",
 
         [],
 
@@ -122,10 +167,15 @@ function avanzarDia(){
 
 
 
+
+
+
     return mundo;
 
 
 }
+
+
 
 
 
@@ -155,14 +205,60 @@ function cambiarEstacion(
 
 
 
+
+
+    const anterior =
+    mundo.estacion;
+
+
+
     mundo.estacion =
     estacion;
+
 
 
 
     guardarMundo(
         mundo
     );
+
+
+
+
+
+    crearEvento(
+
+        "cambio_estacion",
+
+        [],
+
+        {
+
+            anterior,
+
+            nueva:
+            estacion
+
+        }
+
+    );
+
+
+
+
+
+    registrarHistoria(
+
+        "Cambio de estación",
+
+        "El mundo pasó a la estación de " + estacion,
+
+        "general"
+
+    );
+
+
+
 
 
 
@@ -177,8 +273,10 @@ function cambiarEstacion(
 
 
 
+
+
 // =================================
-// CAMBIAR ESTADO DEL MUNDO
+// CAMBIAR ESTADO
 // =================================
 
 function cambiarEstado(
@@ -199,6 +297,8 @@ function cambiarEstado(
 
 
 
+
+
     mundo.estado =
     estado;
 
@@ -210,10 +310,14 @@ function cambiarEstado(
 
 
 
+
+
     return mundo;
 
 
 }
+
+
 
 
 
@@ -244,25 +348,42 @@ function agregarLugar(
 
 
 
+
+
+
     const nuevoId =
+
 
     mundo.lugares.length > 0
 
+
     ?
 
+
     Math.max(
+
         ...mundo.lugares.map(
+
             l=>l.id
+
         )
+
     ) + 1
 
+
     :
+
 
     1;
 
 
 
-    const lugar = {
+
+
+
+
+
+    const lugar={
 
 
         id:nuevoId,
@@ -274,10 +395,21 @@ function agregarLugar(
         tipo,
 
 
-        descubierto:false
+
+        descubierto:false,
+
+
+
+        habitantes:[]
+
 
 
     };
+
+
+
+
+
 
 
 
@@ -287,9 +419,14 @@ function agregarLugar(
 
 
 
+
+
     guardarMundo(
         mundo
     );
+
+
+
 
 
 
@@ -297,6 +434,162 @@ function agregarLugar(
 
 
 }
+
+
+
+
+
+
+
+
+
+// =================================
+// DESCUBRIR LUGAR
+// =================================
+
+function descubrirLugar(
+    id
+){
+
+
+    const mundo =
+    obtenerMundo();
+
+
+
+    const lugar =
+    mundo.lugares.find(
+
+        l=>l.id===id
+
+    );
+
+
+
+    if(!lugar){
+
+        return null;
+
+    }
+
+
+
+
+
+    lugar.descubierto=true;
+
+
+
+
+    guardarMundo(
+        mundo
+    );
+
+
+
+
+
+    crearEvento(
+
+        "descubrimiento",
+
+        [],
+
+        {
+
+            lugar:
+            lugar.nombre
+
+        }
+
+    );
+
+
+
+
+
+    registrarHistoria(
+
+        "Nuevo descubrimiento",
+
+        "Fue descubierto el lugar " +
+        lugar.nombre,
+
+        "descubrimiento"
+
+    );
+
+
+
+
+
+    return lugar;
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// ACTUALIZAR POBLACIÓN
+// =================================
+
+function actualizarPoblacion(
+cantidad
+){
+
+
+
+    const mundo =
+    obtenerMundo();
+
+
+
+    if(!mundo){
+
+        return null;
+
+    }
+
+
+
+
+
+    mundo.poblacion += cantidad;
+
+
+
+    if(
+        mundo.poblacion < 0
+    ){
+
+        mundo.poblacion=0;
+
+    }
+
+
+
+
+    guardarMundo(
+        mundo
+    );
+
+
+
+
+
+    return mundo.poblacion;
+
+
+}
+
+
 
 
 
@@ -327,22 +620,9 @@ function modificarRecurso(
 
 
 
-    if(
-        mundo.recursos[recurso] === undefined
-    ){
-
-        return null;
-
-    }
-
-
-
-    mundo.recursos[recurso] += cantidad;
-
-
 
     if(
-        mundo.recursos[recurso] < 0
+        mundo.recursos[recurso]===undefined
     ){
 
         mundo.recursos[recurso]=0;
@@ -351,9 +631,32 @@ function modificarRecurso(
 
 
 
+
+
+
+    mundo.recursos[recurso]+=cantidad;
+
+
+
+
+
+    if(
+        mundo.recursos[recurso]<0
+    ){
+
+        mundo.recursos[recurso]=0;
+
+    }
+
+
+
+
+
     guardarMundo(
         mundo
     );
+
+
 
 
 
@@ -368,10 +671,75 @@ function modificarRecurso(
 
 
 
-module.exports = {
+
+
+// =================================
+// OBTENER INFORMACIÓN COMPLETA
+// =================================
+
+function obtenerResumenMundo(){
+
+
+    const mundo =
+    obtenerMundo();
+
+
+
+    if(!mundo){
+
+        return null;
+
+    }
+
+
+
+
+
+    return {
+
+
+        nombre:
+        mundo.nombre,
+
+
+        día:
+        mundo.dia_actual,
+
+
+        estación:
+        mundo.estacion,
+
+
+        población:
+        mundo.poblacion,
+
+
+        estado:
+        mundo.estado,
+
+
+        lugares:
+        mundo.lugares.length
+
+
+    };
+
+
+}
+
+
+
+
+
+
+
+
+module.exports={
 
 
     obtenerMundo,
+
+    guardarMundo,
 
     avanzarDia,
 
@@ -381,7 +749,13 @@ module.exports = {
 
     agregarLugar,
 
-    modificarRecurso
+    descubrirLugar,
+
+    actualizarPoblacion,
+
+    modificarRecurso,
+
+    obtenerResumenMundo
 
 
 };
