@@ -12,13 +12,52 @@ const path = require("path");
 
 
 // =================================
+// OBTENER RUTA
+// =================================
+
+
+function obtenerRuta(nombre){
+
+
+    nombre = nombre.replace(
+
+        /^(\.\.\/|\.\/)+/,
+
+        ""
+
+    );
+
+
+
+    return path.join(
+
+        __dirname,
+
+        "..",
+
+        nombre
+
+    );
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
 // GUARDAR ARCHIVO JSON
 // =================================
 
 
 function guardarArchivo(
-    nombre,
-    datos
+nombre,
+datos
 ){
 
 
@@ -29,13 +68,17 @@ function guardarArchivo(
 
         if(!nombre){
 
+
             console.log(
                 "Nombre inválido."
             );
 
+
             return false;
 
+
         }
+
 
 
 
@@ -43,29 +86,21 @@ function guardarArchivo(
 
         if(datos === undefined){
 
+
             console.log(
+
                 "Datos inválidos:",
+
                 nombre
+
             );
+
 
             return false;
 
+
         }
 
-
-
-
-
-
-
-        nombre =
-        nombre.replace(
-
-            /^(\.\.\/|\.\/)+/,
-
-            ""
-
-        );
 
 
 
@@ -74,15 +109,8 @@ function guardarArchivo(
 
 
         const rutaCompleta =
-        path.join(
 
-            __dirname,
-
-            "..",
-
-            nombre
-
-        );
+        obtenerRuta(nombre);
 
 
 
@@ -92,6 +120,7 @@ function guardarArchivo(
 
 
         const carpeta =
+
         path.dirname(
             rutaCompleta
         );
@@ -125,6 +154,7 @@ function guardarArchivo(
 
 
 
+
         const contenido =
 
         JSON.stringify(
@@ -133,7 +163,7 @@ function guardarArchivo(
 
             null,
 
-            2
+            4
 
         );
 
@@ -143,15 +173,13 @@ function guardarArchivo(
 
 
 
-
-
-        // Guardado seguro temporal
-
-
         const temporal =
 
         rutaCompleta +
+
         ".temp";
+
+
 
 
 
@@ -166,6 +194,7 @@ function guardarArchivo(
             "utf8"
 
         );
+
 
 
 
@@ -186,36 +215,20 @@ function guardarArchivo(
 
 
 
-
         return true;
 
 
 
     }
 
+
     catch(error){
 
 
 
         console.log(
-            "==============================="
-        );
 
-
-        console.log(
-            " ERROR GUARDANDO DATOS "
-        );
-
-
-        console.log(
-            "==============================="
-        );
-
-
-
-        console.log(
-
-            "Archivo:",
+            "ERROR GUARDANDO:",
 
             nombre
 
@@ -224,8 +237,6 @@ function guardarArchivo(
 
 
         console.log(
-
-            "Error:",
 
             error.message
 
@@ -248,40 +259,27 @@ function guardarArchivo(
 
 
 
+
 // =================================
-// CREAR COPIA DE SEGURIDAD
+// BACKUP
 // =================================
 
 
-function crearBackup(nombre){
+function crearBackup(
+nombre
+){
 
 
 
     try{
 
 
-
-        nombre =
-        nombre.replace(
-
-            /^(\.\.\/|\.\/)+/,
-
-            ""
-
-        );
-
-
-
         const origen =
-        path.join(
 
-            __dirname,
+        obtenerRuta(nombre);
 
-            "..",
 
-            nombre
 
-        );
 
 
 
@@ -295,11 +293,42 @@ function crearBackup(nombre){
 
 
 
+
+
+
+        const fecha =
+
+        new Date()
+
+        .toISOString()
+
+        .replace(
+
+            /:/g,
+
+            "-"
+
+        )
+
+        .split(".")[0];
+
+
+
+
+
+
+
         const copia =
 
         origen +
 
-        ".backup";
+        ".backup_" +
+
+        fecha;
+
+
+
+
 
 
 
@@ -315,13 +344,28 @@ function crearBackup(nombre){
 
 
 
+
+
+
         return true;
 
 
 
     }
 
+
     catch(error){
+
+
+
+        console.log(
+
+            "Error creando backup:",
+
+            error.message
+
+        );
+
 
 
         return false;
@@ -339,13 +383,52 @@ function crearBackup(nombre){
 
 
 
+
+// =================================
+// GUARDADO SEGURO IMPORTANTE
+// =================================
+
+
+function guardarConBackup(
+nombre,
+datos
+){
+
+
+
+    crearBackup(nombre);
+
+
+
+    return guardarArchivo(
+
+        nombre,
+
+        datos
+
+    );
+
+
+}
+
+
+
+
+
+
+
+
 module.exports={
 
 
     guardarArchivo,
 
 
-    crearBackup
+    crearBackup,
+
+
+    guardarConBackup
+
 
 
 };
