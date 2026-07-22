@@ -13,6 +13,10 @@ const crearMemoria =
 require("./memorias.js");
 
 
+const crearEvento =
+require("./eventos.js");
+
+
 const {
 crearNecesidades
 }
@@ -58,9 +62,13 @@ require("./etapas.js");
 
 
 
+
+
+
 // =================================
 // OBTENER ALMA
 // =================================
+
 
 function obtenerAlma(id){
 
@@ -69,11 +77,13 @@ const datos =
 cargarArchivo("../datos/almas.json");
 
 
+
 if(!datos || !datos.almas){
 
 return null;
 
 }
+
 
 
 return datos.almas.find(
@@ -92,17 +102,21 @@ a=>a.id===id
 
 
 
+
 // =================================
 // CREAR ALMA
 // =================================
+
 
 function crearAlma(
 datosNueva={}
 ){
 
 
+
 const datos =
 cargarArchivo("../datos/almas.json");
+
 
 
 if(!datos){
@@ -123,16 +137,44 @@ datos.almas=[];
 
 
 
+// evitar duplicados
+
+const existente =
+
+datos.almas.find(
+
+a=>a.nombre===datosNueva.nombre
+
+);
+
+
+
+if(existente){
+
+return existente;
+
+}
+
+
+
+
+
+
+
 const id =
 
-datos.almas.length>0
+datos.almas.length
 
 ?
 
 Math.max(
+
 ...datos.almas.map(
+
 a=>a.id
+
 )
+
 )+1
 
 :
@@ -143,9 +185,10 @@ a=>a.id
 
 
 
+
+
 const edad =
 datosNueva.edad || 0;
-
 
 
 
@@ -158,7 +201,10 @@ edad
 
 
 
+
+
 const alma={
+
 
 
 id,
@@ -174,6 +220,7 @@ datosNueva.sexo || "desconocido",
 
 
 
+
 edad,
 
 
@@ -183,8 +230,25 @@ etapa.nombre || etapa,
 
 
 
+
 personalidad:
-datosNueva.personalidad || null,
+
+
+datosNueva.personalidad || {
+
+
+tipo:"neutral",
+
+temperamento:"equilibrado",
+
+valores:[],
+
+miedos:[],
+
+sueños:[]
+
+},
+
 
 
 
@@ -193,8 +257,9 @@ datosNueva.rasgos || [],
 
 
 
-gustos:
 
+
+gustos:
 
 datosNueva.gustos || {
 
@@ -205,9 +270,13 @@ animales:[],
 
 colores:[],
 
-actividades:[]
+actividades:[],
+
+hobbies:[]
 
 },
+
+
 
 
 
@@ -219,7 +288,9 @@ social:0,
 
 trabajo:0,
 
-creatividad:0
+creatividad:0,
+
+aprendizaje:0
 
 },
 
@@ -247,8 +318,10 @@ estado:"inactivo"
 familia:null,
 
 
+
 padres:
 datosNueva.padres || [],
+
 
 
 
@@ -274,7 +347,6 @@ datosNueva.origen ||
 
 historia:[
 
-
 {
 
 evento:"nacimiento",
@@ -282,7 +354,6 @@ evento:"nacimiento",
 fecha:new Date().toISOString()
 
 }
-
 
 ],
 
@@ -320,43 +391,29 @@ datos
 
 
 
-// Crear sistemas internos
+
+
+// Crear sistemas relacionados
 
 
 crearNecesidades(
-
 id,
-
 alma.etapa_vida
-
 );
 
 
-
-crearEmocion(
-id
-);
+crearEmocion(id);
 
 
-
-crearUbicaciones(
-id
-);
+crearUbicaciones(id);
 
 
-
-crearMovimiento(
-id
-);
-
+crearMovimiento(id);
 
 
 crearRutina(
-
 id,
-
 alma.etapa_vida
-
 );
 
 
@@ -380,6 +437,29 @@ id,
 
 
 
+crearEvento(
+
+"nacimiento_alma",
+
+[id],
+
+{
+
+nombre:
+alma.nombre,
+
+etapa:
+alma.etapa_vida
+
+}
+
+);
+
+
+
+
+
+
 
 return alma;
 
@@ -398,20 +478,16 @@ return alma;
 // OBJETIVOS
 // =================================
 
-function obtenerObjetivosIniciales(
-edad
-){
+
+function obtenerObjetivosIniciales(edad){
 
 
 const etapa =
-obtenerEtapaPorEdad(
-edad
-);
+obtenerEtapaPorEdad(edad);
 
 
 
 switch(etapa.nombre){
-
 
 
 case "bebe":
@@ -423,7 +499,6 @@ return [
 "crear vínculos"
 
 ];
-
 
 
 case "niño":
@@ -439,19 +514,17 @@ return [
 ];
 
 
-
 case "adolescente":
 
 return [
 
-"desarrollar habilidades",
-
 "crear identidad",
 
-"formar amistades"
+"desarrollar habilidades",
+
+"crear amistades"
 
 ];
-
 
 
 case "adulto":
@@ -460,12 +533,11 @@ return [
 
 "trabajar",
 
-"crear vínculos",
+"crear hogar",
 
 "formar familia"
 
 ];
-
 
 
 case "adulto_mayor":
@@ -476,7 +548,7 @@ return [
 
 "aconsejar",
 
-"transmitir conocimiento"
+"dejar legado"
 
 ];
 
@@ -484,7 +556,6 @@ return [
 default:
 
 return [];
-
 
 }
 
@@ -502,6 +573,7 @@ return [];
 // =================================
 // AUMENTAR EDAD
 // =================================
+
 
 function aumentarEdad(id){
 
@@ -521,9 +593,23 @@ return null;
 
 
 
-cumplirAño(
-alma
+cumplirAño(alma);
+
+
+
+
+
+
+
+alma.objetivos =
+
+obtenerObjetivosIniciales(
+
+alma.edad
+
 );
+
+
 
 
 
@@ -569,13 +655,15 @@ return alma;
 
 
 // =================================
-// ACTUALIZAR ALMA
+// ACTUALIZAR
 // =================================
+
 
 function actualizarAlma(
 id,
 cambios
 ){
+
 
 
 const datos =
@@ -591,7 +679,6 @@ return null;
 
 
 
-
 const index =
 
 datos.almas.findIndex(
@@ -602,14 +689,11 @@ a=>a.id===id
 
 
 
-
-
 if(index===-1){
 
 return null;
 
 }
-
 
 
 
@@ -650,10 +734,6 @@ return datos.almas[index];
 
 
 
-
-// =================================
-// LISTAR ALMAS
-// =================================
 
 function listarAlmas(){
 
