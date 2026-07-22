@@ -1,14 +1,24 @@
 // Servidor principal - Village Soul Engine
 
 
+const {
+    iniciarSoulEngine
+}
+=
+require("./soul_engine.js");
+
+
+
 const iniciarMundo =
 require("./sistemas/nucleo_mundo.js")
 .iniciarMundo;
 
 
+
 const ejecutarCiclo =
 require("./sistemas/ciclo_mundo.js")
 .ejecutarCiclo;
+
 
 
 const obtenerResumenMundo =
@@ -25,13 +35,14 @@ require("./sistemas/cargador_datos.js");
 
 
 
-
 // =================================
 // CONFIGURACIÓN
 // =================================
 
-const INTERVALO_CICLO = 1000; 
-// 1 segundo real = ejecución del motor
+
+const INTERVALO_CICLO = 1000;
+
+
 
 
 
@@ -43,7 +54,9 @@ const INTERVALO_CICLO = 1000;
 // INICIAR SERVIDOR
 // =================================
 
+
 function iniciarServidor(){
+
 
 
     console.log("");
@@ -58,6 +71,25 @@ function iniciarServidor(){
 
 
 
+
+
+    console.log(
+        "Iniciando Soul Engine..."
+    );
+
+
+
+    iniciarSoulEngine();
+
+
+
+
+
+
+
+    console.log(
+        "Iniciando mundo..."
+    );
 
 
 
@@ -95,13 +127,16 @@ function iniciarServidor(){
 
 
 
+
     iniciarCicloAutomatico();
 
 
 
 
 
+
     return mundo;
+
 
 
 }
@@ -118,6 +153,7 @@ function iniciarServidor(){
 // CICLO AUTOMÁTICO
 // =================================
 
+
 function iniciarCicloAutomatico(){
 
 
@@ -125,6 +161,7 @@ function iniciarCicloAutomatico(){
     console.log(
         "Ciclo automático activado."
     );
+
 
 
 
@@ -149,9 +186,8 @@ function iniciarCicloAutomatico(){
 
                     console.log(
 
-                        "Ciclo completado:",
-
-                        resultado.tiempo
+                        "Ciclo:",
+                        resultado
 
                     );
 
@@ -178,6 +214,7 @@ function iniciarCicloAutomatico(){
 
 
 
+
         },
 
 
@@ -198,8 +235,9 @@ function iniciarCicloAutomatico(){
 
 
 // =================================
-// ESTADO DEL SERVIDOR
+// ESTADO SERVIDOR
 // =================================
+
 
 function estadoServidor(){
 
@@ -211,14 +249,17 @@ function estadoServidor(){
         activo:true,
 
 
+
         mundo:
         obtenerResumenMundo(),
 
 
-        sistemas:
+
+
+        nucleo:
 
         cargarArchivo(
-            "./datos/nucleo_mundo.json"
+            "datos/nucleo_mundo.json"
         )
 
 
@@ -234,11 +275,6 @@ function estadoServidor(){
 
 
 
-
-
-// =================================
-// EJECUCIÓN DIRECTA
-// =================================
 
 
 if(
@@ -261,6 +297,7 @@ module.exports={
 
 
     iniciarServidor,
+
 
     estadoServidor
 
