@@ -19,16 +19,14 @@ require("./memorias.js");
 
 
 
-
-
 // =================================
-// OBTENER UBICACIÓN DEL HABITANTE
+// OBTENER UBICACIÓN
 // =================================
+
 
 function obtenerUbicacion(
-    habitante_id
+habitante_id
 ){
-
 
     const datos =
     cargarArchivo("../datos/ubicaciones.json");
@@ -37,6 +35,13 @@ function obtenerUbicacion(
     if(!datos){
 
         return null;
+
+    }
+
+
+    if(!datos.ubicaciones){
+
+        datos.ubicaciones=[];
 
     }
 
@@ -55,16 +60,34 @@ function obtenerUbicacion(
 
 
 
+// Compatibilidad con otros sistemas
 
-
-// =================================
-// CREAR MEMORIA ESPACIAL
-// =================================
-
-function crearUbicacion(
-    habitante_id
+function obtenerUbicaciones(
+habitante_id
 ){
 
+    return obtenerUbicacion(
+        habitante_id
+    );
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// CREAR UBICACIÓN
+// =================================
+
+
+function crearUbicacion(
+habitante_id
+){
 
     const datos =
     cargarArchivo("../datos/ubicaciones.json");
@@ -75,6 +98,15 @@ function crearUbicacion(
         return null;
 
     }
+
+
+
+    if(!datos.ubicaciones){
+
+        datos.ubicaciones=[];
+
+    }
+
 
 
 
@@ -94,14 +126,11 @@ function crearUbicacion(
 
 
 
-
     const ubicacion={
 
 
         id:
-
         datos.ubicaciones.length + 1,
-
 
 
         habitante_id,
@@ -111,9 +140,7 @@ function crearUbicacion(
         hogar:null,
 
 
-
         trabajo:null,
-
 
 
         escuela:null,
@@ -121,6 +148,10 @@ function crearUbicacion(
 
 
         lugares_favoritos:[],
+
+
+
+        lugares_visitados:[],
 
 
 
@@ -136,8 +167,12 @@ function crearUbicacion(
 
 
 
-        ultima_actualizacion:null
+        ultima_posicion:null,
 
+
+
+        ultima_actualizacion:
+        new Date().toISOString()
 
 
     };
@@ -164,14 +199,13 @@ function crearUbicacion(
 
 
 
-
     crearMemoria(
 
         habitante_id,
 
         "ubicacion",
 
-        "Registró su memoria espacial.",
+        "Creó su memoria espacial.",
 
         "baja"
 
@@ -179,9 +213,25 @@ function crearUbicacion(
 
 
 
-
     return ubicacion;
 
+}
+
+
+
+
+
+
+
+// Alias para evitar errores
+
+function crearUbicaciones(
+habitante_id
+){
+
+    return crearUbicacion(
+        habitante_id
+    );
 
 }
 
@@ -197,40 +247,45 @@ function crearUbicacion(
 // ESTABLECER HOGAR
 // =================================
 
+
 function establecerHogar(
-    habitante_id,
-    posicion
+habitante_id,
+posicion
 ){
 
 
-    const ubicacion =
+    let ubicacion =
     obtenerUbicacion(
         habitante_id
     );
 
 
+
     if(!ubicacion){
 
-        return null;
+        ubicacion =
+        crearUbicacion(
+            habitante_id
+        );
 
     }
+
 
 
 
     ubicacion.hogar={
 
 
-        x:posicion.x,
+        x:posicion.x || 0,
 
-        y:posicion.y,
+        y:posicion.y || 0,
 
-        z:posicion.z,
+        z:posicion.z || 0,
 
 
         nombre:
         posicion.nombre ||
         "hogar"
-
 
 
     };
@@ -261,6 +316,20 @@ function establecerHogar(
 
 
 
+    crearMemoria(
+
+        habitante_id,
+
+        "hogar",
+
+        "Registró su nuevo hogar.",
+
+        "media"
+
+    );
+
+
+
     return ubicacion.hogar;
 
 
@@ -278,21 +347,26 @@ function establecerHogar(
 // ESTABLECER TRABAJO
 // =================================
 
+
 function establecerTrabajo(
-    habitante_id,
-    trabajo
+habitante_id,
+trabajo
 ){
 
 
-    const ubicacion =
+    let ubicacion =
     obtenerUbicacion(
         habitante_id
     );
 
 
+
     if(!ubicacion){
 
-        return null;
+        ubicacion =
+        crearUbicacion(
+            habitante_id
+        );
 
     }
 
@@ -307,20 +381,20 @@ function establecerTrabajo(
 
 
         nombre:
-        trabajo.nombre,
+        trabajo.nombre ||
+        "trabajo",
 
 
         x:
-        trabajo.x,
+        trabajo.x || 0,
 
 
         y:
-        trabajo.y,
+        trabajo.y || 0,
 
 
         z:
-        trabajo.z
-
+        trabajo.z || 0
 
 
     };
@@ -345,36 +419,45 @@ function establecerTrabajo(
 
 
 
+
 // =================================
 // ESTABLECER ESCUELA
 // =================================
 
+
 function establecerEscuela(
-    habitante_id,
-    escuela
+habitante_id,
+escuela
 ){
 
 
-    const ubicacion =
+    let ubicacion =
     obtenerUbicacion(
         habitante_id
     );
 
 
+
     if(!ubicacion){
 
-        return null;
+        ubicacion =
+        crearUbicacion(
+            habitante_id
+        );
 
     }
 
 
 
-    ubicacion.escuela=escuela;
+    ubicacion.escuela=
+    escuela;
+
 
 
     actualizar(
         ubicacion
     );
+
 
 
     return escuela;
@@ -391,12 +474,13 @@ function establecerEscuela(
 
 
 // =================================
-// AGREGAR AMIGO
+// AMIGOS
 // =================================
 
+
 function agregarAmigo(
-    habitante_id,
-    amigo_id
+habitante_id,
+amigo_id
 ){
 
 
@@ -404,6 +488,7 @@ function agregarAmigo(
     obtenerUbicacion(
         habitante_id
     );
+
 
 
     if(!ubicacion){
@@ -415,11 +500,9 @@ function agregarAmigo(
 
 
     if(
-
         !ubicacion.amigos.includes(
             amigo_id
         )
-
     ){
 
         ubicacion.amigos.push(
@@ -450,13 +533,14 @@ function agregarAmigo(
 
 
 // =================================
-// AGREGAR FAMILIAR
+// FAMILIA
 // =================================
 
+
 function agregarFamiliar(
-    habitante_id,
-    familiar_id,
-    parentesco
+habitante_id,
+familiar_id,
+parentesco
 ){
 
 
@@ -464,6 +548,7 @@ function agregarFamiliar(
     obtenerUbicacion(
         habitante_id
     );
+
 
 
     if(!ubicacion){
@@ -474,13 +559,28 @@ function agregarFamiliar(
 
 
 
-    ubicacion.familiares.push({
 
-        habitante_id:familiar_id,
+    const existe =
+    ubicacion.familiares.find(
 
-        parentesco
+        f=>f.habitante_id===familiar_id
 
-    });
+    );
+
+
+
+    if(!existe){
+
+        ubicacion.familiares.push({
+
+            habitante_id:familiar_id,
+
+            parentesco
+
+        });
+
+    }
+
 
 
 
@@ -504,12 +604,13 @@ function agregarFamiliar(
 
 
 // =================================
-// BUSCAR DESTINO
+// DESTINOS
 // =================================
 
+
 function obtenerDestino(
-    habitante_id,
-    tipo
+habitante_id,
+tipo
 ){
 
 
@@ -528,33 +629,7 @@ function obtenerDestino(
 
 
 
-    switch(tipo){
-
-
-        case "hogar":
-
-            return ubicacion.hogar;
-
-
-
-        case "trabajo":
-
-            return ubicacion.trabajo;
-
-
-
-        case "escuela":
-
-            return ubicacion.escuela;
-
-
-
-        default:
-
-            return null;
-
-
-    }
+    return ubicacion[tipo] || null;
 
 
 }
@@ -571,8 +646,9 @@ function obtenerDestino(
 // ACTUALIZAR
 // =================================
 
+
 function actualizar(
-    ubicacion
+ubicacion
 ){
 
 
@@ -583,6 +659,14 @@ function actualizar(
 
     const datos =
     cargarArchivo("../datos/ubicaciones.json");
+
+
+
+    if(!datos.ubicaciones){
+
+        datos.ubicaciones=[];
+
+    }
 
 
 
@@ -600,7 +684,6 @@ function actualizar(
         datos.ubicaciones[index]=ubicacion;
 
     }
-
 
 
 
@@ -628,7 +711,13 @@ module.exports={
 
     obtenerUbicacion,
 
+    obtenerUbicaciones,
+
+
     crearUbicacion,
+
+    crearUbicaciones,
+
 
     establecerHogar,
 
@@ -636,9 +725,11 @@ module.exports={
 
     establecerEscuela,
 
+
     agregarAmigo,
 
     agregarFamiliar,
+
 
     obtenerDestino
 
