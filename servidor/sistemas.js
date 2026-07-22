@@ -1,159 +1,159 @@
 // Registro avanzado de sistemas - Village Soul
 
 
-
-const sistemas = [
-
+const sistemas = {
 
 
     // =========================
-    // NÚCLEO DEL MUNDO
+    // SISTEMAS ACTIVOS
     // =========================
 
 
-    "nucleo_mundo",
-
-    "mundo",
-
-    "tiempo",
-
-    "ciclo_mundo",
+    activos:[
 
 
+        "nucleo_mundo",
+
+        "mundo",
+
+        "tiempo",
+
+        "almas",
+
+        "ia_almas",
+
+        "personalidades",
+
+        "memorias",
+
+        "emociones",
+
+        "necesidades",
+
+        "relaciones",
+
+        "familias",
+
+        "etapas_vida",
+
+        "crecimiento",
+
+        "objetivos",
+
+        "decisiones",
+
+        "profesiones",
+
+        "lugares_trabajo",
+
+        "eventos",
+
+        "recursos"
 
 
-    // =========================
-    // ALMAS E INTELIGENCIA
-    // =========================
+    ],
 
-
-    "almas",
-
-    "ia_almas",
-
-    "personalidades",
-
-    "comportamiento",
-
-    "rutinas",
-
-
-
-
-    // =========================
-    // MEMORIA Y EMOCIONES
-    // =========================
-
-
-    "memorias",
-
-    "emociones",
-
-    "necesidades",
-
-
-
-
-    // =========================
-    // VIDA SOCIAL
-    // =========================
-
-
-    "relaciones",
-
-    "familias",
-
-    "etapas_vida",
-
-    "crecimiento",
 
 
 
 
     // =========================
-    // FAMILIA Y DESCENDENCIA
+    // SISTEMAS EN DESARROLLO
     // =========================
 
 
-    "embarazos",
-
-    "nacimientos",
-
-    "adopciones",
-
-    "matrimonios",
-
-    "divorcios",
-
-    "custodia",
+    desarrollo:[
 
 
+        "ciclo_mundo",
+
+        "comportamiento",
+
+        "rutinas",
+
+        "habilidades",
+
+        "embarazos",
+
+        "nacimientos",
+
+        "adopciones",
+
+        "matrimonios",
+
+        "divorcios",
+
+        "custodia",
+
+        "comunicacion",
+
+        "cultura",
+
+        "historia"
 
 
-    // =========================
-    // DESARROLLO PERSONAL
-    // =========================
+    ]
 
 
-    "objetivos",
-
-    "decisiones",
-
-    "habilidades",
-
-
-
-
-    // =========================
-    // VIDA LABORAL
-    // =========================
-
-
-    "profesiones",
-
-    "lugares_trabajo",
-
-
-
-
-    // =========================
-    // SOCIEDAD Y MUNDO
-    // =========================
-
-
-    "eventos",
-
-    "comunicacion",
-
-    "cultura",
-
-    "recursos",
-
-    "historia"
-
-];
-
+};
 
 
 
 
 
 console.log(
-    "Sistemas registrados:"
+"==============================="
+);
+
+
+console.log(
+"Sistemas Village Soul:"
+);
+
+
+console.log(
+"==============================="
 );
 
 
 
 
-sistemas.forEach(
 
-    sistema => {
+console.log(
+"ACTIVOS:"
+);
 
-        console.log(
-            "✓ " + sistema
-        );
 
-    }
+sistemas.activos.forEach(
+
+sistema=>{
+
+console.log(
+"✓ " + sistema
+);
+
+}
+
+);
+
+
+
+
+
+console.log(
+"EN DESARROLLO:"
+);
+
+
+sistemas.desarrollo.forEach(
+
+sistema=>{
+
+console.log(
+"○ " + sistema
+);
+
+}
 
 );
 
