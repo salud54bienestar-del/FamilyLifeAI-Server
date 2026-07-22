@@ -13,11 +13,27 @@ const crearEvento =
 require("./eventos.js");
 
 
-const registrarHistoria =
-require("./historia.js")
-.registrarHistoria;
 
 
+// Historia opcional
+
+let registrarHistoria = null;
+
+
+try{
+
+    registrarHistoria =
+    require("./historia.js")
+    .registrarHistoria;
+
+}
+catch(error){
+
+    console.log(
+        "Sistema de historia pendiente."
+    );
+
+}
 
 
 
@@ -32,7 +48,9 @@ function obtenerMundo(){
 
 
     const datos =
-    cargarArchivo("../datos/mundo.json");
+    cargarArchivo(
+        "datos/mundo.json"
+    );
 
 
 
@@ -48,7 +66,7 @@ function obtenerMundo(){
 
 
 
-    // Protección de datos faltantes
+
 
     if(!datos.lugares){
 
@@ -57,11 +75,13 @@ function obtenerMundo(){
     }
 
 
+
     if(!datos.recursos){
 
         datos.recursos={};
 
     }
+
 
 
     if(!datos.poblacion){
@@ -83,8 +103,6 @@ function obtenerMundo(){
 
 
 
-
-
 // =================================
 // GUARDAR MUNDO
 // =================================
@@ -94,9 +112,9 @@ function guardarMundo(
 ){
 
 
-    guardarArchivo(
+    return guardarArchivo(
 
-        "../datos/mundo.json",
+        "datos/mundo.json",
 
         mundo
 
@@ -104,8 +122,6 @@ function guardarMundo(
 
 
 }
-
-
 
 
 
@@ -133,9 +149,7 @@ function avanzarDia(){
 
 
 
-
     mundo.dia_actual++;
-
 
 
 
@@ -181,8 +195,6 @@ function avanzarDia(){
 
 
 
-
-
 // =================================
 // CAMBIAR ESTACIÓN
 // =================================
@@ -206,14 +218,15 @@ function cambiarEstacion(
 
 
 
-
     const anterior =
     mundo.estacion;
 
 
 
+
     mundo.estacion =
     estacion;
+
 
 
 
@@ -247,15 +260,20 @@ function cambiarEstacion(
 
 
 
-    registrarHistoria(
+    if(registrarHistoria){
 
-        "Cambio de estación",
 
-        "El mundo pasó a la estación de " + estacion,
+        registrarHistoria(
 
-        "general"
+            "Cambio de estación",
 
-    );
+            "El mundo cambió a " + estacion,
+
+            "general"
+
+        );
+
+    }
 
 
 
@@ -273,10 +291,8 @@ function cambiarEstacion(
 
 
 
-
-
 // =================================
-// CAMBIAR ESTADO
+// CAMBIAR ESTADO DEL MUNDO
 // =================================
 
 function cambiarEstado(
@@ -297,8 +313,6 @@ function cambiarEstado(
 
 
 
-
-
     mundo.estado =
     estado;
 
@@ -310,13 +324,10 @@ function cambiarEstado(
 
 
 
-
-
     return mundo;
 
 
 }
-
 
 
 
@@ -350,32 +361,23 @@ function agregarLugar(
 
 
 
-
     const nuevoId =
-
 
     mundo.lugares.length > 0
 
-
     ?
-
 
     Math.max(
 
         ...mundo.lugares.map(
-
             l=>l.id
-
         )
 
     ) + 1
 
-
     :
 
-
     1;
-
 
 
 
@@ -395,19 +397,13 @@ function agregarLugar(
         tipo,
 
 
-
         descubierto:false,
-
 
 
         habitantes:[]
 
 
-
     };
-
-
-
 
 
 
@@ -429,13 +425,10 @@ function agregarLugar(
 
 
 
-
     return lugar;
 
 
 }
-
-
 
 
 
@@ -457,6 +450,14 @@ function descubrirLugar(
 
 
 
+    if(!mundo){
+
+        return null;
+
+    }
+
+
+
     const lugar =
     mundo.lugares.find(
 
@@ -471,7 +472,6 @@ function descubrirLugar(
         return null;
 
     }
-
 
 
 
@@ -508,16 +508,22 @@ function descubrirLugar(
 
 
 
-    registrarHistoria(
+    if(registrarHistoria){
 
-        "Nuevo descubrimiento",
 
-        "Fue descubierto el lugar " +
-        lugar.nombre,
+        registrarHistoria(
 
-        "descubrimiento"
+            "Nuevo descubrimiento",
 
-    );
+            "Fue descubierto " + lugar.nombre,
+
+            "descubrimiento"
+
+        );
+
+
+    }
+
 
 
 
@@ -535,15 +541,13 @@ function descubrirLugar(
 
 
 
-
 // =================================
 // ACTUALIZAR POBLACIÓN
 // =================================
 
 function actualizarPoblacion(
-cantidad
+    cantidad
 ){
-
 
 
     const mundo =
@@ -560,18 +564,17 @@ cantidad
 
 
 
-
     mundo.poblacion += cantidad;
 
 
 
-    if(
-        mundo.poblacion < 0
-    ){
+
+    if(mundo.poblacion < 0){
 
         mundo.poblacion=0;
 
     }
+
 
 
 
@@ -588,7 +591,6 @@ cantidad
 
 
 }
-
 
 
 
@@ -622,14 +624,12 @@ function modificarRecurso(
 
 
     if(
-        mundo.recursos[recurso]===undefined
+        mundo.recursos[recurso] === undefined
     ){
 
         mundo.recursos[recurso]=0;
 
     }
-
-
 
 
 
@@ -674,7 +674,7 @@ function modificarRecurso(
 
 
 // =================================
-// OBTENER INFORMACIÓN COMPLETA
+// RESUMEN DEL MUNDO
 // =================================
 
 function obtenerResumenMundo(){
@@ -702,15 +702,15 @@ function obtenerResumenMundo(){
         mundo.nombre,
 
 
-        día:
+        dia:
         mundo.dia_actual,
 
 
-        estación:
+        estacion:
         mundo.estacion,
 
 
-        población:
+        poblacion:
         mundo.poblacion,
 
 
@@ -720,6 +720,71 @@ function obtenerResumenMundo(){
 
         lugares:
         mundo.lugares.length
+
+
+    };
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// ESTADO COMPLETO PARA IA
+// =================================
+
+function obtenerEstadoMundo(){
+
+
+    const mundo =
+    obtenerMundo();
+
+
+
+    if(!mundo){
+
+        return null;
+
+    }
+
+
+
+    return {
+
+
+        nombre:
+        mundo.nombre,
+
+
+        dia:
+        mundo.dia_actual,
+
+
+        estacion:
+        mundo.estacion,
+
+
+        poblacion:
+        mundo.poblacion,
+
+
+        recursos:
+        mundo.recursos,
+
+
+        lugares:
+        mundo.lugares,
+
+
+        estado:
+        mundo.estado
+
 
 
     };
@@ -755,7 +820,9 @@ module.exports={
 
     modificarRecurso,
 
-    obtenerResumenMundo
+    obtenerResumenMundo,
+
+    obtenerEstadoMundo
 
 
 };
