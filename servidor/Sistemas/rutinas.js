@@ -17,6 +17,8 @@ const crearMemoria =
 require("./memorias.js");
 
 
+const movimiento =
+require("./movimiento.js");
 
 
 
@@ -30,7 +32,6 @@ require("./memorias.js");
 function obtenerRutina(
     habitante_id
 ){
-
 
     const datos =
     cargarArchivo("../datos/rutinas.json");
@@ -50,9 +51,7 @@ function obtenerRutina(
 
     ) || null;
 
-
 }
-
 
 
 
@@ -71,7 +70,6 @@ function crearRutina(
 ){
 
 
-
     const datos =
     cargarArchivo("../datos/rutinas.json");
 
@@ -85,33 +83,29 @@ function crearRutina(
 
 
 
-    const rutina = {
+    const rutina={
 
 
         id:
-        datos.rutinas.length + 1,
+
+        datos.rutinas.length+1,
 
 
         habitante_id,
 
 
-
         etapa,
-
 
 
         horario:
         generarHorario(etapa),
 
 
-
         actividad_actual:
         "descansar",
 
 
-
-        ultima_actualizacion:
-        null
+        ultima_actualizacion:null
 
 
 
@@ -121,11 +115,7 @@ function crearRutina(
 
 
 
-    datos.rutinas.push(
-        rutina
-    );
-
-
+    datos.rutinas.push(rutina);
 
 
 
@@ -136,7 +126,6 @@ function crearRutina(
         datos
 
     );
-
 
 
 
@@ -156,8 +145,184 @@ function crearRutina(
 
 
 
-
     return rutina;
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// HORARIOS
+// =================================
+
+function generarHorario(
+etapa
+){
+
+
+switch(etapa){
+
+
+case "niño":
+
+return [
+
+{
+hora:7,
+accion:"despertar"
+},
+
+{
+hora:8,
+accion:"ir_escuela"
+},
+
+{
+hora:13,
+accion:"jugar"
+},
+
+{
+hora:18,
+accion:"familia"
+},
+
+{
+hora:21,
+accion:"dormir"
+}
+
+];
+
+
+
+
+
+case "adolescente":
+
+return [
+
+{
+hora:7,
+accion:"entrenar"
+},
+
+{
+hora:10,
+accion:"socializar"
+},
+
+{
+hora:14,
+accion:"aprender"
+},
+
+{
+hora:18,
+accion:"hobby"
+},
+
+{
+hora:22,
+accion:"dormir"
+}
+
+];
+
+
+
+
+
+
+
+case "adulto":
+
+return [
+
+{
+hora:6,
+accion:"despertar"
+},
+
+{
+hora:8,
+accion:"ir_trabajo"
+},
+
+{
+hora:17,
+accion:"regresar_hogar"
+},
+
+{
+hora:20,
+accion:"familia"
+},
+
+{
+hora:23,
+accion:"dormir"
+}
+
+];
+
+
+
+
+
+
+
+case "adulto_mayor":
+
+return [
+
+{
+hora:7,
+accion:"pasear"
+},
+
+{
+hora:10,
+accion:"enseñar"
+},
+
+{
+hora:15,
+accion:"socializar"
+},
+
+{
+hora:21,
+accion:"dormir"
+}
+
+];
+
+
+
+
+
+
+
+default:
+
+return [
+
+{
+hora:8,
+accion:"descansar"
+}
+
+];
+
+
+}
 
 
 }
@@ -171,204 +336,133 @@ function crearRutina(
 
 
 // =================================
-// GENERAR HORARIO POR ETAPA
+// EJECUTAR ACCIÓN DE RUTINA
 // =================================
 
-function generarHorario(
-etapa
+function ejecutarActividad(
+habitante_id,
+actividad
 ){
 
 
-    switch(etapa){
 
+switch(actividad){
 
 
-        case "bebe":
 
+case "ir_trabajo":
 
-            return [
 
-                {
-                    hora:0,
-                    accion:"dormir"
-                },
+return movimiento.irAlTrabajo(
 
-                {
-                    hora:8,
-                    accion:"comer"
-                },
+habitante_id
 
-                {
-                    hora:12,
-                    accion:"interactuar_familia"
-                }
+);
 
-            ];
 
 
 
 
+case "regresar_hogar":
 
-        case "niño":
 
+return movimiento.irAHogar(
 
-            return [
+habitante_id
 
-                {
-                    hora:7,
-                    accion:"despertar"
-                },
+);
 
-                {
-                    hora:9,
-                    accion:"jugar"
-                },
 
-                {
-                    hora:13,
-                    accion:"aprender"
-                },
 
-                {
-                    hora:18,
-                    accion:"familia"
-                },
 
-                {
-                    hora:21,
-                    accion:"dormir"
-                }
 
-            ];
 
+case "ir_escuela":
 
 
+return movimiento.irAEscuela(
 
+habitante_id
 
+);
 
 
-        case "adolescente":
 
 
-            return [
 
-                {
-                    hora:7,
-                    accion:"entrenar_habilidad"
-                },
 
-                {
-                    hora:10,
-                    accion:"socializar"
-                },
 
-                {
-                    hora:14,
-                    accion:"aprender"
-                },
+case "familia":
 
-                {
-                    hora:18,
-                    accion:"hobby"
-                },
 
-                {
-                    hora:22,
-                    accion:"descansar"
-                }
+crearMemoria(
 
-            ];
+habitante_id,
 
+"rutina",
 
+"Pasó tiempo con su familia.",
 
+"baja"
 
+);
 
 
+break;
 
-        case "adulto":
 
 
-            return [
 
-                {
-                    hora:6,
-                    accion:"despertar"
-                },
 
-                {
-                    hora:8,
-                    accion:"trabajar"
-                },
 
-                {
-                    hora:17,
-                    accion:"familia"
-                },
 
-                {
-                    hora:20,
-                    accion:"hobby"
-                },
+case "dormir":
 
-                {
-                    hora:23,
-                    accion:"dormir"
-                }
 
-            ];
+crearMemoria(
 
+habitante_id,
 
+"rutina",
 
+"Fue a descansar.",
 
+"baja"
 
+);
 
 
+break;
 
-        case "adulto_mayor":
 
 
-            return [
 
-                {
-                    hora:7,
-                    accion:"pasear"
-                },
 
-                {
-                    hora:10,
-                    accion:"enseñar"
-                },
 
-                {
-                    hora:15,
-                    accion:"socializar"
-                },
+case "pasear":
 
-                {
-                    hora:21,
-                    accion:"descansar"
-                }
 
-            ];
+crearMemoria(
 
+habitante_id,
 
+"rutina",
 
+"Salió a pasear.",
 
+"baja"
 
-        default:
+);
 
 
-            return [
+break;
 
-                {
-                    hora:8,
-                    accion:"trabajar"
-                }
 
-            ];
+}
 
 
-    }
+
+return true;
 
 
 }
@@ -386,100 +480,122 @@ etapa
 // =================================
 
 function actualizarRutina(
-    habitante_id,
-    horaActual,
-    contexto={}
+habitante_id,
+horaActual,
+contexto={}
 ){
 
 
 
-    let rutina =
-    obtenerRutina(
-        habitante_id
-    );
+let rutina =
+obtenerRutina(
+habitante_id
+);
 
 
 
-    if(!rutina){
-
-        rutina =
-        crearRutina(
-            habitante_id,
-            contexto.etapa || "adulto"
-        );
-
-    }
+if(!rutina){
 
 
+rutina =
+crearRutina(
+
+habitante_id,
+
+contexto.etapa || "adulto"
+
+);
 
 
-
-    const actividad =
-    rutina.horario.find(
-
-        a=>a.hora===horaActual
-
-    );
-
-
-
-
-
-    if(!actividad){
-
-        return rutina;
-
-    }
+}
 
 
 
 
 
 
-    rutina.actividad_actual =
-    actividad.accion;
+const actividad =
 
+rutina.horario.find(
 
+a=>a.hora===horaActual
 
-    rutina.ultima_actualizacion =
-    new Date().toISOString();
-
-
-
-
-
-    guardarRutina(
-        rutina
-    );
+);
 
 
 
 
 
-    crearEvento(
+if(!actividad){
 
-        "actividad_rutina",
+return rutina;
 
-        [
-
-            habitante_id
-
-        ],
-
-        {
-
-            actividad:
-            actividad.accion
-
-        }
-
-    );
+}
 
 
 
 
 
-    return rutina;
+
+rutina.actividad_actual =
+actividad.accion;
+
+
+
+rutina.ultima_actualizacion =
+new Date().toISOString();
+
+
+
+
+
+
+ejecutarActividad(
+
+habitante_id,
+
+actividad.accion
+
+);
+
+
+
+
+
+
+
+guardarRutina(
+
+rutina
+
+);
+
+
+
+
+
+
+crearEvento(
+
+"actividad_rutina",
+
+[habitante_id],
+
+{
+
+actividad:
+actividad.accion
+
+}
+
+);
+
+
+
+
+
+
+return rutina;
 
 
 }
@@ -493,7 +609,7 @@ function actualizarRutina(
 
 
 // =================================
-// MODIFICAR POR PROFESIÓN
+// PROFESIONES
 // =================================
 
 function adaptarRutinaProfesion(
@@ -502,70 +618,25 @@ profesion
 ){
 
 
-    if(!rutina || !profesion){
+if(!rutina || !profesion){
 
-        return rutina;
+return rutina;
 
-    }
-
-
+}
 
 
 
-    if(
-        profesion==="agricultor"
-    ){
+rutina.horario.push({
 
-        rutina.horario.push({
+hora:9,
 
-            hora:9,
+accion:"trabajar"
 
-            accion:"trabajar_campo"
-
-        });
-
-    }
+});
 
 
 
-
-
-    if(
-        profesion==="herrero"
-    ){
-
-        rutina.horario.push({
-
-            hora:9,
-
-            accion:"forjar"
-
-        });
-
-    }
-
-
-
-
-
-
-    if(
-        profesion==="maestro"
-    ){
-
-        rutina.horario.push({
-
-            hora:9,
-
-            accion:"enseñar"
-
-        });
-
-    }
-
-
-
-    return rutina;
+return rutina;
 
 
 }
@@ -587,48 +658,50 @@ rutina
 ){
 
 
-    const datos =
-    cargarArchivo("../datos/rutinas.json");
+const datos =
+cargarArchivo("../datos/rutinas.json");
 
 
 
-    if(!datos){
+if(!datos){
 
-        return null;
+return null;
 
-    }
-
-
-
-    const index =
-    datos.rutinas.findIndex(
-
-        r=>r.id===rutina.id
-
-    );
+}
 
 
 
-    if(index!==-1){
+const index =
 
-        datos.rutinas[index]=rutina;
+datos.rutinas.findIndex(
 
-    }
+r=>r.id===rutina.id
 
-
-
-
-
-    guardarArchivo(
-
-        "../datos/rutinas.json",
-
-        datos
-
-    );
+);
 
 
-    return rutina;
+
+if(index!==-1){
+
+datos.rutinas[index]=rutina;
+
+}
+
+
+
+
+
+guardarArchivo(
+
+"../datos/rutinas.json",
+
+datos
+
+);
+
+
+
+return rutina;
 
 
 }
@@ -640,18 +713,19 @@ rutina
 
 
 
+
 module.exports={
 
 
-    obtenerRutina,
+obtenerRutina,
 
-    crearRutina,
+crearRutina,
 
-    actualizarRutina,
+actualizarRutina,
 
-    adaptarRutinaProfesion,
+adaptarRutinaProfesion,
 
-    generarHorario
+generarHorario
 
 
 };
