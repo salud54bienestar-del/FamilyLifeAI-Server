@@ -1,8 +1,12 @@
-// Sistema de tiempo del mundo - Village Soul
+// Sistema avanzado de tiempo del mundo - Village Soul
 
 
 const cargarArchivo =
 require("./cargador_datos.js");
+
+
+const guardarArchivo =
+require("./guardador_datos.js");
 
 
 const crearEvento =
@@ -11,28 +15,20 @@ require("./eventos.js");
 
 
 
+
 // =================================
-// CONFIGURACIÓN DEL TIEMPO
+// CONFIGURACIÓN
 // =================================
 
 
-// Minecraft:
-// 20 minutos reales = 1 día Minecraft
-
-const MINUTOS_REALES_POR_DIA =
-20;
+const MINUTOS_REALES_POR_DIA = 20;
 
 
-const HORAS_POR_DIA =
-24;
+const DIAS_POR_MES = 30;
 
 
-const DIAS_POR_MES =
-30;
+const MESES_POR_AÑO = 12;
 
-
-const MESES_POR_AÑO =
-12;
 
 
 
@@ -40,7 +36,7 @@ const MESES_POR_AÑO =
 
 
 // =================================
-// OBTENER TIEMPO ACTUAL
+// OBTENER TIEMPO
 // =================================
 
 function obtenerTiempo(){
@@ -50,22 +46,19 @@ function obtenerTiempo(){
     cargarArchivo("../datos/tiempo.json");
 
 
-
     if(!datos){
-
-        console.log(
-            "No se pudo cargar tiempo."
-        );
 
         return null;
 
     }
 
 
-
     return datos.tiempo;
 
+
 }
+
+
 
 
 
@@ -78,9 +71,8 @@ function obtenerTiempo(){
 // =================================
 
 function avanzarTiempo(
-    minutosReales = 1
+    minutosReales=1
 ){
-
 
 
     const datos =
@@ -101,47 +93,39 @@ function avanzarTiempo(
 
 
 
-    if(
-        !tiempo.contador_minecraft
-    ){
 
-        tiempo.contador_minecraft = 0;
+    if(!tiempo.contador_real){
+
+        tiempo.contador_real=0;
 
     }
 
 
 
 
-    let nuevoDiaMinecraft = false;
+    tiempo.contador_real += minutosReales;
+
+
+
+    let nuevoDia=false;
 
 
 
 
-
-    // Acumular tiempo real
-
-    tiempo.contador_minecraft += minutosReales;
-
-
-
-
-
-    // Cada 20 minutos reales
-    // pasa un día Minecraft
 
     if(
-        tiempo.contador_minecraft >=
+        tiempo.contador_real >=
         MINUTOS_REALES_POR_DIA
     ){
 
 
-        tiempo.contador_minecraft = 0;
+        tiempo.contador_real=0;
 
 
         tiempo.dia++;
 
 
-        nuevoDiaMinecraft = true;
+        nuevoDia=true;
 
 
     }
@@ -151,27 +135,23 @@ function avanzarTiempo(
 
 
 
+    // Avance horario
 
-    // Avanza hora Minecraft
 
-
-    tiempo.hora += 24 / 20;
+    tiempo.hora += 1.2;
 
 
 
     if(
-        tiempo.hora >= 24
+        tiempo.hora>=24
     ){
 
-        tiempo.hora = 0;
+        tiempo.hora=0;
 
     }
 
 
 
-
-
-    // Convertir decimales a horas y minutos
 
 
     tiempo.hora =
@@ -181,51 +161,10 @@ function avanzarTiempo(
 
 
 
-    tiempo.minuto =
-    Math.floor(
-        (24 / 20 % 1) * 60
+
+    actualizarCalendario(
+        tiempo
     );
-
-
-
-
-
-
-    // Mes
-
-
-    if(
-        tiempo.dia > DIAS_POR_MES
-    ){
-
-
-        tiempo.dia = 1;
-
-        tiempo.mes++;
-
-
-    }
-
-
-
-
-
-    // Año
-
-
-    if(
-        tiempo.mes > MESES_POR_AÑO
-    ){
-
-
-        tiempo.mes = 1;
-
-        tiempo.año++;
-
-
-    }
-
-
 
 
 
@@ -237,11 +176,7 @@ function avanzarTiempo(
 
 
 
-
-
-    if(
-        nuevoDiaMinecraft
-    ){
+    if(nuevoDia){
 
 
         crearEvento(
@@ -252,15 +187,9 @@ function avanzarTiempo(
 
             {
 
-                dia:
-                tiempo.dia,
+                fecha:
 
-                mes:
-                tiempo.mes,
-
-                año:
-                tiempo.año
-
+                generarFechaTexto(tiempo)
 
             }
 
@@ -273,10 +202,75 @@ function avanzarTiempo(
 
 
 
+
+    guardarArchivo(
+
+        "../datos/tiempo.json",
+
+        datos
+
+    );
+
+
+
+
     return tiempo;
 
 
 }
+
+
+
+
+
+
+
+
+
+// =================================
+// CALENDARIO
+// =================================
+
+function actualizarCalendario(
+    tiempo
+){
+
+
+
+    if(
+        tiempo.dia > DIAS_POR_MES
+    ){
+
+
+        tiempo.dia=1;
+
+
+        tiempo.mes++;
+
+
+    }
+
+
+
+
+
+    if(
+        tiempo.mes > MESES_POR_AÑO
+    ){
+
+
+        tiempo.mes=1;
+
+
+        tiempo.año++;
+
+
+    }
+
+
+
+}
+
 
 
 
@@ -294,49 +288,74 @@ function actualizarEstacion(
 ){
 
 
-
     if(
-        tiempo.mes >=3 &&
-        tiempo.mes <=5
+        tiempo.mes>=3 &&
+        tiempo.mes<=5
     ){
 
-        tiempo.estacion =
-        "primavera";
+        tiempo.estacion="primavera";
 
     }
 
     else if(
-        tiempo.mes >=6 &&
-        tiempo.mes <=8
+        tiempo.mes>=6 &&
+        tiempo.mes<=8
     ){
 
-        tiempo.estacion =
-        "verano";
+        tiempo.estacion="verano";
 
     }
 
     else if(
-        tiempo.mes >=9 &&
-        tiempo.mes <=11
+        tiempo.mes>=9 &&
+        tiempo.mes<=11
     ){
 
-        tiempo.estacion =
-        "otoño";
+        tiempo.estacion="otoño";
 
     }
 
     else{
 
-        tiempo.estacion =
-        "invierno";
+        tiempo.estacion="invierno";
 
     }
 
 
-    return tiempo.estacion;
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// FECHA PARA MEMORIAS
+// =================================
+
+function generarFechaTexto(
+    tiempo
+){
+
+
+    return (
+
+        "Día "+
+        tiempo.dia+
+        " de "+
+        tiempo.estacion+
+        " año "+
+        tiempo.año
+
+    );
 
 
 }
+
 
 
 
@@ -367,8 +386,8 @@ function obtenerPeriodo(){
 
 
     if(
-        tiempo.hora >=6 &&
-        tiempo.hora <12
+        tiempo.hora>=6 &&
+        tiempo.hora<12
     ){
 
         return "mañana";
@@ -376,9 +395,10 @@ function obtenerPeriodo(){
     }
 
 
+
     if(
-        tiempo.hora >=12 &&
-        tiempo.hora <18
+        tiempo.hora>=12 &&
+        tiempo.hora<18
     ){
 
         return "dia";
@@ -386,9 +406,10 @@ function obtenerPeriodo(){
     }
 
 
+
     if(
-        tiempo.hora >=18 &&
-        tiempo.hora <22
+        tiempo.hora>=18 &&
+        tiempo.hora<22
     ){
 
         return "tarde";
@@ -407,7 +428,8 @@ function obtenerPeriodo(){
 
 
 
-module.exports = {
+
+module.exports={
 
 
     obtenerTiempo,
@@ -416,7 +438,9 @@ module.exports = {
 
     obtenerPeriodo,
 
-    actualizarEstacion
+    actualizarEstacion,
+
+    generarFechaTexto
 
 
 };
