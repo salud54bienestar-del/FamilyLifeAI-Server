@@ -1,12 +1,20 @@
 // Sistema avanzado de necesidades de Village Soul
 
-const cargarArchivo = require("./cargador_datos.js");
+const cargarArchivo =
+require("./cargador_datos.js");
 
-const crearMemoria = require("./memorias.js");
+const guardarArchivo =
+require("./guardador_datos.js");
+
+const crearMemoria =
+require("./memorias.js");
+
 
 const {
     cambiarEmocion
-} = require("./emociones.js");
+} =
+require("./emociones.js");
+
 
 
 
@@ -33,6 +41,7 @@ function obtenerNecesidades(habitante_id){
     }
 
 
+
     return datos.necesidades.find(
 
         n => n.habitante_id === habitante_id
@@ -48,15 +57,19 @@ function obtenerNecesidades(habitante_id){
 
 
 
+
 // =================================
 // CREAR NECESIDADES
 // =================================
 
-function crearNecesidades(habitante_id){
+function crearNecesidades(
+    habitante_id
+){
 
 
     const datos =
     cargarArchivo("../datos/necesidades.json");
+
 
 
     if(!datos){
@@ -64,6 +77,25 @@ function crearNecesidades(habitante_id){
         return null;
 
     }
+
+
+
+
+    const existe =
+    obtenerNecesidades(
+        habitante_id
+    );
+
+
+
+    if(existe){
+
+        return existe;
+
+    }
+
+
+
 
 
 
@@ -75,16 +107,24 @@ function crearNecesidades(habitante_id){
 
         hambre:100,
 
+
         energia:100,
 
+
         higiene:100,
+
 
         diversion:100,
 
 
         social:50,
 
+
+        carino:80,
+
+
         seguridad:100,
+
 
         descanso:100,
 
@@ -95,20 +135,41 @@ function crearNecesidades(habitante_id){
         estado:"estable",
 
 
-        ultima_actualizacion:0
+        ultima_actualizacion:"dia_1"
 
 
     };
 
 
 
-    datos.necesidades.push(nueva);
+
+
+
+    datos.necesidades.push(
+        nueva
+    );
+
+
+
+
+
+    guardarArchivo(
+
+        "../datos/necesidades.json",
+
+        datos
+
+    );
+
+
 
 
 
     return nueva;
 
+
 }
+
 
 
 
@@ -143,63 +204,107 @@ function actualizarNecesidades(
 
 
 
+
+
+
     necesidad.hambre -= 2 * ciclo;
+
 
     necesidad.energia -= 1 * ciclo;
 
+
     necesidad.higiene -= 1 * ciclo;
 
+
     necesidad.diversion -= 1 * ciclo;
+
 
     necesidad.social -= 1 * ciclo;
 
 
 
-
-
-    limitar(necesidad);
-
+    necesidad.descanso -= 1 * ciclo;
 
 
 
 
-    // EFECTOS EMOCIONALES
+
+
+
+    limitar(
+        necesidad
+    );
+
+
+
+
+
+
+
+
+    // ============================
+    // EFECTOS EN EMOCIONES
+    // ============================
+
 
 
     if(necesidad.hambre < 30){
 
+
         cambiarEmocion(
+
             habitante_id,
+
             "tristeza",
+
             5,
+
             "hambre"
+
         );
 
+
     }
+
 
 
 
     if(necesidad.energia < 30){
 
+
         cambiarEmocion(
+
             habitante_id,
+
             "estres",
+
             5,
+
             "cansancio"
+
         );
 
+
     }
+
 
 
 
     if(necesidad.diversion < 30){
 
+
         cambiarEmocion(
+
             habitante_id,
+
             "aburrimiento",
+
             5,
+
             "falta de diversión"
+
         );
+
 
     }
 
@@ -207,7 +312,54 @@ function actualizarNecesidades(
 
 
 
-    actualizarEstado(necesidad);
+    if(necesidad.social < 30){
+
+
+        cambiarEmocion(
+
+            habitante_id,
+
+            "soledad",
+
+            5,
+
+            "falta de interacción"
+
+        );
+
+
+    }
+
+
+
+
+
+
+
+    actualizarEstado(
+        necesidad
+    );
+
+
+
+
+
+
+    const datos =
+    cargarArchivo("../datos/necesidades.json");
+
+
+
+    guardarArchivo(
+
+        "../datos/necesidades.json",
+
+        datos
+
+    );
+
+
+
 
 
 
@@ -215,6 +367,7 @@ function actualizarNecesidades(
 
 
 }
+
 
 
 
@@ -232,11 +385,13 @@ function limitar(necesidad){
 
     Object.keys(necesidad).forEach(
 
-        valor =>{
+        valor => {
 
 
             if(
-                typeof necesidad[valor] === "number"
+                typeof necesidad[valor]
+                ===
+                "number"
             ){
 
 
@@ -245,6 +400,7 @@ function limitar(necesidad){
                     necesidad[valor]=100;
 
                 }
+
 
 
                 if(necesidad[valor] < 0){
@@ -271,11 +427,14 @@ function limitar(necesidad){
 
 
 
+
 // =================================
 // ESTADO GENERAL
 // =================================
 
-function actualizarEstado(necesidad){
+function actualizarEstado(
+    necesidad
+){
 
 
     const promedio =
@@ -293,6 +452,8 @@ function actualizarEstado(necesidad){
         necesidad.social
 
     ) / 5;
+
+
 
 
 
@@ -325,7 +486,10 @@ function actualizarEstado(necesidad){
 
     return necesidad;
 
+
 }
+
+
 
 
 
@@ -360,6 +524,7 @@ function satisfacerNecesidad(
 
 
 
+
     switch(tipo){
 
 
@@ -371,12 +536,15 @@ function satisfacerNecesidad(
 
 
 
+
         case "dormir":
 
             necesidad.energia=100;
+
             necesidad.descanso=100;
 
         break;
+
 
 
 
@@ -388,11 +556,13 @@ function satisfacerNecesidad(
 
 
 
+
         case "diversion":
 
             necesidad.diversion=100;
 
         break;
+
 
 
 
@@ -403,7 +573,19 @@ function satisfacerNecesidad(
         break;
 
 
+
+
+        case "carino":
+
+            necesidad.carino=100;
+
+        break;
+
+
+
     }
+
+
 
 
 
@@ -426,7 +608,30 @@ function satisfacerNecesidad(
 
 
 
-    actualizarEstado(necesidad);
+
+
+    actualizarEstado(
+        necesidad
+    );
+
+
+
+
+
+    const datos =
+    cargarArchivo("../datos/necesidades.json");
+
+
+
+    guardarArchivo(
+
+        "../datos/necesidades.json",
+
+        datos
+
+    );
+
+
 
 
 
@@ -441,7 +646,8 @@ function satisfacerNecesidad(
 
 
 
-module.exports={
+
+module.exports = {
 
 
     obtenerNecesidades,
