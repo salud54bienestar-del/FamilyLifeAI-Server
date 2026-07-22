@@ -17,6 +17,10 @@ const crearMemoria =
 require("./memorias.js");
 
 
+const ubicaciones =
+require("./ubicaciones.js");
+
+
 
 
 // =================================
@@ -46,6 +50,7 @@ function obtenerMovimiento(
 
 
 }
+
 
 
 
@@ -84,6 +89,7 @@ function crearMovimiento(
         return existente;
 
     }
+
 
 
 
@@ -133,6 +139,7 @@ function crearMovimiento(
 
 
 
+
     datos.movimientos.push(
         movimiento
     );
@@ -146,6 +153,8 @@ function crearMovimiento(
         datos
 
     );
+
+
 
 
 
@@ -163,10 +172,12 @@ function crearMovimiento(
 
 
 
+
     return movimiento;
 
 
 }
+
 
 
 
@@ -225,9 +236,11 @@ function establecerDestino(
 
 
 
+
     guardarMovimiento(
         movimiento
     );
+
 
 
 
@@ -237,7 +250,9 @@ function establecerDestino(
         "movimiento_iniciado",
 
         [
+
             habitante_id
+
         ],
 
         {
@@ -250,10 +265,253 @@ function establecerDestino(
 
 
 
+
+
     return movimiento;
 
 
 }
+
+
+
+
+
+
+
+
+
+// =================================
+// IR A UBICACIÓN GUARDADA
+// =================================
+
+function irAUbicacion(
+    habitante_id,
+    tipo
+){
+
+    const destino =
+
+    ubicaciones.obtenerDestino(
+
+        habitante_id,
+
+        tipo
+
+    );
+
+
+
+    if(!destino){
+
+        return null;
+
+    }
+
+
+
+    return establecerDestino(
+
+        habitante_id,
+
+        destino
+
+    );
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// REGRESAR AL HOGAR
+// =================================
+
+function irAHogar(
+    habitante_id
+){
+
+
+    const movimiento =
+
+    irAUbicacion(
+
+        habitante_id,
+
+        "hogar"
+
+    );
+
+
+
+    if(movimiento){
+
+
+        crearMemoria(
+
+            habitante_id,
+
+            "movimiento",
+
+            "Regresó a su hogar.",
+
+            "baja"
+
+        );
+
+
+    }
+
+
+
+    return movimiento;
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// IR AL TRABAJO
+// =================================
+
+function irAlTrabajo(
+    habitante_id
+){
+
+
+    const movimiento =
+
+    irAUbicacion(
+
+        habitante_id,
+
+        "trabajo"
+
+    );
+
+
+
+    if(movimiento){
+
+
+        crearMemoria(
+
+            habitante_id,
+
+            "movimiento",
+
+            "Se dirigió a su lugar de trabajo.",
+
+            "baja"
+
+        );
+
+
+    }
+
+
+
+    return movimiento;
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// IR A LA ESCUELA
+// =================================
+
+function irAEscuela(
+    habitante_id
+){
+
+
+    return irAUbicacion(
+
+        habitante_id,
+
+        "escuela"
+
+    );
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// VISITAR AMIGO
+// =================================
+
+function irAVisitarAmigo(
+    habitante_id,
+    amigo_id
+){
+
+
+
+    const amigo =
+
+    ubicaciones.obtenerUbicacion(
+
+        amigo_id
+
+    );
+
+
+
+    if(
+
+        !amigo ||
+
+        !amigo.hogar
+
+    ){
+
+        return null;
+
+    }
+
+
+
+
+
+    return establecerDestino(
+
+        habitante_id,
+
+        amigo.hogar
+
+    );
+
+
+}
+
 
 
 
@@ -309,7 +567,9 @@ function actualizarPosicion(
 
 
     verificarLlegada(
+
         movimiento
+
     );
 
 
@@ -317,7 +577,9 @@ function actualizarPosicion(
 
 
     guardarMovimiento(
+
         movimiento
+
     );
 
 
@@ -326,6 +588,7 @@ function actualizarPosicion(
 
 
 }
+
 
 
 
@@ -351,28 +614,41 @@ function verificarLlegada(
 
 
 
+
     const distancia = Math.sqrt(
 
         Math.pow(
+
             movimiento.posicion_actual.x -
+
             movimiento.destino.x,
+
             2
+
         )
 
         +
 
         Math.pow(
+
             movimiento.posicion_actual.y -
+
             movimiento.destino.y,
+
             2
+
         )
 
         +
 
         Math.pow(
+
             movimiento.posicion_actual.z -
+
             movimiento.destino.z,
+
             2
+
         )
 
 
@@ -385,7 +661,9 @@ function verificarLlegada(
     if(distancia <=1){
 
 
+
         movimiento.estado="llegado";
+
 
 
         crearEvento(
@@ -393,7 +671,9 @@ function verificarLlegada(
             "lugar_alcanzado",
 
             [
+
                 movimiento.habitante_id
+
             ],
 
             {
@@ -406,9 +686,26 @@ function verificarLlegada(
         );
 
 
+
+        crearMemoria(
+
+            movimiento.habitante_id,
+
+            "movimiento",
+
+            "Llegó a su destino.",
+
+            "baja"
+
+        );
+
+
+
         return true;
 
+
     }
+
 
 
 
@@ -416,6 +713,7 @@ function verificarLlegada(
 
 
 }
+
 
 
 
@@ -434,8 +732,11 @@ function detenerMovimiento(
 
 
     const movimiento =
+
     obtenerMovimiento(
+
         habitante_id
+
     );
 
 
@@ -455,8 +756,11 @@ function detenerMovimiento(
 
 
 
+
     guardarMovimiento(
+
         movimiento
+
     );
 
 
@@ -465,6 +769,8 @@ function detenerMovimiento(
 
 
 }
+
+
 
 
 
@@ -482,7 +788,12 @@ function guardarMovimiento(
 
 
     const datos =
-    cargarArchivo("../datos/movimientos.json");
+
+    cargarArchivo(
+
+        "../datos/movimientos.json"
+
+    );
 
 
 
@@ -494,12 +805,15 @@ function guardarMovimiento(
 
 
 
+
     const index =
+
     datos.movimientos.findIndex(
 
         m=>m.id===movimiento.id
 
     );
+
 
 
 
@@ -512,6 +826,7 @@ function guardarMovimiento(
 
 
 
+
     guardarArchivo(
 
         "../datos/movimientos.json",
@@ -519,6 +834,7 @@ function guardarMovimiento(
         datos
 
     );
+
 
 
     return movimiento;
@@ -542,8 +858,19 @@ module.exports={
 
     establecerDestino,
 
+    irAUbicacion,
+
+    irAHogar,
+
+    irAlTrabajo,
+
+    irAEscuela,
+
+    irAVisitarAmigo,
+
     actualizarPosicion,
 
     detenerMovimiento
+
 
 };
