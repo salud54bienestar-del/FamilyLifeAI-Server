@@ -1,46 +1,65 @@
-// Sistema central de inteligencia - Village Soul
+// ==========================================
+// CEREBRO PRINCIPAL DE HABITANTES
+// Village Soul
+// ==========================================
 
 
 const cargarArchivo =
 require("./cargador_datos.js");
 
 
-const necesidades =
-require("./necesidades.js");
-
-
-const emociones =
-require("./emociones.js");
-
-
-const rutinas =
-require("./rutinas.js");
-
-
-const decisiones =
-require("./decisiones.js");
-
-
-const acciones =
-require("./acciones.js");
+const crearMemoria =
+require("./memorias.js");
 
 
 const crearEvento =
 require("./eventos.js");
 
 
+const {
+    procesarDecision
+}
+=
+require("./decisiones.js");
+
+
+const {
+    obtenerNecesidades
+}
+=
+require("./necesidades.js");
+
+
+const {
+    obtenerUbicaciones
+}
+=
+require("./ubicaciones.js");
+
+
+const {
+    obtenerRutina
+}
+=
+require("./rutinas.js");
+
+
+const ejecutarAccion =
+require("./acciones.js");
 
 
 
-// =================================
-// PENSAMIENTO DEL HABITANTE
-// =================================
 
-function pensar(
-habitante_id,
-horaActual
+
+
+// ==========================================
+// PENSAR HABITANTE
+// ==========================================
+
+
+function pensarHabitante(
+habitante_id
 ){
-
 
 
     const almas =
@@ -57,14 +76,12 @@ horaActual
 
 
 
-
     const habitante =
     almas.almas.find(
 
         a=>a.id===habitante_id
 
     );
-
 
 
 
@@ -81,104 +98,87 @@ horaActual
 
 
 
+    const contexto={
 
-    // Necesidades
 
 
-    const estadoNecesidades =
+        necesidades:
 
-    necesidades.obtenerNecesidades(
-
-        habitante_id
-
-    );
+        obtenerNecesidades(
+            habitante_id
+        ),
 
 
 
 
+        personalidad:
 
-
-
-    // Emoción
-
-
-    const emocion =
-
-    habitante.emocion ||
-
-    "neutral";
+        habitante.personalidad
+        || null,
 
 
 
 
+        profesion:
+
+        habitante.profesion?.nombre
+        || habitante.profesion
+        || null,
 
 
 
 
-    // Rutina
+        tiene_familia:
 
-
-    const rutina =
-
-    rutinas.actualizarRutina(
-
-        habitante_id,
-
-        horaActual,
-
-        {
-
-            etapa:
-            habitante.etapa
-
-        }
-
-    );
+        habitante.familia
+        ? true
+        : false,
 
 
 
 
+        tiene_hijos:
+
+        habitante.hijos &&
+        habitante.hijos.length>0,
+
+
+
+
+        ubicacion:
+
+        obtenerUbicaciones(
+            habitante_id
+        ),
+
+
+
+
+        rutina:
+
+        obtenerRutina(
+            habitante_id
+        )
+
+
+
+    };
 
 
 
 
 
-    // Decisión
+
+
 
 
     const decision =
 
-    decisiones.procesarDecision(
+    procesarDecision(
 
         habitante_id,
 
-        {
-
-
-            necesidades:
-            estadoNecesidades,
-
-
-            emocion,
-
-
-            rutina:
-
-
-            rutina,
-
-
-            personalidad:
-
-            habitante.personalidad,
-
-
-            profesion:
-
-            habitante.profesion?.nombre
-
-
-        }
+        contexto
 
     );
 
@@ -188,33 +188,17 @@ horaActual
 
 
 
-    if(!decision){
-
-        return null;
-
-    }
-
-
-
-
-
-
-
-
-    // Ejecutar acción
-
-
-    const resultado =
-
-    acciones(
+    crearMemoria(
 
         habitante_id,
 
-        decision.decision
+        "pensamiento",
+
+        "Pensó hacer: "+decision,
+
+        "media"
 
     );
-
-
 
 
 
@@ -234,11 +218,86 @@ horaActual
 
         {
 
-            decision,
-
-            resultado
+            decision
 
         }
+
+    );
+
+
+
+
+
+
+
+
+    return {
+
+
+        habitante_id,
+
+
+        decision,
+
+
+        contexto
+
+
+    };
+
+
+}
+
+
+
+
+
+
+
+
+
+// ==========================================
+// EJECUTAR PENSAMIENTO
+// ==========================================
+
+
+function ejecutarPensamiento(
+habitante_id
+){
+
+
+
+    const pensamiento =
+
+    pensarHabitante(
+
+        habitante_id
+
+    );
+
+
+
+
+
+    if(!pensamiento){
+
+        return null;
+
+    }
+
+
+
+
+
+
+
+    const resultado =
+
+    ejecutarAccion(
+
+        habitante_id,
+
+        pensamiento.decision
 
     );
 
@@ -251,12 +310,7 @@ horaActual
     return {
 
 
-        habitante:
-
-        habitante.nombre,
-
-
-        decision,
+        pensamiento,
 
 
         resultado
@@ -275,21 +329,39 @@ horaActual
 
 
 
-// =================================
-// CICLO DE VIDA
-// =================================
-
-function cicloVida(
-habitante_id,
-hora
-){
+// ==========================================
+// PENSAMIENTO DE TODOS
+// ==========================================
 
 
-    return pensar(
+function pensarTodos(){
 
-        habitante_id,
 
-        hora
+    const almas =
+    cargarArchivo("../datos/almas.json");
+
+
+
+    if(
+        !almas ||
+        !almas.almas
+    ){
+
+        return [];
+
+    }
+
+
+
+
+
+    return almas.almas.map(
+
+        alma=>
+
+        pensarHabitante(
+            alma.id
+        )
 
     );
 
@@ -307,9 +379,13 @@ hora
 module.exports={
 
 
-    pensar,
+    pensarHabitante,
 
-    cicloVida
+
+    ejecutarPensamiento,
+
+
+    pensarTodos
 
 
 };
