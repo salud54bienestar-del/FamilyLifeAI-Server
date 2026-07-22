@@ -9,6 +9,47 @@ const path = require("path");
 
 
 
+
+
+// =================================
+// CREAR RUTA COMPLETA
+// =================================
+
+
+function obtenerRuta(nombre){
+
+
+    nombre = nombre.replace(
+
+        /^(\.\.\/|\.\/)+/,
+
+        ""
+
+    );
+
+
+
+    return path.join(
+
+        __dirname,
+
+        "..",
+
+        nombre
+
+    );
+
+
+}
+
+
+
+
+
+
+
+
+
 // =================================
 // CARGAR ARCHIVO JSON
 // =================================
@@ -17,17 +58,20 @@ const path = require("path");
 function cargarArchivo(nombre){
 
 
+
     try{
 
 
-
         if(!nombre){
+
 
             console.log(
                 "Nombre de archivo inválido."
             );
 
+
             return null;
+
 
         }
 
@@ -36,42 +80,14 @@ function cargarArchivo(nombre){
 
 
 
-        // Limpiar rutas iniciales
+        const rutaCompleta =
 
-
-        nombre =
-        nombre.replace(
-
-            /^(\.\.\/|\.\/)+/,
-
-            ""
-
-        );
+        obtenerRuta(nombre);
 
 
 
 
 
-
-
-        const rutaCompleta = path.join(
-
-            __dirname,
-
-            "..",
-
-            nombre
-
-        );
-
-
-
-
-
-
-
-
-        // Verificar existencia
 
 
         if(
@@ -115,10 +131,6 @@ function cargarArchivo(nombre){
 
 
 
-
-        // Archivo vacío
-
-
         if(
             !contenido.trim()
         ){
@@ -144,10 +156,10 @@ function cargarArchivo(nombre){
 
 
 
+
         return JSON.parse(
             contenido
         );
-
 
 
 
@@ -164,7 +176,7 @@ function cargarArchivo(nombre){
 
 
         console.log(
-            " ERROR CARGANDO DATOS "
+            " ERROR JSON "
         );
 
 
@@ -175,21 +187,15 @@ function cargarArchivo(nombre){
 
 
         console.log(
-
             "Archivo:",
-
             nombre
-
         );
 
 
 
         console.log(
-
-            "Error:",
-
+            "Mensaje:",
             error.message
-
         );
 
 
@@ -200,7 +206,131 @@ function cargarArchivo(nombre){
     }
 
 
+
 }
+
+
+
+
+
+
+
+
+
+// =================================
+// GUARDAR ARCHIVO BASE
+// =================================
+
+
+function crearArchivoSiNoExiste(
+nombre,
+contenido={}
+){
+
+
+
+    try{
+
+
+        const ruta =
+
+        obtenerRuta(nombre);
+
+
+
+
+
+        const carpeta =
+
+        path.dirname(ruta);
+
+
+
+
+
+        if(
+            !fs.existsSync(carpeta)
+        ){
+
+
+            fs.mkdirSync(
+
+                carpeta,
+
+                {
+                    recursive:true
+                }
+
+            );
+
+
+        }
+
+
+
+
+
+
+
+        if(
+            !fs.existsSync(ruta)
+        ){
+
+
+
+            fs.writeFileSync(
+
+                ruta,
+
+                JSON.stringify(
+
+                    contenido,
+
+                    null,
+
+                    4
+
+                ),
+
+                "utf8"
+
+            );
+
+
+
+        }
+
+
+
+
+        return true;
+
+
+
+    }
+
+
+    catch(error){
+
+
+        console.log(
+
+            "Error creando archivo:",
+
+            error.message
+
+        );
+
+
+        return false;
+
+
+    }
+
+
+
+}
+
 
 
 
@@ -217,30 +347,16 @@ function cargarArchivo(nombre){
 function existeArchivo(nombre){
 
 
-    nombre =
-    nombre.replace(
 
-        /^(\.\.\/|\.\/)+/,
+    const ruta =
 
-        ""
+    obtenerRuta(nombre);
 
-    );
-
-
-
-    const ruta = path.join(
-
-        __dirname,
-
-        "..",
-
-        nombre
-
-    );
 
 
 
     return fs.existsSync(ruta);
+
 
 
 }
@@ -252,13 +368,18 @@ function existeArchivo(nombre){
 
 
 
-module.exports = {
+module.exports={
+
 
 
     cargarArchivo,
 
 
-    existeArchivo
+    existeArchivo,
+
+
+    crearArchivoSiNoExiste
+
 
 
 };
