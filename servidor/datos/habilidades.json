@@ -1,0 +1,20 @@
+{
+    "habilidades_disponibles": [
+        {
+            "nombre": "agricultura",
+            "categoria": "naturaleza",
+            "descripcion": "Permite cultivar plantas y cuidar cosechas."
+        },
+        {
+            "nombre": "forja",
+            "categoria": "artesania",
+            "descripcion": "Permite crear herramientas y objetos metálicos."
+        },
+        {
+            "nombre": "cocina",
+            "categoria": "hogar",
+            "descripcion": "Permite preparar alimentos."
+        }
+    ],
+    "habitantes": []
+}
