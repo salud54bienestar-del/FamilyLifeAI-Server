@@ -1,4 +1,4 @@
-// Sistema de historia del mundo - Village Soul
+// Sistema avanzado de historia del mundo - Village Soul
 
 
 const cargarArchivo =
@@ -17,9 +17,6 @@ require("./eventos.js");
 
 
 
-
-
-
 // =================================
 // CARGAR HISTORIA
 // =================================
@@ -28,7 +25,9 @@ function cargarHistoria(){
 
 
     const datos =
-    cargarArchivo("../datos/historia.json");
+    cargarArchivo(
+        "datos/historia.json"
+    );
 
 
 
@@ -60,9 +59,67 @@ function cargarHistoria(){
 
 
 
+// =================================
+// FECHA DEL MUNDO
+// =================================
+
+function obtenerFechaMundo(){
+
+
+    const tiempo =
+    cargarArchivo(
+        "datos/tiempo.json"
+    );
+
+
+
+    if(
+        !tiempo ||
+        !tiempo.tiempo
+    ){
+
+        return new Date()
+        .toISOString();
+
+    }
+
+
+
+    return {
+
+
+        dia:
+        tiempo.tiempo.dia,
+
+
+        mes:
+        tiempo.tiempo.mes,
+
+
+        año:
+        tiempo.tiempo.año,
+
+
+        estacion:
+        tiempo.tiempo.estacion
+
+
+
+    };
+
+
+}
+
+
+
+
+
+
+
+
 
 // =================================
-// REGISTRAR ACONTECIMIENTO
+// REGISTRAR HISTORIA
 // =================================
 
 function registrarHistoria(
@@ -75,7 +132,9 @@ function registrarHistoria(
 
 
     const datos =
-    cargarArchivo("../datos/historia.json");
+    cargarArchivo(
+        "datos/historia.json"
+    );
 
 
 
@@ -87,6 +146,17 @@ function registrarHistoria(
 
 
 
+    if(!datos.historia){
+
+        datos.historia=[];
+
+    }
+
+
+
+
+
+
 
     const nuevoId =
 
@@ -95,6 +165,7 @@ function registrarHistoria(
 
 
     ?
+
 
     Math.max(
 
@@ -118,7 +189,8 @@ function registrarHistoria(
 
 
 
-    const acontecimiento = {
+
+    const acontecimiento={
 
 
         id:nuevoId,
@@ -133,14 +205,12 @@ function registrarHistoria(
         tipo,
 
 
-
         participantes,
 
 
 
         fecha:
-
-        new Date().toISOString(),
+        obtenerFechaMundo(),
 
 
 
@@ -149,12 +219,18 @@ function registrarHistoria(
 
 
 
-        consecuencias:[]
+        fama:0,
 
+
+
+        consecuencias:[],
+
+
+
+        registrado:true
 
 
     };
-
 
 
 
@@ -169,14 +245,16 @@ function registrarHistoria(
 
 
 
-
     guardarArchivo(
 
-        "../datos/historia.json",
+        "datos/historia.json",
 
         datos
 
     );
+
+
+
 
 
 
@@ -190,11 +268,14 @@ function registrarHistoria(
 
         {
 
-            titulo
+            titulo,
+
+            tipo
 
         }
 
     );
+
 
 
 
@@ -237,11 +318,17 @@ tipo
 
         case "guerra":
 
+
+        case "desastre":
+
             return "alta";
 
 
 
         case "descubrimiento":
+
+
+        case "revolucion":
 
             return "alta";
 
@@ -249,11 +336,11 @@ tipo
 
         case "nacimiento":
 
-            return "media";
-
-
 
         case "matrimonio":
+
+
+        case "familia":
 
             return "media";
 
@@ -261,7 +348,16 @@ tipo
 
         case "fiesta":
 
+
+        case "cultura":
+
             return "baja";
+
+
+
+        case "leyenda":
+
+            return "mitica";
 
 
 
@@ -288,14 +384,16 @@ tipo
 // =================================
 
 function agregarConsecuencia(
-    historia_id,
-    consecuencia
+historia_id,
+consecuencia
 ){
 
 
 
     const datos =
-    cargarArchivo("../datos/historia.json");
+    cargarArchivo(
+        "datos/historia.json"
+    );
 
 
 
@@ -326,7 +424,6 @@ function agregarConsecuencia(
 
 
 
-
     historia.consecuencias.push(
         consecuencia
     );
@@ -337,7 +434,7 @@ function agregarConsecuencia(
 
     guardarArchivo(
 
-        "../datos/historia.json",
+        "datos/historia.json",
 
         datos
 
@@ -361,13 +458,12 @@ function agregarConsecuencia(
 
 
 // =================================
-// BUSCAR HISTORIA POR TIPO
+// BUSCAR POR TIPO
 // =================================
 
 function buscarPorTipo(
-    tipo
+tipo
 ){
-
 
 
     const historia =
@@ -380,7 +476,6 @@ function buscarPorTipo(
         return [];
 
     }
-
 
 
 
@@ -401,15 +496,57 @@ function buscarPorTipo(
 
 
 
+// =================================
+// BUSCAR HISTORIA DE HABITANTE
+// =================================
+
+function buscarHistoriaHabitante(
+habitante_id
+){
+
+
+    const historia =
+    cargarHistoria();
+
+
+
+    if(!historia){
+
+        return [];
+
+    }
+
+
+
+
+
+    return historia.filter(
+
+        h=>
+
+        h.participantes.includes(
+            habitante_id
+        )
+
+    );
+
+
+}
+
+
+
+
+
+
+
 
 // =================================
-// ÚLTIMOS ACONTECIMIENTOS
+// ÚLTIMOS EVENTOS
 // =================================
 
 function obtenerUltimos(
 cantidad=10
 ){
-
 
 
     const historia =
@@ -453,7 +590,8 @@ descripcion
 
 
 
-    return registrarHistoria(
+    const leyenda =
+    registrarHistoria(
 
         titulo,
 
@@ -462,6 +600,99 @@ descripcion
         "leyenda"
 
     );
+
+
+
+    if(leyenda){
+
+
+        leyenda.fama=100;
+
+
+    }
+
+
+
+    return leyenda;
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// AUMENTAR FAMA DE HISTORIA
+// =================================
+
+function aumentarFama(
+historia_id,
+cantidad
+){
+
+
+
+    const datos =
+    cargarArchivo(
+        "datos/historia.json"
+    );
+
+
+
+    if(!datos){
+
+        return null;
+
+    }
+
+
+
+    const historia =
+    datos.historia.find(
+
+        h=>h.id===historia_id
+
+    );
+
+
+
+    if(!historia){
+
+        return null;
+
+    }
+
+
+
+
+    historia.fama += cantidad;
+
+
+
+    if(historia.fama>100){
+
+        historia.fama=100;
+
+    }
+
+
+
+    guardarArchivo(
+
+        "datos/historia.json",
+
+        datos
+
+    );
+
+
+
+    return historia;
 
 
 }
@@ -478,15 +709,26 @@ module.exports={
 
     cargarHistoria,
 
+
     registrarHistoria,
+
 
     agregarConsecuencia,
 
+
     buscarPorTipo,
+
+
+    buscarHistoriaHabitante,
+
 
     obtenerUltimos,
 
-    crearLeyenda
+
+    crearLeyenda,
+
+
+    aumentarFama
 
 
 };
