@@ -21,6 +21,12 @@ const movimiento =
 require("./movimiento.js");
 
 
+const reloj =
+require("./reloj_mundo.js");
+
+
+
+
 
 
 
@@ -30,28 +36,32 @@ require("./movimiento.js");
 // =================================
 
 function obtenerRutina(
-    habitante_id
+habitante_id
 ){
 
-    const datos =
-    cargarArchivo("../datos/rutinas.json");
 
-
-    if(!datos){
-
-        return null;
-
-    }
+const datos =
+cargarArchivo("../datos/rutinas.json");
 
 
 
-    return datos.rutinas.find(
+if(!datos){
 
-        r=>r.habitante_id===habitante_id
-
-    ) || null;
+return null;
 
 }
+
+
+
+return datos.rutinas.find(
+
+r=>r.habitante_id===habitante_id
+
+)||null;
+
+
+}
+
 
 
 
@@ -65,87 +75,93 @@ function obtenerRutina(
 // =================================
 
 function crearRutina(
-    habitante_id,
-    etapa="adulto"
+habitante_id,
+etapa="adulto"
 ){
 
 
-    const datos =
-    cargarArchivo("../datos/rutinas.json");
+const datos =
+cargarArchivo("../datos/rutinas.json");
 
 
 
-    if(!datos){
+if(!datos){
 
-        return null;
+return null;
 
-    }
-
-
-
-    const rutina={
-
-
-        id:
-
-        datos.rutinas.length+1,
-
-
-        habitante_id,
-
-
-        etapa,
-
-
-        horario:
-        generarHorario(etapa),
-
-
-        actividad_actual:
-        "descansar",
-
-
-        ultima_actualizacion:null
+}
 
 
 
-    };
+const rutina={
+
+
+id:
+datos.rutinas.length+1,
+
+
+habitante_id,
+
+
+etapa,
+
+
+horario:
+generarHorario(etapa),
 
 
 
+actividad_actual:
+"descansar",
 
 
-    datos.rutinas.push(rutina);
+
+ultima_hora:null,
 
 
 
-    guardarArchivo(
+ultima_actualizacion:null
 
-        "../datos/rutinas.json",
 
-        datos
-
-    );
+};
 
 
 
 
-    crearMemoria(
 
-        habitante_id,
-
-        "rutina",
-
-        "Creó una rutina diaria.",
-
-        "baja"
-
-    );
+datos.rutinas.push(rutina);
 
 
 
+guardarArchivo(
 
-    return rutina;
+"../datos/rutinas.json",
+
+datos
+
+);
+
+
+
+
+
+crearMemoria(
+
+habitante_id,
+
+"rutina",
+
+"Creó su rutina diaria.",
+
+"baja"
+
+);
+
+
+
+
+return rutina;
+
 
 }
 
@@ -166,6 +182,7 @@ etapa
 ){
 
 
+
 switch(etapa){
 
 
@@ -173,33 +190,17 @@ case "niño":
 
 return [
 
-{
-hora:7,
-accion:"despertar"
-},
+{hora:7,accion:"despertar"},
 
-{
-hora:8,
-accion:"ir_escuela"
-},
+{hora:8,accion:"ir_escuela"},
 
-{
-hora:13,
-accion:"jugar"
-},
+{hora:13,accion:"jugar"},
 
-{
-hora:18,
-accion:"familia"
-},
+{hora:18,accion:"familia"},
 
-{
-hora:21,
-accion:"dormir"
-}
+{hora:21,accion:"dormir"}
 
 ];
-
 
 
 
@@ -208,35 +209,17 @@ case "adolescente":
 
 return [
 
-{
-hora:7,
-accion:"entrenar"
-},
+{hora:7,accion:"entrenar"},
 
-{
-hora:10,
-accion:"socializar"
-},
+{hora:10,accion:"socializar"},
 
-{
-hora:14,
-accion:"aprender"
-},
+{hora:14,accion:"aprender"},
 
-{
-hora:18,
-accion:"hobby"
-},
+{hora:18,accion:"hobby"},
 
-{
-hora:22,
-accion:"dormir"
-}
+{hora:22,accion:"dormir"}
 
 ];
-
-
-
 
 
 
@@ -245,35 +228,17 @@ case "adulto":
 
 return [
 
-{
-hora:6,
-accion:"despertar"
-},
+{hora:6,accion:"despertar"},
 
-{
-hora:8,
-accion:"ir_trabajo"
-},
+{hora:8,accion:"ir_trabajo"},
 
-{
-hora:17,
-accion:"regresar_hogar"
-},
+{hora:17,accion:"regresar_hogar"},
 
-{
-hora:20,
-accion:"familia"
-},
+{hora:20,accion:"familia"},
 
-{
-hora:23,
-accion:"dormir"
-}
+{hora:23,accion:"dormir"}
 
 ];
-
-
-
 
 
 
@@ -282,42 +247,23 @@ case "adulto_mayor":
 
 return [
 
-{
-hora:7,
-accion:"pasear"
-},
+{hora:7,accion:"pasear"},
 
-{
-hora:10,
-accion:"enseñar"
-},
+{hora:10,accion:"enseñar"},
 
-{
-hora:15,
-accion:"socializar"
-},
+{hora:15,accion:"socializar"},
 
-{
-hora:21,
-accion:"dormir"
-}
+{hora:21,accion:"dormir"}
 
 ];
 
 
-
-
-
-
-
 default:
+
 
 return [
 
-{
-hora:8,
-accion:"descansar"
-}
+{hora:8,accion:"descansar"}
 
 ];
 
@@ -336,7 +282,7 @@ accion:"descansar"
 
 
 // =================================
-// EJECUTAR ACCIÓN DE RUTINA
+// EJECUTAR ACTIVIDAD
 // =================================
 
 function ejecutarActividad(
@@ -354,11 +300,8 @@ case "ir_trabajo":
 
 
 return movimiento.irAlTrabajo(
-
 habitante_id
-
 );
-
 
 
 
@@ -367,12 +310,8 @@ case "regresar_hogar":
 
 
 return movimiento.irAHogar(
-
 habitante_id
-
 );
-
-
 
 
 
@@ -381,11 +320,8 @@ case "ir_escuela":
 
 
 return movimiento.irAEscuela(
-
 habitante_id
-
 );
-
 
 
 
@@ -399,9 +335,9 @@ crearMemoria(
 
 habitante_id,
 
-"rutina",
+"familia",
 
-"Pasó tiempo con su familia.",
+"Compartió tiempo con su familia.",
 
 "baja"
 
@@ -437,8 +373,6 @@ break;
 
 
 
-
-
 case "pasear":
 
 
@@ -448,7 +382,7 @@ habitante_id,
 
 "rutina",
 
-"Salió a pasear.",
+"Salió a explorar la comunidad.",
 
 "baja"
 
@@ -456,6 +390,25 @@ habitante_id,
 
 
 break;
+
+
+
+
+
+default:
+
+
+crearMemoria(
+
+habitante_id,
+
+"rutina",
+
+"Realizó la actividad "+actividad,
+
+"baja"
+
+);
 
 
 }
@@ -514,6 +467,19 @@ contexto.etapa || "adulto"
 
 
 
+if(
+rutina.ultima_hora===horaActual
+){
+
+return rutina;
+
+}
+
+
+
+
+
+
 const actividad =
 
 rutina.horario.find(
@@ -542,8 +508,14 @@ actividad.accion;
 
 
 
+rutina.ultima_hora =
+horaActual;
+
+
+
 rutina.ultima_actualizacion =
 new Date().toISOString();
+
 
 
 
@@ -565,10 +537,9 @@ actividad.accion
 
 
 guardarRutina(
-
 rutina
-
 );
+
 
 
 
@@ -584,7 +555,10 @@ crearEvento(
 {
 
 actividad:
-actividad.accion
+actividad.accion,
+
+momento:
+reloj.obtenerMomentoDia()
 
 }
 
@@ -609,7 +583,7 @@ return rutina;
 
 
 // =================================
-// PROFESIONES
+// ADAPTAR PROFESIÓN
 // =================================
 
 function adaptarRutinaProfesion(
@@ -618,7 +592,7 @@ profesion
 ){
 
 
-if(!rutina || !profesion){
+if(!rutina){
 
 return rutina;
 
@@ -626,13 +600,42 @@ return rutina;
 
 
 
+
+const trabajos={
+
+
+agricultor:"trabajar_campo",
+
+medico:"atender_pacientes",
+
+cocinero:"cocinar",
+
+maestro:"enseñar",
+
+guardia:"patrullar"
+
+
+};
+
+
+
+
+
+if(trabajos[profesion]){
+
+
 rutina.horario.push({
 
 hora:9,
 
-accion:"trabajar"
+accion:trabajos[profesion]
 
 });
+
+
+}
+
+
 
 
 
@@ -671,6 +674,8 @@ return null;
 
 
 
+
+
 const index =
 
 datos.rutinas.findIndex(
@@ -678,6 +683,8 @@ datos.rutinas.findIndex(
 r=>r.id===rutina.id
 
 );
+
+
 
 
 
@@ -705,7 +712,6 @@ return rutina;
 
 
 }
-
 
 
 
