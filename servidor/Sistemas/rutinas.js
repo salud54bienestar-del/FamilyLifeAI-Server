@@ -1,4 +1,5 @@
 // Sistema avanzado de rutinas de habitantes - Village Soul
+// Versión 2.0
 
 
 const cargarArchivo =
@@ -126,12 +127,24 @@ return existente;
 
 
 
-
 const rutina={
 
 
 id:
-datos.rutinas.length+1,
+datos.rutinas.length>0
+
+?
+
+Math.max(
+...datos.rutinas.map(
+r=>r.id
+)
+)+1
+
+:
+
+1,
+
 
 
 habitante_id,
@@ -165,7 +178,6 @@ new Date().toISOString()
 
 
 
-
 datos.rutinas.push(
 rutina
 );
@@ -184,19 +196,17 @@ datos
 
 
 
-
 crearMemoria(
 
 habitante_id,
 
 "rutina",
 
-"Creó su rutina diaria.",
+"Obtuvo una rutina diaria.",
 
 "baja"
 
 );
-
 
 
 
@@ -216,7 +226,7 @@ return rutina;
 
 
 // =================================
-// GENERAR HORARIO SEGÚN ETAPA
+// GENERAR HORARIO
 // =================================
 
 function generarHorario(
@@ -226,7 +236,6 @@ etapa
 
 
 switch(etapa){
-
 
 
 case "bebe":
@@ -390,7 +399,6 @@ habitante_id
 
 
 
-
 case "familia":
 
 
@@ -400,15 +408,14 @@ habitante_id,
 
 "familia",
 
-"Compartió tiempo con su familia.",
+"Pasó tiempo con sus seres queridos.",
 
-"baja"
+"media"
 
 );
 
 
 break;
-
 
 
 
@@ -423,7 +430,7 @@ habitante_id,
 
 "rutina",
 
-"Fue a descansar.",
+"Descansó durante la noche.",
 
 "baja"
 
@@ -436,6 +443,27 @@ break;
 
 
 
+case "socializar":
+
+
+crearMemoria(
+
+habitante_id,
+
+"social",
+
+"Conversó con otros habitantes.",
+
+"baja"
+
+);
+
+
+break;
+
+
+
+
 
 case "pasear":
 
@@ -444,7 +472,7 @@ crearMemoria(
 
 habitante_id,
 
-"rutina",
+"exploracion",
 
 "Exploró los alrededores.",
 
@@ -459,7 +487,6 @@ break;
 
 
 
-
 default:
 
 
@@ -467,9 +494,9 @@ crearMemoria(
 
 habitante_id,
 
-"rutina",
+"actividad",
 
-"Realizó la actividad "+actividad,
+"Realizó "+actividad,
 
 "baja"
 
@@ -499,9 +526,20 @@ return true;
 
 function actualizarRutina(
 habitante_id,
-horaActual,
+horaActual=null,
 contexto={}
 ){
+
+
+
+if(horaActual===null){
+
+horaActual =
+reloj.obtenerHora();
+
+}
+
+
 
 
 
@@ -534,13 +572,16 @@ contexto.etapa || "adulto"
 
 
 
-
-// Actualizar si cambió de etapa
+// Cambio de etapa
 
 if(
+
 contexto.etapa &&
+
 rutina.etapa !== contexto.etapa
+
 ){
+
 
 
 rutina.etapa =
@@ -555,13 +596,15 @@ contexto.etapa
 
 
 
+
+
 crearMemoria(
 
 habitante_id,
 
-"rutina",
+"crecimiento",
 
-"Su rutina cambió por crecimiento.",
+"Su rutina cambió por una nueva etapa de vida.",
 
 "media"
 
@@ -589,7 +632,6 @@ return rutina;
 
 
 
-
 const actividad =
 
 rutina.horario.find(
@@ -602,13 +644,11 @@ a=>a.hora===horaActual
 
 
 
-
 if(!actividad){
 
 return rutina;
 
 }
-
 
 
 
@@ -632,7 +672,6 @@ new Date().toISOString();
 
 
 
-
 ejecutarActividad(
 
 habitante_id,
@@ -645,12 +684,9 @@ actividad.accion
 
 
 
-
-
 guardarRutina(
 rutina
 );
-
 
 
 
@@ -668,13 +704,17 @@ actividad:
 actividad.accion,
 
 
+hora:
+horaActual,
+
+
 momento:
 reloj.obtenerMomentoDia()
+
 
 }
 
 );
-
 
 
 
@@ -703,11 +743,13 @@ profesion
 ){
 
 
+
 if(!rutina){
 
 return rutina;
 
 }
+
 
 
 
@@ -735,20 +777,37 @@ guardia:"patrullar"
 
 
 
-if(trabajos[profesion]){
+const actividad =
+trabajos[profesion];
+
+
+
+
+
+
+if(
+actividad &&
+
+!rutina.horario.some(
+
+h=>h.accion===actividad
+
+)
+
+){
 
 
 rutina.horario.push({
 
 hora:9,
 
-accion:
-trabajos[profesion]
+accion:actividad
 
 });
 
 
 }
+
 
 
 
@@ -785,6 +844,7 @@ if(!datos){
 return null;
 
 }
+
 
 
 
@@ -825,6 +885,7 @@ guardarArchivo(
 datos
 
 );
+
 
 
 
