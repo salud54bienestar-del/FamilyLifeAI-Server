@@ -1,79 +1,168 @@
-// Sistema de lugares de trabajo - Village Soul
-
-const cargarArchivo = require("./cargador_datos.js");
-const crearEvento = require("./eventos.js");
-const crearMemoria = require("./memorias.js");
+// Sistema avanzado de lugares de trabajo - Village Soul
 
 
-
-// Buscar un lugar de trabajo
-
-function buscarLugar(nombreLugar) {
-
-    const lugares =
-        cargarArchivo("../datos/lugares_trabajo.json");
+const cargarArchivo =
+require("./cargador_datos.js");
 
 
-    if (!lugares) {
+const guardarArchivo =
+require("./guardador_datos.js");
+
+
+const crearEvento =
+require("./eventos.js");
+
+
+const crearMemoria =
+require("./memorias.js");
+
+
+
+
+
+
+// =================================
+// BUSCAR LUGAR
+// =================================
+
+function buscarLugar(nombre){
+
+
+    const datos =
+    cargarArchivo("../datos/lugares_trabajo.json");
+
+
+
+    if(!datos){
 
         return null;
 
     }
 
 
-    return lugares.lugares_trabajo.find(
+
+    return datos.lugares_trabajo.find(
 
         lugar =>
-            lugar.nombre.toLowerCase() ===
-            nombreLugar.toLowerCase()
 
-    );
+        lugar.nombre.toLowerCase()
+        ===
+        nombre.toLowerCase()
+
+    ) || null;
+
 
 }
 
 
 
 
-// Asignar lugar de trabajo a un habitante
 
-function asignarLugarTrabajo(habitante_id, nombreLugar) {
+
+
+
+
+// =================================
+// VERIFICAR ESPACIO
+// =================================
+
+function tieneEspacio(
+lugar,
+habitante_id
+){
+
+
+    if(!lugar.capacidad){
+
+        return true;
+
+    }
+
+
+
+    if(!lugar.trabajadores){
+
+        lugar.trabajadores=[];
+
+    }
+
+
+
+    return (
+
+        lugar.trabajadores.length
+        <
+        lugar.capacidad
+
+        ||
+
+        lugar.trabajadores.includes(
+            habitante_id
+        )
+
+    );
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// ASIGNAR LUGAR
+// =================================
+
+function asignarLugarTrabajo(
+habitante_id,
+nombreLugar
+){
+
 
 
     const almas =
-        cargarArchivo("../datos/almas.json");
+    cargarArchivo("../datos/almas.json");
+
+
+    const lugares =
+    cargarArchivo("../datos/lugares_trabajo.json");
+
 
 
     const lugar =
-        buscarLugar(nombreLugar);
+    buscarLugar(nombreLugar);
 
 
 
-    if (!almas || !lugar) {
 
-        console.log(
-            "No se pudo encontrar el lugar de trabajo."
-        );
+    if(
+        !almas ||
+        !lugares ||
+        !lugar
+    ){
 
         return null;
 
     }
+
+
 
 
 
     const habitante =
-        almas.almas.find(
+    almas.almas.find(
 
-            a => a.id === habitante_id
+        a=>a.id===habitante_id
 
-        );
+    );
 
 
 
-    if (!habitante) {
-
-        console.log(
-            "Habitante no encontrado."
-        );
+    if(!habitante){
 
         return null;
 
@@ -81,26 +170,100 @@ function asignarLugarTrabajo(habitante_id, nombreLugar) {
 
 
 
-    habitante.lugar_trabajo = {
+
+
+
+
+    if(
+        !tieneEspacio(
+            lugar,
+            habitante_id
+        )
+    ){
+
+        return null;
+
+    }
+
+
+
+
+
+
+
+
+    habitante.lugar_trabajo={
+
+
+        id:
+        lugar.id,
 
 
         nombre:
-            lugar.nombre,
+        lugar.nombre,
 
 
         categoria:
-            lugar.categoria,
-
-
-        servicios:
-            lugar.servicios,
+        lugar.categoria,
 
 
         estado:
-            "activo"
+        "activo"
 
 
     };
+
+
+
+
+
+
+    if(!lugar.trabajadores){
+
+        lugar.trabajadores=[];
+
+    }
+
+
+
+    if(
+        !lugar.trabajadores.includes(
+            habitante_id
+        )
+    ){
+
+        lugar.trabajadores.push(
+            habitante_id
+        );
+
+    }
+
+
+
+
+
+
+
+    guardarArchivo(
+
+        "../datos/almas.json",
+
+        almas
+
+    );
+
+
+
+    guardarArchivo(
+
+        "../datos/lugares_trabajo.json",
+
+        lugares
+
+    );
+
+
+
 
 
 
@@ -109,14 +272,20 @@ function asignarLugarTrabajo(habitante_id, nombreLugar) {
 
         "asignacion_lugar_trabajo",
 
-        [habitante_id],
+        [
+            habitante_id
+        ],
 
         {
+
             lugar:
-                lugar.nombre
+            lugar.nombre
+
         }
 
     );
+
+
 
 
 
@@ -127,27 +296,15 @@ function asignarLugarTrabajo(habitante_id, nombreLugar) {
 
         "trabajo",
 
-        "Comenzó a trabajar en " +
+        "Comenzó a trabajar en "+
         lugar.nombre,
 
-        "media",
-
-        [],
-
-        "motivacion"
+        "media"
 
     );
 
 
 
-
-    console.log(
-        "Lugar de trabajo asignado:"
-    );
-
-    console.log(
-        habitante.lugar_trabajo
-    );
 
 
 
@@ -160,17 +317,25 @@ function asignarLugarTrabajo(habitante_id, nombreLugar) {
 
 
 
-// Obtener lugar actual de un habitante
 
-function obtenerLugarTrabajo(habitante_id) {
+
+
+
+// =================================
+// OBTENER LUGAR ACTUAL
+// =================================
+
+function obtenerLugarTrabajo(
+habitante_id
+){
 
 
     const almas =
-        cargarArchivo("../datos/almas.json");
+    cargarArchivo("../datos/almas.json");
 
 
 
-    if (!almas) {
+    if(!almas){
 
         return null;
 
@@ -179,11 +344,11 @@ function obtenerLugarTrabajo(habitante_id) {
 
 
     const habitante =
-        almas.almas.find(
+    almas.almas.find(
 
-            a => a.id === habitante_id
+        a=>a.id===habitante_id
 
-        );
+    );
 
 
 
@@ -196,24 +361,99 @@ function obtenerLugarTrabajo(habitante_id) {
 
 
 
-// Mostrar todos los lugares disponibles
-
-function obtenerLugares() {
-
-
-    const lugares =
-        cargarArchivo("../datos/lugares_trabajo.json");
 
 
 
-    return lugares?.lugares_trabajo || [];
+
+// =================================
+// LISTAR LUGARES
+// =================================
+
+function obtenerLugares(){
+
+
+    const datos =
+    cargarArchivo("../datos/lugares_trabajo.json");
+
+
+
+    return datos?.lugares_trabajo || [];
+
 
 }
 
 
 
 
-module.exports = {
+
+
+
+
+// =================================
+// QUITAR TRABAJO
+// =================================
+
+function retirarLugarTrabajo(
+habitante_id
+){
+
+
+    const almas =
+    cargarArchivo("../datos/almas.json");
+
+
+    if(!almas){
+
+        return null;
+
+    }
+
+
+
+    const habitante =
+    almas.almas.find(
+
+        a=>a.id===habitante_id
+
+    );
+
+
+
+    if(!habitante){
+
+        return null;
+
+    }
+
+
+
+    habitante.lugar_trabajo=null;
+
+
+
+    guardarArchivo(
+
+        "../datos/almas.json",
+
+        almas
+
+    );
+
+
+
+    return true;
+
+
+}
+
+
+
+
+
+
+
+module.exports={
+
 
     buscarLugar,
 
@@ -221,6 +461,9 @@ module.exports = {
 
     obtenerLugarTrabajo,
 
-    obtenerLugares
+    obtenerLugares,
+
+    retirarLugarTrabajo
+
 
 };
