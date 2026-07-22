@@ -1,32 +1,41 @@
-// Sistema de acciones de Village Soul
-
-const cargarArchivo = require("./cargador_datos.js");
-const crearEvento = require("./eventos.js");
-const crearMemoria = require("./memorias.js");
-const obtenerLugarTrabajo =
-require("./lugares_trabajo.js").obtenerLugarTrabajo;
+// Sistema avanzado de ubicaciones de habitantes - Village Soul
 
 
-
-function ejecutarAccion(habitante_id, accion) {
-
-
-    console.log("=================================");
-    console.log("        ACCIÓN");
-    console.log("=================================");
+const cargarArchivo =
+require("./cargador_datos.js");
 
 
-    console.log("Habitante:", habitante_id);
-    console.log("Acción:", accion);
+const guardarArchivo =
+require("./guardador_datos.js");
+
+
+const crearEvento =
+require("./eventos.js");
+
+
+const crearMemoria =
+require("./memorias.js");
 
 
 
-    const mundo = cargarArchivo("../datos/mundo.json");
 
 
-    if (!mundo) {
+// =================================
+// OBTENER UBICACIONES
+// =================================
 
-        console.log("No se pudo cargar el mundo.");
+
+function obtenerUbicaciones(
+    habitante_id
+){
+
+
+    const datos =
+    cargarArchivo("../datos/ubicaciones.json");
+
+
+
+    if(!datos){
 
         return null;
 
@@ -34,18 +43,126 @@ function ejecutarAccion(habitante_id, accion) {
 
 
 
-    let nombreAccion;
+    return datos.ubicaciones.find(
+
+        u=>u.habitante_id===habitante_id
+
+    ) || null;
 
 
-    if (typeof accion === "object") {
+}
 
-        nombreAccion = accion.eleccion;
 
-    } else {
 
-        nombreAccion = accion;
+
+
+
+
+
+// =================================
+// CREAR PERFIL DE UBICACIONES
+// =================================
+
+
+function crearUbicaciones(
+    habitante_id
+){
+
+
+    const datos =
+    cargarArchivo("../datos/ubicaciones.json");
+
+
+
+    if(!datos){
+
+        return null;
 
     }
+
+
+
+
+    const existente =
+    obtenerUbicaciones(
+        habitante_id
+    );
+
+
+
+    if(existente){
+
+        return existente;
+
+    }
+
+
+
+
+
+    const nueva = {
+
+
+        id:
+        datos.ubicaciones.length + 1,
+
+
+        habitante_id,
+
+
+
+        hogar:null,
+
+
+        trabajo:null,
+
+
+        escuela:null,
+
+
+
+        lugares_visitados:[],
+
+
+
+        amigos:{},
+
+
+
+        familia:{},
+
+
+
+        lugares_favoritos:[],
+
+
+
+        ultima_actualizacion:null
+
+
+    };
+
+
+
+
+
+    datos.ubicaciones.push(
+        nueva
+    );
+
+
+
+
+
+    guardarArchivo(
+
+        "../datos/ubicaciones.json",
+
+        datos
+
+    );
+
+
 
 
 
@@ -53,359 +170,451 @@ function ejecutarAccion(habitante_id, accion) {
 
         habitante_id,
 
-        "accion",
+        "ubicacion",
 
-        "El habitante realizó: " + nombreAccion,
+        "Registró sus lugares importantes.",
 
-        "media"
+        "baja"
 
     );
 
 
 
-    let resultadoAccion = "";
 
-    let evento = null;
+    return nueva;
 
-
-
-    switch (nombreAccion) {
-
-
-
-        case "explorar el mundo":
-        case "explorar_el_mundo":
-
-
-            if (!mundo.lugares) {
-
-                mundo.lugares = [];
-
-            }
-
-
-            mundo.lugares.push({
-
-                id: mundo.lugares.length + 1,
-
-                nombre: "Nueva zona descubierta",
-
-                tipo: "zona",
-
-                descubierto: true
-
-            });
-
-
-            resultadoAccion =
-            "Descubrió un nuevo lugar y ganó experiencia.";
-
-
-            evento = 1;
-
-
-            break;
-
-
-
-        case "buscar compañía":
-        case "buscar_compania":
-
-
-            resultadoAccion =
-            "El habitante busca fortalecer sus relaciones.";
-
-
-            evento = 2;
-
-
-            break;
-
-
-
-        case "cuidar familia":
-        case "cuidar_familia":
-        case "proteger_familia":
-
-
-            resultadoAccion =
-            "El habitante protegió y cuidó a su familia.";
-
-
-            evento = 2;
-
-
-            break;
-
-
-
-        case "crear_vinculos":
-
-
-            resultadoAccion =
-            "El habitante intenta crear una nueva amistad.";
-
-
-            evento = 2;
-
-
-            break;
-
-
-
-        case "resolver_conflicto":
-
-
-            resultadoAccion =
-            "El habitante intenta solucionar un problema.";
-
-
-            break;
-
-
-
-        case "trabajar en su objetivo":
-
-
-            resultadoAccion =
-            "El habitante avanzó hacia su meta.";
-
-
-            break;
-
-
-
-        case "descansar":
-
-
-            resultadoAccion =
-            "El habitante recuperó energía.";
-
-
-            break;
-
-
-
-        case "casarse":
-
-
-            resultadoAccion =
-            "Dos habitantes formaron una familia.";
-
-
-            evento = 6;
-
-
-            break;
-
-
-
-        case "adoptar":
-
-
-            resultadoAccion =
-            "El habitante creó un vínculo familiar mediante adopción.";
-
-
-            evento = 8;
-
-
-            break;
-
-
-
-
-        // NUEVO SISTEMA LABORAL
-
-
-
-        case "ir_al_trabajo":
-
-
-            const lugar =
-            obtenerLugarTrabajo(habitante_id);
-
-
-
-            if (lugar) {
-
-                resultadoAccion =
-                "El habitante fue a trabajar en " +
-                lugar.nombre + ".";
-
-            } else {
-
-                resultadoAccion =
-                "El habitante no tiene un lugar de trabajo asignado.";
-
-            }
-
-
-            break;
-
-
-
-
-        case "trabajar":
-
-
-            const trabajo =
-            obtenerLugarTrabajo(habitante_id);
-
-
-
-            if (trabajo) {
-
-                resultadoAccion =
-                "El habitante realizó sus tareas en " +
-                trabajo.nombre +
-                " y ganó experiencia.";
-
-            } else {
-
-                resultadoAccion =
-                "El habitante no tiene trabajo.";
-
-            }
-
-
-            break;
-
-
-
-
-        case "terminar_turno":
-
-
-            resultadoAccion =
-            "El habitante terminó su jornada laboral y regresó a casa.";
-
-
-            break;
-
-
-
-
-        case "cuidar_ninos":
-
-
-            resultadoAccion =
-            "El habitante cuidó a los niños del establecimiento.";
-
-
-            evento = 8;
-
-
-            break;
-
-
-
-
-        case "proteger_comunidad":
-
-
-            resultadoAccion =
-            "El guardia protegió la comunidad de amenazas.";
-
-
-            evento = 2;
-
-
-            break;
-
-
-
-
-        case "atender_pacientes":
-
-
-            resultadoAccion =
-            "El trabajador de salud atendió a los habitantes.";
-
-
-            break;
-
-
-
-
-        case "cocinar":
-
-
-            resultadoAccion =
-            "El cocinero preparó alimentos para la comunidad.";
-
-
-            break;
-
-
-
-
-        default:
-
-
-            resultadoAccion =
-            "El habitante realizó una acción nueva sin consecuencias definidas.";
-
-
-            break;
-
-    }
-
-
-
-    if (evento) {
-
-        crearEvento(
-
-            evento,
-
-            [habitante_id]
-
-        );
-
-    }
-
-
-
-    const resultado = {
-
-
-        habitante_id: habitante_id,
-
-        accion: nombreAccion,
-
-        resultado: resultadoAccion,
-
-        estado: "completada"
-
-
-    };
-
-
-
-    console.log("Resultado:");
-
-    console.log(resultado);
-
-
-
-    return resultado;
 
 }
 
 
 
 
-// Prueba inicial
-
-ejecutarAccion(
-
-    1,
-
-    "explorar el mundo"
-
-);
 
 
 
-module.exports = ejecutarAccion;
+
+
+// =================================
+// GUARDAR UBICACION
+// =================================
+
+
+function guardarUbicacion(
+    habitante_id,
+    tipo,
+    coordenadas,
+    nombre=""
+){
+
+
+
+    const ubicacion =
+    obtenerUbicaciones(
+        habitante_id
+    );
+
+
+
+    if(!ubicacion){
+
+        return null;
+
+    }
+
+
+
+
+    ubicacion[tipo]={
+
+
+        nombre,
+
+
+        x:coordenadas.x || 0,
+
+        y:coordenadas.y || 0,
+
+        z:coordenadas.z || 0,
+
+
+        actualizado:
+        new Date().toISOString()
+
+
+    };
+
+
+
+
+
+    ubicacion.ultima_actualizacion =
+    new Date().toISOString();
+
+
+
+
+
+    const datos =
+    cargarArchivo("../datos/ubicaciones.json");
+
+
+
+    const index =
+    datos.ubicaciones.findIndex(
+
+        u=>u.habitante_id===habitante_id
+
+    );
+
+
+
+
+
+    datos.ubicaciones[index]=ubicacion;
+
+
+
+    guardarArchivo(
+
+        "../datos/ubicaciones.json",
+
+        datos
+
+    );
+
+
+
+
+
+    crearEvento(
+
+        "ubicacion_guardada",
+
+        [
+            habitante_id
+        ],
+
+        {
+
+            tipo,
+
+            nombre
+
+        }
+
+    );
+
+
+
+
+
+    return ubicacion[tipo];
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// GUARDAR HOGAR
+// =================================
+
+
+function establecerHogar(
+habitante_id,
+coordenadas
+){
+
+
+    return guardarUbicacion(
+
+        habitante_id,
+
+        "hogar",
+
+        coordenadas,
+
+        "Casa"
+
+    );
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// GUARDAR TRABAJO
+// =================================
+
+
+function establecerTrabajo(
+habitante_id,
+coordenadas,
+nombre
+){
+
+
+    return guardarUbicacion(
+
+        habitante_id,
+
+        "trabajo",
+
+        coordenadas,
+
+        nombre
+
+    );
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// GUARDAR AMIGO
+// =================================
+
+
+function guardarAmigo(
+habitante_id,
+amigo_id,
+coordenadas
+){
+
+
+    const ubicacion =
+    obtenerUbicaciones(
+        habitante_id
+    );
+
+
+
+    if(!ubicacion){
+
+        return null;
+
+    }
+
+
+
+
+    ubicacion.amigos[amigo_id]={
+
+
+        x:coordenadas.x,
+
+        y:coordenadas.y,
+
+        z:coordenadas.z
+
+
+    };
+
+
+
+
+
+    actualizar(
+        ubicacion
+    );
+
+
+
+    return ubicacion.amigos[amigo_id];
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// AGREGAR LUGAR VISITADO
+// =================================
+
+
+function registrarLugarVisitado(
+habitante_id,
+lugar
+){
+
+
+    const ubicacion =
+    obtenerUbicaciones(
+        habitante_id
+    );
+
+
+
+    if(!ubicacion){
+
+        return null;
+
+    }
+
+
+
+
+    ubicacion.lugares_visitados.push(
+
+        lugar
+
+    );
+
+
+
+
+
+    actualizar(
+        ubicacion
+    );
+
+
+
+    return lugar;
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// ACTUALIZAR DATOS
+// =================================
+
+
+function actualizar(
+ubicacion
+){
+
+
+    const datos =
+    cargarArchivo("../datos/ubicaciones.json");
+
+
+
+    const index =
+    datos.ubicaciones.findIndex(
+
+        u=>u.id===ubicacion.id
+
+    );
+
+
+
+    if(index!==-1){
+
+        datos.ubicaciones[index]=ubicacion;
+
+    }
+
+
+
+    guardarArchivo(
+
+        "../datos/ubicaciones.json",
+
+        datos
+
+    );
+
+
+}
+
+
+
+
+
+
+
+
+
+// =================================
+// OBTENER DESTINO
+// =================================
+
+
+function obtenerDestino(
+habitante_id,
+tipo
+){
+
+
+    const ubicacion =
+    obtenerUbicaciones(
+        habitante_id
+    );
+
+
+
+    if(!ubicacion){
+
+        return null;
+
+    }
+
+
+
+    return ubicacion[tipo] || null;
+
+
+}
+
+
+
+
+
+
+
+
+
+module.exports={
+
+
+    obtenerUbicaciones,
+
+    crearUbicaciones,
+
+    establecerHogar,
+
+    establecerTrabajo,
+
+    guardarAmigo,
+
+    registrarLugarVisitado,
+
+    obtenerDestino
+
+
+};
