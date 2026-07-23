@@ -1,66 +1,54 @@
 // Sistema avanzado de cultura de Village Soul
 
+const cargarArchivo = require("./cargador_datos.js");
+const guardarArchivo = require("./guardador_datos.js");
+const crearEvento = require("./eventos.js");
+const crearMemoria = require("./memorias.js");
 
-const cargarArchivo =
-require("./cargador_datos.js");
+// =================================
+// GUARDAR CULTURA (AUXILIAR)
+// =================================
 
+function guardarCultura(cultura) {
+    let datos = cargarArchivo("../datos/cultura.json");
 
-const guardarArchivo =
-require("./guardador_datos.js");
+    if (!datos) {
+        datos = { culturas: [] };
+    }
 
+    if (!Array.isArray(datos.culturas)) {
+        datos.culturas = [];
+    }
 
-const crearEvento =
-require("./eventos.js");
+    const indice = datos.culturas.findIndex(
+        c => String(c.id) === String(cultura.id)
+    );
 
+    if (indice !== -1) {
+        datos.culturas[indice] = cultura;
+    } else {
+        datos.culturas.push(cultura);
+    }
 
-const crearMemoria =
-require("./memorias.js");
-
-
-
-
-
-
-
+    guardarArchivo("../datos/cultura.json", datos);
+    return cultura;
+}
 
 // =================================
 // OBTENER CULTURA
 // =================================
 
-function obtenerCultura(
-    cultura_id
-){
+function obtenerCultura(cultura_id) {
+    const datos = cargarArchivo("../datos/cultura.json");
 
-
-    const datos =
-    cargarArchivo("../datos/cultura.json");
-
-
-
-    if(!datos){
-
+    if (!datos || !Array.isArray(datos.culturas)) {
         return null;
-
     }
 
-
-
     return datos.culturas.find(
-
-        c=>c.id===cultura_id
-
+        c => String(c.id) === String(cultura_id)
     ) || null;
-
-
 }
-
-
-
-
-
-
-
-
 
 // =================================
 // CREAR CULTURA
@@ -68,185 +56,65 @@ function obtenerCultura(
 
 function crearCultura(
     nombre,
-    origen="natural"
-){
+    origen = "natural"
+) {
+    let datos = cargarArchivo("../datos/cultura.json");
 
-
-    const datos =
-    cargarArchivo("../datos/cultura.json");
-
-
-
-    if(!datos){
-
-        return null;
-
+    if (!datos) {
+        datos = { culturas: [] };
     }
 
+    if (!Array.isArray(datos.culturas)) {
+        datos.culturas = [];
+    }
 
-
-
-
-    const nuevoId =
-
-
-    datos.culturas.length > 0
-
-    ?
-
-    Math.max(
-        ...datos.culturas.map(
-            c=>c.id
-        )
-    ) + 1
-
-    :
-
-    1;
-
-
-
-
-
-
+    const nuevoId = datos.culturas.length > 0
+        ? Math.max(...datos.culturas.map(c => Number(c.id) || 0)) + 1
+        : 1;
 
     const cultura = {
-
-
-        id:nuevoId,
-
-
-        nombre,
-
-
+        id: nuevoId,
+        nombre: nombre || "Cultura sin nombre",
         origen,
-
-
-
-        valores:[
-
+        valores: [
             "cooperacion",
-
             "familia",
-
             "supervivencia"
-
         ],
-
-
-
-        tradiciones:[],
-
-
-        festividades:[],
-
-
-        comidas_tipicas:[],
-
-
-        arquitectura:{
-
-
-            estilo:
-            "medieval",
-
-
-            materiales:[],
-
-
-            decoracion:[]
-
+        tradiciones: [],
+        festividades: [],
+        comidas_tipicas: [],
+        arquitectura: {
+            estilo: "medieval",
+            materiales: [],
+            decoracion: []
         },
-
-
-
-        musica:[],
-
-
-        idioma:"comun",
-
-
-
-        reputacion:50,
-
-
-
-        historia:[
-
+        musica: [],
+        idioma: "comun",
+        reputacion: 50,
+        historia: [
             {
-
-                evento:
-                "cultura_creada",
-
-                fecha:
-                new Date().toISOString()
-
+                evento: "cultura_creada",
+                fecha: new Date().toISOString()
             }
-
         ]
-
-
-
     };
 
+    datos.culturas.push(cultura);
+    guardarArchivo("../datos/cultura.json", datos);
 
-
-
-
-
-
-    datos.culturas.push(
-        cultura
-    );
-
-
-
-
-
-    guardarArchivo(
-
-        "../datos/cultura.json",
-
-        datos
-
-    );
-
-
-
-
-
-    crearEvento(
-
-        "nueva_cultura",
-
-        [],
-
-        {
-
-            cultura:
-            nombre
-
-        }
-
-    );
-
-
-
-
-
+    if (typeof crearEvento === "function") {
+        crearEvento(
+            "nueva_cultura",
+            [],
+            {
+                cultura: nombre
+            }
+        );
+    }
 
     return cultura;
-
-
 }
-
-
-
-
-
-
-
-
 
 // =================================
 // AGREGAR TRADICIÓN
@@ -255,62 +123,27 @@ function crearCultura(
 function agregarTradicion(
     cultura_id,
     tradicion
-){
+) {
+    const cultura = obtenerCultura(cultura_id);
 
-
-
-    const cultura =
-    obtenerCultura(
-        cultura_id
-    );
-
-
-
-    if(!cultura){
-
+    if (!cultura) {
         return null;
-
     }
 
-
+    if (!Array.isArray(cultura.tradiciones)) {
+        cultura.tradiciones = [];
+    }
 
     cultura.tradiciones.push({
-
-        nombre:
-        tradicion,
-
-        importancia:
-        "media",
-
-        fecha:
-        new Date().toISOString()
-
+        nombre: tradicion,
+        importancia: "media",
+        fecha: new Date().toISOString()
     });
 
-
-
-
-
-    guardarCultura(
-        cultura
-    );
-
-
-
-
+    guardarCultura(cultura);
 
     return cultura;
-
-
 }
-
-
-
-
-
-
-
-
 
 // =================================
 // CREAR FESTIVIDAD
@@ -320,67 +153,31 @@ function crearFestividad(
     cultura_id,
     nombre,
     motivo
-){
+) {
+    const cultura = obtenerCultura(cultura_id);
 
-
-    const cultura =
-    obtenerCultura(
-        cultura_id
-    );
-
-
-
-    if(!cultura){
-
+    if (!cultura) {
         return null;
-
     }
 
-
-
-
+    if (!Array.isArray(cultura.festividades)) {
+        cultura.festividades = [];
+    }
 
     cultura.festividades.push({
-
         nombre,
-
         motivo,
-
-
-        actividades:[
-
+        actividades: [
             "reunirse",
-
             "comer",
-
             "celebrar"
-
         ]
-
     });
 
-
-
-
-
-    guardarCultura(
-        cultura
-    );
-
-
+    guardarCultura(cultura);
 
     return cultura;
-
-
 }
-
-
-
-
-
-
-
-
 
 // =================================
 // CAMBIAR VALORES CULTURALES
@@ -389,61 +186,24 @@ function crearFestividad(
 function agregarValor(
     cultura_id,
     valor
-){
+) {
+    const cultura = obtenerCultura(cultura_id);
 
-
-
-    const cultura =
-    obtenerCultura(
-        cultura_id
-    );
-
-
-
-    if(!cultura){
-
+    if (!cultura) {
         return null;
-
     }
 
-
-
-
-
-    if(
-        !cultura.valores.includes(valor)
-    ){
-
-
-        cultura.valores.push(
-            valor
-        );
-
-
+    if (!Array.isArray(cultura.valores)) {
+        cultura.valores = [];
     }
 
-
-
-
-
-    guardarCultura(
-        cultura
-    );
-
-
+    if (!cultura.valores.includes(valor)) {
+        cultura.valores.push(valor);
+        guardarCultura(cultura);
+    }
 
     return cultura;
-
-
 }
-
-
-
-
-
-
-
-
 
 // =================================
 // INFLUENCIA CULTURAL
@@ -452,72 +212,23 @@ function agregarValor(
 function obtenerInfluencia(
     cultura_id,
     accion
-){
+) {
+    const cultura = obtenerCultura(cultura_id);
 
-
-
-    const cultura =
-    obtenerCultura(
-        cultura_id
-    );
-
-
-
-    if(!cultura){
-
-        return null;
-
+    if (!cultura || !Array.isArray(cultura.valores)) {
+        return 0;
     }
 
-
-
-
-
-
-    if(
-        cultura.valores.includes(
-            "familia"
-        )
-        &&
-        accion==="ayudar_familia"
-    ){
-
+    if (cultura.valores.includes("familia") && accion === "ayudar_familia") {
         return 20;
-
     }
 
-
-
-
-
-    if(
-        cultura.valores.includes(
-            "exploracion"
-        )
-        &&
-        accion==="explorar"
-    ){
-
+    if (cultura.valores.includes("exploracion") && accion === "explorar") {
         return 15;
-
     }
-
-
-
-
 
     return 0;
-
-
 }
-
-
-
-
-
-
-
-
 
 // =================================
 // EVOLUCIONAR CULTURA
@@ -526,160 +237,40 @@ function obtenerInfluencia(
 function evolucionarCultura(
     cultura_id,
     cambio
-){
+) {
+    const cultura = obtenerCultura(cultura_id);
 
-
-
-    const cultura =
-    obtenerCultura(
-        cultura_id
-    );
-
-
-
-    if(!cultura){
-
+    if (!cultura) {
         return null;
-
     }
 
-
-
-
+    if (!Array.isArray(cultura.historia)) {
+        cultura.historia = [];
+    }
 
     cultura.historia.push({
-
-        evento:
-        cambio,
-
-        fecha:
-        new Date().toISOString()
-
+        evento: cambio,
+        fecha: new Date().toISOString()
     });
 
+    cultura.reputacion = Math.min(100, (cultura.reputacion || 50) + 1);
 
-
-
-
-    cultura.reputacion += 1;
-
-
-
-
-
-    if(
-        cultura.reputacion >100
-    ){
-
-        cultura.reputacion=100;
-
-    }
-
-
-
-
-
-    guardarCultura(
-        cultura
-    );
-
-
-
-
+    guardarCultura(cultura);
 
     return cultura;
-
-
 }
 
-
-
-
-
-
-
-
-
 // =================================
-// GUARDAR
+// EXPORTACIÓN DE MÓDULOS
 // =================================
 
-function guardarCultura(
-    cultura
-){
-
-
-
-    const datos =
-    cargarArchivo("../datos/cultura.json");
-
-
-
-    if(!datos){
-
-        return null;
-
-    }
-
-
-
-    const indice =
-    datos.culturas.findIndex(
-
-        c=>c.id===cultura.id
-
-    );
-
-
-
-    if(indice!==-1){
-
-        datos.culturas[indice]=cultura;
-
-    }
-
-
-
-
-
-    guardarArchivo(
-
-        "../datos/cultura.json",
-
-        datos
-
-    );
-
-
-
-    return cultura;
-
-
-}
-
-
-
-
-
-
-
-
-module.exports={
-
-
+module.exports = {
     obtenerCultura,
-
     crearCultura,
-
     agregarTradicion,
-
     crearFestividad,
-
     agregarValor,
-
     obtenerInfluencia,
-
     evolucionarCultura
-
-
 };
+    
