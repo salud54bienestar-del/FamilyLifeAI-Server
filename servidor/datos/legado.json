@@ -2,29 +2,17 @@
   "legados": [
     {
       "id": 1,
-
       "familia_id": 1,
-
       "nombre_legado": "Historia familiar",
-
       "tipo": "generacional",
-
       "descripcion": "Los conocimientos y recuerdos importantes pasan de una generación a otra.",
-
       "fundador": null,
-
       "generaciones": 1,
-
       "habilidades_transmitidas": [],
-
       "tradiciones": [],
-
       "reputacion": 0,
-
       "recuerdos_importantes": [],
-
       "objetos_heredados": [],
-
       "estado": "activo"
     }
   ]
