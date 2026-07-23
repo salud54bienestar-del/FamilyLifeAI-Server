@@ -1,0 +1,26 @@
+{
+  "format_version": "1.16.0",
+  "village_soul:familias_estructura": {
+    "familias": [
+      {
+        "id_familia": 1,
+        "nombre_familia": "",
+        "miembros": [],
+        "parentescos": [],
+        "parejas": [],
+        "historial": [],
+        "generaciones": {
+          "primera": [],
+          "segunda": [],
+          "tercera": []
+        },
+        "adopciones": [],
+        "custodia": [],
+        "estado": {
+          "felicidad": 100,
+          "estabilidad": 100
+        }
+      }
+    ]
+  }
+}
