@@ -1,0 +1,37 @@
+{
+  "format_version": "1.16.0",
+  "village_soul:perfil_completo": {
+    "datos_personales": {
+      "nombre": "",
+      "edad": 0,
+      "etapa_vida": "adulto",
+      "genero": "",
+      "cualidades_fisicas": []
+    },
+    "psicologia": {
+      "personalidad": [],
+      "gustos": [],
+      "hobbies": [],
+      "estado_emocional": "neutral"
+    },
+    "historia_y_vida": {
+      "historia_personal": "",
+      "memorias": [],
+      "relaciones": {
+        "familia": {
+          "padre": null,
+          "madre": null,
+          "pareja": null,
+          "hijos": []
+        },
+        "amistades": []
+      }
+    },
+    "estado_actual": {
+      "hambre": 100,
+      "energia": 100,
+      "felicidad": 100,
+      "profesion": "sin_asignar"
+    }
+  }
+}
