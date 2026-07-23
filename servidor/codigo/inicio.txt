@@ -1,16 +1,49 @@
-Village Soul Server
+// Servidor principal y Soul Engine - Village Soul
 
-Inicio del sistema.
+const cargarArchivo = require("./Sistemas/cargador_datos.js");
+const guardarArchivo = require("./Sistemas/guardador_datos.js");
+const crearEvento = require("./Sistemas/eventos.js");
 
-Este proyecto contiene el núcleo del servidor de Village Soul.
-Aquí se gestionan personajes, memorias, relaciones, eventos y conexiones entre los diferentes sistemas del mundo.
+// =================================
+// INICIAR SERVIDOR / MUNDO
+// =================================
 
-Componentes principales:
-- Sistema de Almas
-- Sistema de Memorias
-- Sistema de Relaciones
-- Sistema de Eventos
-- Núcleo del Mundo
+function iniciarServidor() {
+    console.log("[Soul Engine] Cargando datos del mundo...");
 
-Estado:
-Base inicial del Soul Engine.
+    let mundo = cargarArchivo("../datos/pueblo.json");
+
+    if (!mundo) {
+        mundo = {
+            mundo: {
+                nombre: "Village Soul",
+                version: "1.0.0",
+                creado: new Date().toISOString()
+            }
+        };
+        guardarArchivo("../datos/pueblo.json", mundo);
+    }
+
+    if (typeof crearEvento === "function") {
+        crearEvento(
+            "inicio_servidor",
+            [],
+            {
+                mensaje: "El motor de Village Soul se ha puesto en marcha."
+            }
+        );
+    }
+
+    return {
+        estado: "activo",
+        mundo: mundo.mundo || { nombre: "Village Soul" }
+    };
+}
+
+// =================================
+// EXPORTACIÓN DE MÓDULOS
+// =================================
+
+module.exports = {
+    iniciarServidor
+};
