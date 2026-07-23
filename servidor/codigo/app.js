@@ -1,112 +1,41 @@
 // Punto de entrada principal - Village Soul
 
-
 console.log("=================================");
 console.log("          VILLAGE SOUL");
 console.log("=================================");
 
+console.log("Iniciando aplicación...");
+console.log("Activando Soul Engine...");
 
+try {
+    const servidor = require("./servidor.js");
 
-console.log(
-    "Iniciando aplicación..."
-);
+    const resultado = typeof servidor.iniciarServidor === "function" 
+        ? servidor.iniciarServidor() 
+        : null;
 
-
-
-console.log(
-    "Activando Soul Engine..."
-);
-
-
-
-
-
-
-try{
-
-
-    const servidor =
-    require("./servidor.js");
-
-
-
-
-
-    const resultado =
-    servidor.iniciarServidor();
-
-
-
-
-
-    if(resultado){
-
-
+    if (resultado && resultado.mundo) {
         console.log("");
-
-        console.log(
-            "================================="
-        );
-
-        console.log(
-            " VILLAGE SOUL INICIADO CORRECTAMENTE"
-        );
-
-        console.log(
-            "================================="
-        );
-
-
-        console.log(
-            "Mundo:",
-            resultado.mundo.nombre
-        );
-
-
-
+        console.log("=================================");
+        console.log(" VILLAGE SOUL INICIADO CORRECTAMENTE");
+        console.log("=================================");
+        console.log("Mundo:", resultado.mundo.nombre || "Desconocido");
+        console.log("Estado:", resultado.estado || "Activo");
+    } else {
+        console.log("");
+        console.log("⚠️ Advertencia: El servidor inició pero no devolvió datos del mundo.");
     }
-
-    else{
-
-
-        console.log(
-            "No se pudo iniciar el mundo."
-        );
-
-
-    }
-
-
-
-
-}
-
-catch(error){
-
-
-
+} catch (error) {
     console.log("");
-
-    console.log(
-        "ERROR AL INICIAR VILLAGE SOUL"
-    );
-
-
-    console.log(
-        error.message
-    );
-
-
-
+    console.log("=================================");
+    console.log(" ERROR AL INICIAR VILLAGE SOUL");
+    console.log("=================================");
+    console.log(error.message);
+    if (error.stack) {
+        console.log("");
+        console.log(error.stack);
+    }
 }
-
-
-
-
-
 
 console.log("");
-
-console.log(
-    "Aplicación cargada."
-);
+console.log("Aplicación cargada.");
