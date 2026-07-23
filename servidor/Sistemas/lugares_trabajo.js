@@ -1,469 +1,180 @@
 // Sistema avanzado de lugares de trabajo - Village Soul
 
-
-const cargarArchivo =
-require("./cargador_datos.js");
-
-
-const guardarArchivo =
-require("./guardador_datos.js");
-
-
-const crearEvento =
-require("./eventos.js");
-
-
-const crearMemoria =
-require("./memorias.js");
-
-
-
-
-
+const cargarArchivo = require("./cargador_datos.js");
+const guardarArchivo = require("./guardador_datos.js");
+const crearEvento = require("./eventos.js");
+const crearMemoria = require("./memorias.js");
 
 // =================================
 // BUSCAR LUGAR
 // =================================
 
-function buscarLugar(nombre){
+function buscarLugar(nombre) {
+    const datos = cargarArchivo("../datos/lugares_trabajo.json");
 
-
-    const datos =
-    cargarArchivo("../datos/lugares_trabajo.json");
-
-
-
-    if(!datos){
-
+    if (!datos || !Array.isArray(datos.lugares_trabajo)) {
         return null;
-
     }
 
-
-
     return datos.lugares_trabajo.find(
-
-        lugar =>
-
-        lugar.nombre.toLowerCase()
-        ===
-        nombre.toLowerCase()
-
+        lugar => lugar.nombre && lugar.nombre.toLowerCase() === nombre.toLowerCase()
     ) || null;
-
-
 }
-
-
-
-
-
-
-
-
 
 // =================================
 // VERIFICAR ESPACIO
 // =================================
 
-function tieneEspacio(
-lugar,
-habitante_id
-){
+function tieneEspacio(lugar, habitante_id) {
+    if (!lugar) return false;
 
-
-    if(!lugar.capacidad){
-
+    if (!lugar.capacidad) {
         return true;
-
     }
 
-
-
-    if(!lugar.trabajadores){
-
-        lugar.trabajadores=[];
-
+    if (!Array.isArray(lugar.trabajadores)) {
+        lugar.trabajadores = [];
     }
-
-
 
     return (
-
-        lugar.trabajadores.length
-        <
-        lugar.capacidad
-
-        ||
-
-        lugar.trabajadores.includes(
-            habitante_id
-        )
-
+        lugar.trabajadores.length < lugar.capacidad ||
+        lugar.trabajadores.includes(habitante_id)
     );
-
-
 }
-
-
-
-
-
-
-
-
 
 // =================================
 // ASIGNAR LUGAR
 // =================================
 
-function asignarLugarTrabajo(
-habitante_id,
-nombreLugar
-){
+function asignarLugarTrabajo(habitante_id, nombreLugar) {
+    const almas = cargarArchivo("../datos/almas.json");
+    let lugares = cargarArchivo("../datos/lugares_trabajo.json");
 
-
-
-    const almas =
-    cargarArchivo("../datos/almas.json");
-
-
-    const lugares =
-    cargarArchivo("../datos/lugares_trabajo.json");
-
-
-
-    const lugar =
-    buscarLugar(nombreLugar);
-
-
-
-
-    if(
-        !almas ||
-        !lugares ||
-        !lugar
-    ){
-
+    if (!almas || !Array.isArray(almas.almas) || !lugares || !Array.isArray(lugares.lugares_trabajo)) {
         return null;
-
     }
 
-
-
-
-
-    const habitante =
-    almas.almas.find(
-
-        a=>a.id===habitante_id
-
+    const lugarIndex = lugares.lugares_trabajo.findIndex(
+        l => l.nombre && l.nombre.toLowerCase() === nombreLugar.toLowerCase()
     );
 
-
-
-    if(!habitante){
-
+    if (lugarIndex === -1) {
         return null;
-
     }
 
+    const lugar = lugares.lugares_trabajo[lugarIndex];
+    const habitante = almas.almas.find(a => String(a.id) === String(habitante_id));
 
-
-
-
-
-
-    if(
-        !tieneEspacio(
-            lugar,
-            habitante_id
-        )
-    ){
-
+    if (!habitante || !tieneEspacio(lugar, habitante_id)) {
         return null;
-
     }
 
-
-
-
-
-
-
-
-    habitante.lugar_trabajo={
-
-
-        id:
-        lugar.id,
-
-
-        nombre:
-        lugar.nombre,
-
-
-        categoria:
-        lugar.categoria,
-
-
-        estado:
-        "activo"
-
-
+    // Asignar en el habitante
+    habitante.lugar_trabajo = {
+        id: lugar.id,
+        nombre: lugar.nombre,
+        categoria: lugar.categoria,
+        estado: "activo"
     };
 
-
-
-
-
-
-    if(!lugar.trabajadores){
-
-        lugar.trabajadores=[];
-
+    // Actualizar trabajadores en la entidad del lugar
+    if (!Array.isArray(lugar.trabajadores)) {
+        lugar.trabajadores = [];
     }
 
+    if (!lugar.trabajadores.includes(habitante_id)) {
+        lugar.trabajadores.push(habitante_id);
+    }
 
+    guardarArchivo("../datos/almas.json", almas);
+    guardarArchivo("../datos/lugares_trabajo.json", lugares);
 
-    if(
-        !lugar.trabajadores.includes(
-            habitante_id
-        )
-    ){
-
-        lugar.trabajadores.push(
-            habitante_id
+    if (typeof crearEvento === "function") {
+        crearEvento(
+            "asignacion_lugar_trabajo",
+            [habitante_id],
+            { lugar: lugar.nombre }
         );
-
     }
 
-
-
-
-
-
-
-    guardarArchivo(
-
-        "../datos/almas.json",
-
-        almas
-
-    );
-
-
-
-    guardarArchivo(
-
-        "../datos/lugares_trabajo.json",
-
-        lugares
-
-    );
-
-
-
-
-
-
-
-    crearEvento(
-
-        "asignacion_lugar_trabajo",
-
-        [
-            habitante_id
-        ],
-
-        {
-
-            lugar:
-            lugar.nombre
-
-        }
-
-    );
-
-
-
-
-
-
-    crearMemoria(
-
-        habitante_id,
-
-        "trabajo",
-
-        "Comenzó a trabajar en "+
-        lugar.nombre,
-
-        "media"
-
-    );
-
-
-
-
-
+    if (typeof crearMemoria === "function") {
+        crearMemoria(
+            habitante_id,
+            "trabajo",
+            "Comenzó a trabajar en " + lugar.nombre,
+            "media"
+        );
+    }
 
     return habitante.lugar_trabajo;
-
-
 }
-
-
-
-
-
-
-
-
 
 // =================================
 // OBTENER LUGAR ACTUAL
 // =================================
 
-function obtenerLugarTrabajo(
-habitante_id
-){
+function obtenerLugarTrabajo(habitante_id) {
+    const almas = cargarArchivo("../datos/almas.json");
 
-
-    const almas =
-    cargarArchivo("../datos/almas.json");
-
-
-
-    if(!almas){
-
+    if (!almas || !Array.isArray(almas.almas)) {
         return null;
-
     }
 
-
-
-    const habitante =
-    almas.almas.find(
-
-        a=>a.id===habitante_id
-
-    );
-
-
-
+    const habitante = almas.almas.find(a => String(a.id) === String(habitante_id));
     return habitante?.lugar_trabajo || null;
-
-
 }
-
-
-
-
-
-
-
-
 
 // =================================
 // LISTAR LUGARES
 // =================================
 
-function obtenerLugares(){
-
-
-    const datos =
-    cargarArchivo("../datos/lugares_trabajo.json");
-
-
-
+function obtenerLugares() {
+    const datos = cargarArchivo("../datos/lugares_trabajo.json");
     return datos?.lugares_trabajo || [];
-
-
 }
-
-
-
-
-
-
-
 
 // =================================
 // QUITAR TRABAJO
 // =================================
 
-function retirarLugarTrabajo(
-habitante_id
-){
+function retirarLugarTrabajo(habitante_id) {
+    const almas = cargarArchivo("../datos/almas.json");
+    let lugares = cargarArchivo("../datos/lugares_trabajo.json");
 
-
-    const almas =
-    cargarArchivo("../datos/almas.json");
-
-
-    if(!almas){
-
+    if (!almas || !Array.isArray(almas.almas)) {
         return null;
-
     }
 
+    const habitante = almas.almas.find(a => String(a.id) === String(habitante_id));
 
-
-    const habitante =
-    almas.almas.find(
-
-        a=>a.id===habitante_id
-
-    );
-
-
-
-    if(!habitante){
-
+    if (!habitante) {
         return null;
-
     }
 
+    const lugarAnteriorId = habitante.lugar_trabajo?.id;
+    habitante.lugar_trabajo = null;
 
+    // Retirar del array de trabajadores en lugares_trabajo.json
+    if (lugares && Array.isArray(lugares.lugares_trabajo) && lugarAnteriorId) {
+        const lugar = lugares.lugares_trabajo.find(l => l.id === lugarAnteriorId);
+        if (lugar && Array.isArray(lugar.trabajadores)) {
+            lugar.trabajadores = lugar.trabajadores.filter(id => String(id) !== String(habitante_id));
+            guardarArchivo("../datos/lugares_trabajo.json", lugares);
+        }
+    }
 
-    habitante.lugar_trabajo=null;
-
-
-
-    guardarArchivo(
-
-        "../datos/almas.json",
-
-        almas
-
-    );
-
-
-
+    guardarArchivo("../datos/almas.json", almas);
     return true;
-
-
 }
 
+// =================================
+// EXPORTACIÓN DE MÓDULOS
+// =================================
 
-
-
-
-
-
-module.exports={
-
-
+module.exports = {
     buscarLugar,
-
     asignarLugarTrabajo,
-
     obtenerLugarTrabajo,
-
     obtenerLugares,
-
     retirarLugarTrabajo
-
-
 };
