@@ -50,7 +50,7 @@ function obtenerFechaMundo() {
 }
 
 // ==========================================
-// CATEGORIA EMOCIONAL
+// CATEGORÍA EMOCIONAL
 // ==========================================
 
 function obtenerCategoria(emocion) {
@@ -118,18 +118,18 @@ function crearMemoria(
         influencia: calcularInfluencia(importancia),
         categoria: obtenerCategoria(emocion),
         emocion,
-        personas_relacionadas: Array.isArray(personas) ? personas : [],
+        personas_relacionadas: Array.isArray(personas) ? personas.map(p => String(p)) : [],
         lugar_relacionado: lugar,
         ubicacion,
         origen,
         grupo_memoria,
         efecto_personalidad: {
-            confianza: efecto.confianza || 0,
-            miedo: efecto.miedo || 0,
-            felicidad: efecto.felicidad || 0,
-            tristeza: efecto.tristeza || 0,
-            respeto: efecto.respeto || 0,
-            valentia: efecto.valentia || 0
+            confianza: efecto?.confianza || 0,
+            miedo: efecto?.miedo || 0,
+            felicidad: efecto?.felicidad || 0,
+            tristeza: efecto?.tristeza || 0,
+            respeto: efecto?.respeto || 0,
+            valentia: efecto?.valentia || 0
         },
         aprendizaje: aprendizaje || "ninguno",
         impacto_comportamiento:
@@ -169,7 +169,7 @@ function obtenerMemorias(habitante_id) {
 }
 
 // ==========================================
-// BUSQUEDAS
+// BÚSQUEDAS
 // ==========================================
 
 function buscarMemoriasTipo(habitante_id, tipo) {
@@ -180,7 +180,7 @@ function buscarMemoriasTipo(habitante_id, tipo) {
 
 function buscarMemoriasPersona(habitante_id, persona_id) {
     return obtenerMemorias(habitante_id).filter(
-        memoria => memoria.personas_relacionadas.includes(persona_id)
+        memoria => memoria.personas_relacionadas.includes(String(persona_id))
     );
 }
 
@@ -206,10 +206,10 @@ function obtenerRecuerdosImportantes(habitante_id) {
 
 function recordarMemoria(habitante_id, id) {
     const datos = cargarArchivo("memorias_data");
-    if (!datos) return null;
+    if (!datos || !Array.isArray(datos.memorias)) return null;
 
     const memoria = datos.memorias.find(
-        memoria => memoria.id === id && String(memoria.habitante_id) === String(habitante_id)
+        memoria => Number(memoria.id) === Number(id) && String(memoria.habitante_id) === String(habitante_id)
     );
 
     if (!memoria) return null;
@@ -228,19 +228,18 @@ function recordarMemoria(habitante_id, id) {
 
 function evolucionarMemorias() {
     const datos = cargarArchivo("memorias_data");
-    if (!datos) return false;
+    if (!datos || !Array.isArray(datos.memorias)) return false;
 
     datos.memorias.forEach(memoria => {
         if (memoria.favorita) return;
 
         memoria.fuerza_recuerdo -= 1;
 
-        if (memoria.fuerza_recuerdo <= 20) {
+        if (memoria.fuerza_recuerdo <= 20 && memoria.fuerza_recuerdo > 0) {
             memoria.estado = "debil";
-        }
-
-        if (memoria.fuerza_recuerdo <= 0) {
+        } else if (memoria.fuerza_recuerdo <= 0) {
             memoria.estado = "olvidada";
+            memoria.fuerza_recuerdo = 0;
         }
     });
 
@@ -254,10 +253,10 @@ function evolucionarMemorias() {
 
 function eliminarMemoria(id) {
     const datos = cargarArchivo("memorias_data");
-    if (!datos) return false;
+    if (!datos || !Array.isArray(datos.memorias)) return false;
 
     datos.memorias = datos.memorias.filter(
-        memoria => memoria.id !== id
+        memoria => Number(memoria.id) !== Number(id)
     );
 
     guardarArchivo("memorias_data", datos);
@@ -280,4 +279,3 @@ export {
     eliminarMemoria,
     generarId
 };
-        
