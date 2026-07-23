@@ -1,11 +1,15 @@
-// Rutas de Village Soul
+// Rutas y Endpoints de Village Soul - Soul Engine
 
 const rutas = {
+    base: "/",
     mundo: "/mundo",
     almas: "/almas",
     memorias: "/memorias",
     relaciones: "/relaciones",
-    eventos: "/eventos"
+    eventos: "/eventos",
+    comportamiento: "/comportamiento",
+    cultura: "/cultura",
+    comunicacion: "/comunicacion"
 };
 
 console.log("Rutas de Village Soul preparadas.");
