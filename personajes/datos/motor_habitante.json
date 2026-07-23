@@ -1,0 +1,11 @@
+{
+  "format_version": "1.16.0",
+  "village_soul:motor_habitante": {
+    "version": "1.0.0",
+    "configuracion": {
+      "actualizacion_estados_vitales": true,
+      "procesamiento_memoria_activa": true,
+      "frecuencia_sincronizacion_ticks": 40
+    }
+  }
+}
