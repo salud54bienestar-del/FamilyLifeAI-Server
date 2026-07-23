@@ -1,0 +1,21 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "animation.habitante.idle": {
+      "loop": true,
+      "bones": {
+        "head": {
+          "rotation": ["math.sin(query.anim_time * 50) * 2", "math.cos(query.anim_time * 40) * 3", 0]
+        }
+      }
+    },
+    "animation.habitante.walk": {
+      "loop": true,
+      "bones": {
+        "body": {
+          "rotation": [0, 0, "math.sin(query.anim_time * 200) * 5"]
+        }
+      }
+    }
+  }
+}
