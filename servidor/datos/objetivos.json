@@ -12,7 +12,6 @@
       "requisitos": [],
       "recompensa": "experiencia"
     },
-
     {
       "id": 2,
       "habitante_id": 1,
@@ -28,7 +27,6 @@
       ],
       "recompensa": "aumento_confianza"
     },
-
     {
       "id": 3,
       "habitante_id": 1,
@@ -45,7 +43,6 @@
       ],
       "recompensa": "nueva_generacion"
     },
-
     {
       "id": 4,
       "habitante_id": 1,
@@ -60,7 +57,6 @@
       ],
       "recompensa": "fortalecer_familia"
     },
-
     {
       "id": 5,
       "habitante_id": 1,
@@ -75,7 +71,6 @@
       ],
       "recompensa": "nuevo_rango"
     },
-
     {
       "id": 6,
       "habitante_id": 2,
@@ -92,7 +87,6 @@
       ],
       "recompensa": "experiencia_exploracion"
     },
-
     {
       "id": 7,
       "habitante_id": 2,
@@ -108,7 +102,6 @@
       ],
       "recompensa": "aumento_reputacion"
     },
-
     {
       "id": 8,
       "habitante_id": 2,
