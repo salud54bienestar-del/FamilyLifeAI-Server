@@ -1,0 +1,11 @@
+{
+  "format_version": "1.16.0",
+  "village_soul:motor_dialogos": {
+    "version": "1.0.0",
+    "configuracion": {
+      "procesamiento_emocional": true,
+      "generacion_memoria_activa": true,
+      "frecuencia_analisis_contexto_ticks": 80
+    }
+  }
+}
