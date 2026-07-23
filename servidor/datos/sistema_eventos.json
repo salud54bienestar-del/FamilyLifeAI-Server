@@ -1,6 +1,5 @@
 {
   "eventos_disponibles": [
-
     {
       "id": 1,
       "nombre": "primer_encuentro",
@@ -14,8 +13,6 @@
         "curiosidad": 5
       }
     },
-
-
     {
       "id": 2,
       "nombre": "nuevo_dia",
@@ -28,8 +25,6 @@
         "estres": -1
       }
     },
-
-
     {
       "id": 3,
       "nombre": "embarazo_confirmado",
@@ -43,8 +38,6 @@
         "amor": 5
       }
     },
-
-
     {
       "id": 4,
       "nombre": "nacimiento",
@@ -58,8 +51,6 @@
         "orgullo": 5
       }
     },
-
-
     {
       "id": 5,
       "nombre": "amistad",
@@ -73,8 +64,6 @@
         "soledad": -10
       }
     },
-
-
     {
       "id": 6,
       "nombre": "conflicto",
@@ -88,8 +77,6 @@
         "confianza": -5
       }
     },
-
-
     {
       "id": 7,
       "nombre": "boda",
@@ -103,8 +90,6 @@
         "confianza": 10
       }
     },
-
-
     {
       "id": 8,
       "nombre": "adopcion",
@@ -118,8 +103,6 @@
         "confianza": 5
       }
     },
-
-
     {
       "id": 9,
       "nombre": "cumpleaños",
@@ -132,8 +115,6 @@
         "orgullo": 3
       }
     },
-
-
     {
       "id": 10,
       "nombre": "cambio_etapa_vida",
@@ -146,8 +127,6 @@
         "confianza": 5
       }
     },
-
-
     {
       "id": 11,
       "nombre": "fallecimiento",
@@ -161,8 +140,6 @@
         "estres": 5
       }
     },
-
-
     {
       "id": 12,
       "nombre": "nuevo_trabajo",
@@ -176,8 +153,6 @@
         "esperanza": 5
       }
     },
-
-
     {
       "id": 13,
       "nombre": "descubrimiento",
@@ -191,6 +166,5 @@
         "confianza": 3
       }
     }
-
   ]
 }
