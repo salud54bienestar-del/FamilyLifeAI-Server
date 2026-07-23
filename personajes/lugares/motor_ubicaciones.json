@@ -1,0 +1,11 @@
+{
+  "format_version": "1.16.0",
+  "village_soul:motor_ubicaciones": {
+    "version": "1.0.0",
+    "configuracion": {
+      "gestion_espacial": true,
+      "asignacion_automatica_zonas": true,
+      "frecuencia_actualizacion_ticks": 200
+    }
+  }
+}
