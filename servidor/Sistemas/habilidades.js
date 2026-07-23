@@ -1,621 +1,225 @@
 // Sistema avanzado de habilidades - Village Soul
 
+const cargarArchivo = require("./cargador_datos.js");
+const guardarArchivo = require("./guardador_datos.js");
+const crearMemoria = require("./memorias.js");
+const crearEvento = require("./eventos.js");
 
-const cargarArchivo =
-require("./cargador_datos.js");
+// =================================
+// GUARDAR HABILIDADES (AUXILIAR)
+// =================================
 
+function guardarHabilidades(habilidadActualizada) {
+    let datos = cargarArchivo("../datos/habilidades.json");
 
-const guardarArchivo =
-require("./guardador_datos.js");
+    if (!datos) {
+        datos = { habilidades: [] };
+    }
 
+    if (!Array.isArray(datos.habilidades)) {
+        datos.habilidades = [];
+    }
 
-const crearMemoria =
-require("./memorias.js");
+    const index = datos.habilidades.findIndex(
+        h => String(h.habitante_id) === String(habilidadActualizada.habitante_id)
+    );
 
+    if (index !== -1) {
+        datos.habilidades[index] = habilidadActualizada;
+    } else {
+        datos.habilidades.push(habilidadActualizada);
+    }
 
-const crearEvento =
-require("./eventos.js");
-
-
-
-
-
+    guardarArchivo("../datos/habilidades.json", datos);
+}
 
 // =================================
 // OBTENER HABILIDADES
 // =================================
 
-function obtenerHabilidades(
-    habitante_id
-){
+function obtenerHabilidades(habitante_id) {
+    const datos = cargarArchivo("../datos/habilidades.json");
 
-
-    const datos =
-    cargarArchivo("../datos/habilidades.json");
-
-
-
-    if(!datos){
-
+    if (!datos || !Array.isArray(datos.habilidades)) {
         return null;
-
     }
 
-
-
     return datos.habilidades.find(
-
-        h =>
-        h.habitante_id === habitante_id
-
+        h => String(h.habitante_id) === String(habitante_id)
     ) || null;
-
-
 }
-
-
-
-
-
-
-
 
 // =================================
 // CREAR HABILIDADES
 // =================================
 
-function crearHabilidades(
-    habitante_id
-){
+function crearHabilidades(habitante_id) {
+    let datos = cargarArchivo("../datos/habilidades.json");
 
-
-    const datos =
-    cargarArchivo("../datos/habilidades.json");
-
-
-
-    if(!datos){
-
-        return null;
-
+    if (!datos) {
+        datos = { habilidades: [] };
     }
 
+    if (!Array.isArray(datos.habilidades)) {
+        datos.habilidades = [];
+    }
 
-
-
-
-    const existente =
-    obtenerHabilidades(
-        habitante_id
-    );
-
-
-
-    if(existente){
-
+    const existente = obtenerHabilidades(habitante_id);
+    if (existente) {
         return existente;
-
     }
-
-
-
-
-
 
     const nuevasHabilidades = {
-
-
         habitante_id,
-
-
-
-        habilidades:{
-
-
-            agricultura:{
-
-                nivel:0,
-
-                experiencia:0
-
-            },
-
-
-            cocina:{
-
-                nivel:0,
-
-                experiencia:0
-
-            },
-
-
-            forja:{
-
-                nivel:0,
-
-                experiencia:0
-
-            },
-
-
-            construccion:{
-
-                nivel:0,
-
-                experiencia:0
-
-            },
-
-
-            combate:{
-
-                nivel:0,
-
-                experiencia:0
-
-            },
-
-
-            comercio:{
-
-                nivel:0,
-
-                experiencia:0
-
-            },
-
-
-            medicina:{
-
-                nivel:0,
-
-                experiencia:0
-
-            },
-
-
-            creatividad:{
-
-                nivel:0,
-
-                experiencia:0
-
-            }
-
-
+        habilidades: {
+            agricultura: { nivel: 0, experiencia: 0 },
+            cocina: { nivel: 0, experiencia: 0 },
+            forja: { nivel: 0, experiencia: 0 },
+            construccion: { nivel: 0, experiencia: 0 },
+            combate: { nivel: 0, experiencia: 0 },
+            comercio: { nivel: 0, experiencia: 0 },
+            medicina: { nivel: 0, experiencia: 0 },
+            creatividad: { nivel: 0, experiencia: 0 }
         }
-
-
     };
 
-
-
-
-
-    datos.habilidades.push(
-        nuevasHabilidades
-    );
-
-
-
-
-
-    guardarArchivo(
-
-        "../datos/habilidades.json",
-
-        datos
-
-    );
-
-
-
-
+    datos.habilidades.push(nuevasHabilidades);
+    guardarArchivo("../datos/habilidades.json", datos);
 
     return nuevasHabilidades;
-
-
 }
 
+// =================================
+// SUBIR NIVEL DE HABILIDAD
+// =================================
 
+function subirNivelHabilidad(datosHabitante, habilidad, habitante_id) {
+    const habilidadDatos = datosHabitante.habilidades[habilidad];
 
+    while (habilidadDatos.experiencia >= 100) {
+        habilidadDatos.nivel++;
+        habilidadDatos.experiencia -= 100;
 
+        if (typeof crearEvento === "function") {
+            crearEvento(
+                "subida_habilidad",
+                [habitante_id],
+                {
+                    habilidad,
+                    nivel: habilidadDatos.nivel
+                }
+            );
+        }
 
-
-
-
+        if (typeof crearMemoria === "function") {
+            crearMemoria(
+                habitante_id,
+                "aprendizaje",
+                "Mejoró la habilidad de " + habilidad + " a nivel " + habilidadDatos.nivel,
+                "media"
+            );
+        }
+    }
+}
 
 // =================================
 // AUMENTAR EXPERIENCIA
 // =================================
 
-function aumentarHabilidad(
-    habitante_id,
-    habilidad,
-    cantidad
-){
+function aumentarHabilidad(habitante_id, habilidad, cantidad) {
+    let datosHabitante = obtenerHabilidades(habitante_id);
 
-
-
-    const datos =
-    obtenerHabilidades(
-        habitante_id
-    );
-
-
-
-    if(!datos){
-
-        return null;
-
+    if (!datosHabitante) {
+        datosHabitante = crearHabilidades(habitante_id);
     }
 
-
-
-
-
-    if(
-        !datos.habilidades[habilidad]
-    ){
-
-        datos.habilidades[habilidad]={
-
-            nivel:0,
-
-            experiencia:0
-
+    if (!datosHabitante.habilidades[habilidad]) {
+        datosHabitante.habilidades[habilidad] = {
+            nivel: 0,
+            experiencia: 0
         };
-
     }
 
+    datosHabitante.habilidades[habilidad].experiencia += cantidad;
 
+    subirNivelHabilidad(datosHabitante, habilidad, habitante_id);
+    guardarHabilidades(datosHabitante);
 
-
-
-    datos.habilidades[habilidad].experiencia += cantidad;
-
-
-
-
-
-
-    subirNivelHabilidad(
-
-        datos,
-
-        habilidad,
-
-        habitante_id
-
-    );
-
-
-
-
-
-
-    guardarArchivoHabilidades();
-
-
-
-    return datos.habilidades[habilidad];
-
-
+    return datosHabitante.habilidades[habilidad];
 }
-
-
-
-
-
-
-
-
-
-// =================================
-// SUBIR NIVEL
-// =================================
-
-function subirNivelHabilidad(
-    datos,
-    habilidad,
-    habitante_id
-){
-
-
-
-    const habilidadDatos =
-    datos.habilidades[habilidad];
-
-
-
-    if(
-        habilidadDatos.experiencia >=100
-    ){
-
-
-        habilidadDatos.nivel++;
-
-
-        habilidadDatos.experiencia=0;
-
-
-
-
-
-        crearEvento(
-
-            "subida_habilidad",
-
-            [
-                habitante_id
-            ],
-
-            {
-
-                habilidad,
-
-                nivel:
-                habilidadDatos.nivel
-
-            }
-
-        );
-
-
-
-
-
-        crearMemoria(
-
-            habitante_id,
-
-            "aprendizaje",
-
-            "Mejoró la habilidad de "+
-            habilidad,
-
-            "media"
-
-        );
-
-
-
-    }
-
-
-}
-
-
-
-
-
-
-
 
 // =================================
 // VERIFICAR HABILIDAD
 // =================================
 
-function tieneHabilidad(
-    habitante_id,
-    habilidad,
-    nivelNecesario
-){
+function tieneHabilidad(habitante_id, habilidad, nivelNecesario) {
+    const datosHabitante = obtenerHabilidades(habitante_id);
 
-
-    const datos =
-    obtenerHabilidades(
-        habitante_id
-    );
-
-
-
-    if(!datos){
-
+    if (!datosHabitante || !datosHabitante.habilidades[habilidad]) {
         return false;
-
     }
 
-
-
-
-
-    const habilidadActual =
-    datos.habilidades[habilidad];
-
-
-
-    if(!habilidadActual){
-
-        return false;
-
-    }
-
-
-
-
-
-    return (
-
-        habilidadActual.nivel >=
-        nivelNecesario
-
-    );
-
-
+    return datosHabitante.habilidades[habilidad].nivel >= nivelNecesario;
 }
-
-
-
-
-
-
-
 
 // =================================
 // APRENDER HABILIDAD NUEVA
 // =================================
 
-function aprenderHabilidad(
-    habitante_id,
-    habilidad
-){
+function aprenderHabilidad(habitante_id, habilidad) {
+    let datosHabitante = obtenerHabilidades(habitante_id);
 
-
-
-    const datos =
-    obtenerHabilidades(
-        habitante_id
-    );
-
-
-
-    if(!datos){
-
-        return null;
-
+    if (!datosHabitante) {
+        datosHabitante = crearHabilidades(habitante_id);
     }
 
-
-
-
-
-    if(
-        !datos.habilidades[habilidad]
-    ){
-
-
-        datos.habilidades[habilidad]={
-
-            nivel:1,
-
-            experiencia:0
-
+    if (!datosHabitante.habilidades[habilidad]) {
+        datosHabitante.habilidades[habilidad] = {
+            nivel: 1,
+            experiencia: 0
         };
-
-
+    } else if (datosHabitante.habilidades[habilidad].nivel === 0) {
+        datosHabitante.habilidades[habilidad].nivel = 1;
     }
 
+    if (typeof crearMemoria === "function") {
+        crearMemoria(
+            habitante_id,
+            "aprendizaje",
+            "Aprendió la habilidad " + habilidad,
+            "media"
+        );
+    }
 
+    guardarHabilidades(datosHabitante);
 
-
-
-
-
-    crearMemoria(
-
-        habitante_id,
-
-        "aprendizaje",
-
-        "Aprendió la habilidad "+
-        habilidad,
-
-        "media"
-
-    );
-
-
-
-
-
-
-
-    guardarArchivoHabilidades();
-
-
-
-
-    return datos.habilidades[habilidad];
-
-
+    return datosHabitante.habilidades[habilidad];
 }
-
-
-
-
-
-
-
-
-// =================================
-// GUARDAR
-// =================================
-
-function guardarArchivoHabilidades(){
-
-
-
-    const datos =
-    cargarArchivo("../datos/habilidades.json");
-
-
-
-    guardarArchivo(
-
-        "../datos/habilidades.json",
-
-        datos
-
-    );
-
-
-}
-
-
-
-
-
-
-
 
 // =================================
 // LISTAR HABILIDADES
 // =================================
 
-function listarHabilidades(){
+function listarHabilidades() {
+    const datos = cargarArchivo("../datos/habilidades.json");
 
-
-    const datos =
-    cargarArchivo("../datos/habilidades.json");
-
-
-
-    if(!datos){
-
+    if (!datos || !Array.isArray(datos.habilidades)) {
         return [];
-
     }
 
-
-
     return datos.habilidades;
-
-
 }
 
+// =================================
+// EXPORTACIÓN DE MÓDULOS
+// =================================
 
-
-
-
-
-
-
-module.exports={
-
-
+module.exports = {
     obtenerHabilidades,
-
     crearHabilidades,
-
     aumentarHabilidad,
-
     tieneHabilidad,
-
     aprenderHabilidad,
-
     listarHabilidades
-
-
 };
+            
