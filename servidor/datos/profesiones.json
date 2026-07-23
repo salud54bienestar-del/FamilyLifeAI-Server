@@ -38,7 +38,6 @@
         "maestro_agricultor"
       ]
     },
-
     {
       "id": 2,
       "nombre": "trabajador_social",
@@ -77,7 +76,6 @@
         "director_orfanato"
       ]
     },
-
     {
       "id": 3,
       "nombre": "guardia_seguridad",
