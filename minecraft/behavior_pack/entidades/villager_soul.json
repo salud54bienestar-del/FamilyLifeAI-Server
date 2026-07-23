@@ -1,0 +1,38 @@
+{
+  "format_version": "1.20.80",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "village_soul:villager_soul",
+      "is_spawnable": true,
+      "is_summonable": true,
+      "is_experimental": false
+    },
+    "components": {
+      "minecraft:health": {
+        "value": 20,
+        "max": 20
+      },
+      "minecraft:nameable": {
+        "always_show": true,
+        "allow_name_tag_modification": true
+      },
+      "minecraft:movement": {
+        "value": 0.5
+      },
+      "minecraft:navigation.walk": {
+        "is_amphibious": false
+      },
+      "minecraft:behavior.float": {
+        "priority": 0
+      },
+      "minecraft:behavior.look_at_player": {
+        "priority": 1,
+        "look_distance": 6.0
+      },
+      "minecraft:behavior.random_stroll": {
+        "priority": 2,
+        "speed_multiplier": 1.0
+      }
+    }
+  }
+}
