@@ -1,0 +1,82 @@
+{
+  "format_version": "1.16.0",
+  "village_soul:personalidades_habitantes": {
+    "personalidades": [
+      {
+        "nombre": "amable",
+        "rasgos": [
+          "ayuda a otros",
+          "paciente",
+          "sociable"
+        ],
+        "efectos": {
+          "amistad": "aumenta_facilmente",
+          "familia": "protector",
+          "trabajo": "colaborador"
+        }
+      },
+      {
+        "nombre": "curioso",
+        "rasgos": [
+          "explora",
+          "hace_preguntas",
+          "aprende"
+        ],
+        "efectos": {
+          "amistad": "busca_conversacion",
+          "familia": "enseña_y_aprende",
+          "trabajo": "mejora_habilidades"
+        }
+      },
+      {
+        "nombre": "serio",
+        "rasgos": [
+          "responsable",
+          "tranquilo",
+          "organizado"
+        ],
+        "efectos": {
+          "amistad": "crea_confianza_lentamente",
+          "familia": "estable",
+          "trabajo": "eficiente"
+        }
+      },
+      {
+        "nombre": "timido",
+        "rasgos": [
+          "reservado",
+          "le_cuesta_socializar",
+          "observador"
+        ],
+        "efectos": {
+          "amistad": "necesita_mas_tiempo",
+          "romance": "avanza_lentamente"
+        }
+      },
+      {
+        "nombre": "protector",
+        "rasgos": [
+          "cuida_a_otros",
+          "valiente",
+          "familiar"
+        ],
+        "efectos": {
+          "familia": "protege_hijos",
+          "comunidad": "ayuda_habitantes"
+        }
+      },
+      {
+        "nombre": "aventurero",
+        "rasgos": [
+          "explorador",
+          "arriesgado",
+          "independiente"
+        ],
+        "efectos": {
+          "objetivos": "busca_experiencias",
+          "rutina": "prefiere_explorar"
+        }
+      }
+    ]
+  }
+}
