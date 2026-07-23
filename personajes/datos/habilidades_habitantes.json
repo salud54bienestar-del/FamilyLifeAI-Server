@@ -1,0 +1,108 @@
+{
+  "format_version": "1.16.0",
+  "village_soul:habilidades_habitantes": {
+    "habilidades": [
+      {
+        "nombre": "agricultura",
+        "nivel": 0,
+        "experiencia": 0,
+        "nivel_maximo": 100,
+        "etapa_recomendada": "niño_adolescente",
+        "descripcion": "Capacidad para cultivar plantas y cuidar cultivos.",
+        "usos": [
+          "trabajar_granja",
+          "ayudar_comunidad",
+          "enseñar_agricultura"
+        ],
+        "efectos": [
+          "mejora_produccion",
+          "aumenta_autonomia"
+        ]
+      },
+      {
+        "nombre": "cocina",
+        "nivel": 0,
+        "experiencia": 0,
+        "nivel_maximo": 100,
+        "etapa_recomendada": "adolescente",
+        "descripcion": "Capacidad para preparar alimentos y comidas especiales.",
+        "usos": [
+          "cocinar",
+          "preparar_alimentos_bebe",
+          "crear_recetas"
+        ],
+        "efectos": [
+          "mejora_alimentacion",
+          "aumenta_relaciones"
+        ]
+      },
+      {
+        "nombre": "comunicacion",
+        "nivel": 0,
+        "experiencia": 0,
+        "nivel_maximo": 100,
+        "etapa_recomendada": "niño",
+        "descripcion": "Capacidad para conversar y crear vínculos con otros habitantes.",
+        "usos": [
+          "hacer_amigos",
+          "mejorar_relaciones",
+          "resolver_conflictos"
+        ],
+        "efectos": [
+          "aumenta_confianza",
+          "mejora_dialogos"
+        ]
+      },
+      {
+        "nombre": "crianza",
+        "nivel": 0,
+        "experiencia": 0,
+        "nivel_maximo": 100,
+        "etapa_recomendada": "adulto",
+        "descripcion": "Capacidad para cuidar bebés y niños.",
+        "usos": [
+          "alimentar_bebe",
+          "educar_hijo",
+          "cuidar_familia"
+        ],
+        "efectos": [
+          "mejora_cuidado_infantil",
+          "fortalece_vinculo_familiar"
+        ]
+      },
+      {
+        "nombre": "combate",
+        "nivel": 0,
+        "experiencia": 0,
+        "nivel_maximo": 100,
+        "etapa_recomendada": "adolescente",
+        "descripcion": "Capacidad para defenderse y proteger a otros.",
+        "usos": [
+          "defender_aldea",
+          "proteger_familia"
+        ],
+        "efectos": [
+          "aumenta_seguridad",
+          "mejora_defensa"
+        ]
+      },
+      {
+        "nombre": "aprendizaje",
+        "nivel": 0,
+        "experiencia": 0,
+        "nivel_maximo": 100,
+        "etapa_recomendada": "niño",
+        "descripcion": "Capacidad general para adquirir nuevos conocimientos.",
+        "usos": [
+          "estudiar",
+          "mejorar_profesion",
+          "aprender_habilidades"
+        ],
+        "efectos": [
+          "aumenta_progreso",
+          "facilita_aprendizaje"
+        ]
+      }
+    ]
+  }
+}
