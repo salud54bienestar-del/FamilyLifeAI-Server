@@ -1,122 +1,46 @@
 // Sistema avanzado de comunicación de Village Soul
 
-
-const cargarArchivo =
-require("./cargador_datos.js");
-
-
-const crearMemoria =
-require("./memorias.js");
-
-
-const crearEvento =
-require("./eventos.js");
-
-
-const emociones =
-require("./emociones.js");
-
-
-const relaciones =
-require("./relaciones.js");
-
-
-
-
-
-
-
+const cargarArchivo = require("./cargador_datos.js");
+const crearMemoria = require("./memorias.js");
+const crearEvento = require("./eventos.js");
+const emociones = require("./emociones.js");
+const relaciones = require("./relaciones.js");
 
 // =================================
 // OBTENER FRASES
 // =================================
 
-function cargarConversaciones(){
+function cargarConversaciones() {
+    const datos = cargarArchivo("../datos/conversaciones.json");
 
-
-    const datos =
-    cargarArchivo("../datos/conversaciones.json");
-
-
-
-    if(!datos){
-
+    if (!datos || !Array.isArray(datos.conversaciones)) {
         return [];
-
     }
 
-
-
-    return datos.conversaciones || [];
-
-
+    return datos.conversaciones;
 }
-
-
-
-
-
-
-
-
 
 // =================================
 // OBTENER PERSONALIDAD
 // =================================
 
-function obtenerPersonalidad(
-    habitante_id
-){
+function obtenerPersonalidad(habitante_id) {
+    const almas = cargarArchivo("../datos/almas.json");
 
-
-    const almas =
-    cargarArchivo("../datos/almas.json");
-
-
-
-    if(!almas){
-
+    if (!almas || !Array.isArray(almas.almas)) {
         return "neutral";
-
     }
 
-
-
-    const habitante =
-    almas.almas.find(
-
-        a=>a.id===habitante_id
-
+    const habitante = almas.almas.find(
+        a => String(a.id) === String(habitante_id)
     );
 
-
-
-    if(!habitante){
-
+    if (!habitante) {
         return "neutral";
-
     }
 
-
-
-    return (
-
-        habitante.personalidad ||
-
-        "neutral"
-
-    );
-
-
+    return habitante.personalidad || "neutral";
 }
-
-
-
-
-
-
-
-
 
 // =================================
 // CREAR CONVERSACIÓN
@@ -125,141 +49,44 @@ function obtenerPersonalidad(
 function conversar(
     hablante_id,
     receptor_id,
-    mensaje="hola"
-){
+    mensaje = "hola"
+) {
+    const personalidad = obtenerPersonalidad(hablante_id);
+    const conversaciones = cargarConversaciones();
 
-
-
-    const personalidad =
-    obtenerPersonalidad(
-        hablante_id
+    let disponibles = conversaciones.filter(
+        c =>
+            String(c.personalidad).toLowerCase() === String(personalidad).toLowerCase() ||
+            String(c.personalidad).toLowerCase() === "general"
     );
 
-
-
-    const conversaciones =
-    cargarConversaciones();
-
-
-
-
-
-    let disponibles =
-    conversaciones.filter(
-
-        c=>
-
-        c.personalidad === personalidad
-
-        ||
-
-        c.personalidad === "general"
-
-    );
-
-
-
-
-
-    if(disponibles.length===0){
-
-
-        disponibles =
-        conversaciones;
-
-
+    if (disponibles.length === 0) {
+        disponibles = conversaciones;
     }
 
+    let respuesta = "Hola, es un gusto hablar contigo.";
 
-
-
-
-    let respuesta =
-
-    "Hola, es un gusto hablar contigo.";
-
-
-
-
-
-    if(disponibles.length>0){
-
-
-        const frase =
-
-        disponibles[
-
-            Math.floor(
-
-                Math.random()
-
-                *
-
-                disponibles.length
-
-            )
-
+    if (disponibles.length > 0) {
+        const frase = disponibles[
+            Math.floor(Math.random() * disponibles.length)
         ];
-
-
-
-        respuesta =
-        frase.texto;
-
-
+        respuesta = frase.texto || respuesta;
     }
-
-
-
-
-
-
 
     registrarConversacion(
-
         hablante_id,
-
         receptor_id,
-
         mensaje,
-
         respuesta
-
     );
 
-
-
-
-
-
     return {
-
-
-        hablante:
-        hablante_id,
-
-
-        receptor:
-        receptor_id,
-
-
+        hablante: hablante_id,
+        receptor: receptor_id,
         mensaje,
-
-
         respuesta
-
-
     };
-
-
 }
-
-
-
-
-
-
-
 
 // =================================
 // REGISTRAR CONVERSACIÓN
@@ -270,112 +97,46 @@ function registrarConversacion(
     receptor_id,
     mensaje,
     respuesta
-){
-
-
-
-    crearMemoria(
-
-        hablante_id,
-
-        "conversacion",
-
-        "Habló con el habitante "
-        + receptor_id,
-
-        "baja",
-
-        [
-
-            receptor_id
-
-        ]
-
-    );
-
-
-
-
-
-    crearMemoria(
-
-        receptor_id,
-
-        "conversacion",
-
-        "Conversó con el habitante "
-        + hablante_id,
-
-        "baja",
-
-        [
-
-            hablante_id
-
-        ]
-
-    );
-
-
-
-
-
-
-    crearEvento(
-
-        "conversacion",
-
-        [
-
+) {
+    if (typeof crearMemoria === "function") {
+        crearMemoria(
             hablante_id,
-
-            receptor_id
-
-        ],
-
-        {
-
-            mensaje,
-
-            respuesta
-
-        }
-
-    );
-
-
-
-
-
-    try{
-
-
-        relaciones.aumentarAmistad(
-
-            hablante_id,
-
-            receptor_id,
-
-            2
-
+            "conversacion",
+            "Habló con el habitante " + receptor_id,
+            "baja",
+            [receptor_id]
         );
 
-
+        crearMemoria(
+            receptor_id,
+            "conversacion",
+            "Conversó con el habitante " + hablante_id,
+            "baja",
+            [hablante_id]
+        );
     }
 
-    catch(error){}
+    if (typeof crearEvento === "function") {
+        crearEvento(
+            "conversacion",
+            [hablante_id, receptor_id],
+            {
+                mensaje,
+                respuesta
+            }
+        );
+    }
 
-
-
+    try {
+        if (relaciones && typeof relaciones.aumentarAmistad === "function") {
+            relaciones.aumentarAmistad(
+                hablante_id,
+                receptor_id,
+                2
+            );
+        }
+    } catch (error) {}
 }
-
-
-
-
-
-
-
-
 
 // =================================
 // CONVERSACIÓN SEGÚN EMOCIÓN
@@ -385,239 +146,96 @@ function hablarSegunEmocion(
     habitante_id,
     receptor_id,
     emocion
-){
-
-
-
+) {
     let respuesta;
 
-
-
-    switch(emocion){
-
-
-
+    switch (String(emocion).toLowerCase()) {
         case "tristeza":
-
-
-            respuesta =
-            "Hoy no me siento muy bien...";
-
-
-        break;
-
-
-
+            respuesta = "Hoy no me siento muy bien...";
+            break;
 
         case "felicidad":
-
-
-            respuesta =
-            "Estoy teniendo un día maravilloso.";
-
-
-        break;
-
-
-
+            respuesta = "Estoy teniendo un día maravilloso.";
+            break;
 
         case "miedo":
-
-
-            respuesta =
-            "Espero que todo esté tranquilo.";
-
-
-        break;
-
-
-
+            respuesta = "Espero que todo esté tranquilo.";
+            break;
 
         case "ira":
-
-
-            respuesta =
-            "Necesito calmarme un poco.";
-
-
-        break;
-
-
-
+            respuesta = "Necesito calmarme un poco.";
+            break;
 
         default:
-
-
-            respuesta =
-            "Todo está bien por ahora.";
-
-
-
+            respuesta = "Todo está bien por ahora.";
     }
 
-
-
-
-
     registrarConversacion(
-
         habitante_id,
-
         receptor_id,
-
         "estado emocional",
-
         respuesta
-
     );
 
-
-
-
-
     return respuesta;
-
-
 }
-
-
-
-
-
-
-
-
 
 // =================================
 // HABLAR SOBRE MEMORIAS
 // =================================
 
-function recordarConversacion(
-    habitante_id
-){
+function recordarConversacion(habitante_id) {
+    const memorias = cargarArchivo("../datos/memorias.json");
 
-
-
-    const memorias =
-    cargarArchivo("../datos/memorias.json");
-
-
-
-    if(!memorias){
-
-        return null;
-
+    if (!memorias || !Array.isArray(memorias.memorias)) {
+        return [];
     }
 
-
-
     return memorias.memorias.filter(
-
         m =>
-
-        m.habitante_id===habitante_id
-
-        &&
-
-        m.tipo==="conversacion"
-
+            String(m.habitante_id) === String(habitante_id) &&
+            m.tipo === "conversacion"
     );
-
-
 }
-
-
-
-
-
-
-
-
 
 // =================================
 // RESPUESTA SOCIAL
 // =================================
 
-function reaccionSocial(
-    tipo
-){
-
-
-
-    switch(tipo){
-
-
-
+function reaccionSocial(tipo) {
+    switch (String(tipo).toLowerCase()) {
         case "amable":
-
             return {
-
-                amistad:5,
-
-                confianza:3,
-
-                emocion:"felicidad"
-
+                amistad: 5,
+                confianza: 3,
+                emocion: "felicidad"
             };
-
-
-
-
 
         case "grosero":
-
             return {
-
-                amistad:-5,
-
-                confianza:-3,
-
-                emocion:"ira"
-
+                amistad: -5,
+                confianza: -3,
+                emocion: "ira"
             };
-
-
-
-
 
         default:
-
-
             return {
-
-                amistad:1,
-
-                confianza:1,
-
-                emocion:"neutral"
-
+                amistad: 1,
+                confianza: 1,
+                emocion: "neutral"
             };
-
-
     }
-
-
 }
 
+// =================================
+// EXPORTACIÓN DE MÓDULOS
+// =================================
 
-
-
-
-
-
-
-module.exports={
-
-
+module.exports = {
     cargarConversaciones,
-
     conversar,
-
     hablarSegunEmocion,
-
     recordarConversacion,
-
     reaccionSocial
-
-
 };
+                
