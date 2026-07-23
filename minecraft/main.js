@@ -3,7 +3,7 @@
 // (Minecraft Bedrock Script API)
 // =============================================
 
-import { world } from "@minecraft/server";
+import { world, system } from "@minecraft/server";
 import { consultarIA } from "./conexion_ia.js";
 
 // Escuchar cuando un jugador envía un mensaje en el chat
