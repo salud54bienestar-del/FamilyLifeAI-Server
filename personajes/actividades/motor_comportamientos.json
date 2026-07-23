@@ -1,0 +1,11 @@
+{
+  "format_version": "1.16.0",
+  "village_soul:motor_comportamientos": {
+    "version": "1.0.0",
+    "configuracion": {
+      "priorizar_emociones": true,
+      "evaluacion_vinculos": true,
+      "frecuencia_actualizacion_ticks": 120
+    }
+  }
+}
