@@ -1,4 +1,4 @@
-// Sistema avanzado de personalidades - Village Soul
+// Sistema avanzado de personalidades - Village Soul 2.0
 
 const cargarArchivo = require("./cargador_datos.js");
 const guardarArchivo = require("./guardador_datos.js");
@@ -11,11 +11,11 @@ const crearMemoria = require("./memorias.js");
 function cargarPersonalidades() {
     const datos = cargarArchivo("../datos/personalidades.json");
 
-    if (!datos) {
+    if (!datos || !Array.isArray(datos.personalidades)) {
         return [];
     }
 
-    return datos.personalidades || [];
+    return datos.personalidades;
 }
 
 // =================================
@@ -36,7 +36,7 @@ function buscarPersonalidad(nombre) {
     }
 
     return cargarPersonalidades().find(
-        p => p.nombre.toLowerCase() === nombre.toLowerCase()
+        p => p.nombre && p.nombre.toLowerCase() === nombre.toLowerCase()
     ) || null;
 }
 
@@ -55,21 +55,33 @@ function asignarPersonalidad(habitante, personalidad_id) {
 
     habitante.personalidad = {
         nombre: personalidad.nombre,
-        rasgos: [...(personalidad.rasgos || [])],
+        rasgos: Array.isArray(personalidad.rasgos) ? [...personalidad.rasgos] : [],
         valores: {
-            curiosidad: personalidad.curiosidad || 50,
-            valentia: personalidad.valentia || 50,
-            sociabilidad: personalidad.sociabilidad || 50,
-            paciencia: personalidad.paciencia || 50
+            curiosidad: personalidad.curiosidad ?? 50,
+            valentia: personalidad.valentia ?? 50,
+            sociabilidad: personalidad.sociabilidad ?? 50,
+            paciencia: personalidad.paciencia ?? 50
         }
     };
 
-    crearMemoria(
-        habitante.id,
-        "personalidad",
-        "Desarrolló una personalidad " + personalidad.nombre,
-        "alta"
-    );
+    if (typeof crearMemoria === "function") {
+        crearMemoria(
+            habitante.id,
+            "personalidad",
+            "Desarrolló una personalidad " + personalidad.nombre,
+            "alta"
+        );
+    }
+
+    // Persistir cambios en almas.json
+    const almas = cargarArchivo("../datos/almas.json");
+    if (almas && Array.isArray(almas.almas)) {
+        const almaIndex = almas.almas.findIndex(a => a.id === habitante.id);
+        if (almaIndex !== -1) {
+            almas.almas[almaIndex] = habitante;
+            guardarArchivo("../datos/almas.json", almas);
+        }
+    }
 
     return habitante.personalidad;
 }
@@ -149,26 +161,38 @@ function influirDecision(habitante, decision) {
 // EVOLUCIONAR PERSONALIDAD
 // =================================
 
-function modificarPersonalidad(habitante, rasgo, cantidad) {
+function modificarPersonalidad(habitante, rasgo, cantidad = 5) {
     if (!habitante || !habitante.personalidad) {
         return null;
     }
 
-    if (!habitante.personalidad.rasgos.includes(rasgo)) {
+    if (!Array.isArray(habitante.personalidad.rasgos)) {
+        habitante.personalidad.rasgos = [];
+    }
+
+    // Si es un valor numérico existente, lo incrementamos
+    if (habitante.personalidad.valores && habitante.personalidad.valores[rasgo] !== undefined) {
+        habitante.personalidad.valores[rasgo] = Math.max(
+            0,
+            Math.min(100, habitante.personalidad.valores[rasgo] + cantidad)
+        );
+    } else if (!habitante.personalidad.rasgos.includes(rasgo)) {
         habitante.personalidad.rasgos.push(rasgo);
     }
 
     // 1. Crear memoria del cambio
-    crearMemoria(
-        habitante.id,
-        "cambio_personalidad",
-        "Desarrolló el rasgo " + rasgo,
-        "media"
-    );
+    if (typeof crearMemoria === "function") {
+        crearMemoria(
+            habitante.id,
+            "cambio_personalidad",
+            "Desarrolló el rasgo " + rasgo,
+            "media"
+        );
+    }
 
     // 2. Guardar cambios en el archivo almas.json para asegurar persistencia
     const almas = cargarArchivo("../datos/almas.json");
-    if (almas) {
+    if (almas && Array.isArray(almas.almas)) {
         const almaIndex = almas.almas.findIndex(a => a.id === habitante.id);
         if (almaIndex !== -1) {
             almas.almas[almaIndex] = habitante;
@@ -194,3 +218,4 @@ module.exports = {
     influirDecision,
     modificarPersonalidad
 };
+                        
