@@ -2,16 +2,13 @@
   "emociones": [
     {
       "habitante_id": 1,
-
       "felicidad": 70,
       "confianza": 20,
       "miedo": 10,
       "tristeza": 10,
       "ira": 0,
       "calma": 80,
-
       "estado_actual": "tranquila",
-
       "emociones_secundarias": {
         "amor": 0,
         "orgullo": 0,
@@ -20,7 +17,6 @@
         "estres": 0,
         "esperanza": 50
       },
-
       "factores_influencia": {
         "familia": 0,
         "pareja": 0,
@@ -28,30 +24,22 @@
         "trabajo": 0,
         "eventos": 0
       },
-
       "estabilidad_emocional": 50,
-
       "ultima_emocion_importante": {
         "evento": "ninguno",
         "fecha": null
       },
-
       "historial_emocional": []
     },
-
-
     {
       "habitante_id": 2,
-
       "felicidad": 70,
       "confianza": 15,
       "miedo": 10,
       "tristeza": 10,
       "ira": 0,
       "calma": 75,
-
       "estado_actual": "tranquila",
-
       "emociones_secundarias": {
         "amor": 0,
         "orgullo": 0,
@@ -60,7 +48,6 @@
         "estres": 0,
         "esperanza": 50
       },
-
       "factores_influencia": {
         "familia": 0,
         "pareja": 0,
@@ -68,30 +55,22 @@
         "trabajo": 0,
         "eventos": 0
       },
-
       "estabilidad_emocional": 60,
-
       "ultima_emocion_importante": {
         "evento": "ninguno",
         "fecha": null
       },
-
       "historial_emocional": []
     },
-
-
     {
       "habitante_id": 99,
-
       "felicidad": 80,
       "confianza": 100,
       "miedo": 0,
       "tristeza": 0,
       "ira": 0,
       "calma": 100,
-
       "estado_actual": "serena",
-
       "emociones_secundarias": {
         "amor": 50,
         "orgullo": 80,
@@ -100,7 +79,6 @@
         "estres": 0,
         "esperanza": 100
       },
-
       "factores_influencia": {
         "familia": 0,
         "pareja": 0,
@@ -108,14 +86,11 @@
         "trabajo": 0,
         "eventos": 100
       },
-
       "estabilidad_emocional": 100,
-
       "ultima_emocion_importante": {
         "evento": "creacion",
         "fecha": null
       },
-
       "historial_emocional": []
     }
   ]
