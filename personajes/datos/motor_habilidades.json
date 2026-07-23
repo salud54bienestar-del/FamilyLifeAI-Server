@@ -1,0 +1,11 @@
+{
+  "format_version": "1.16.0",
+  "village_soul:motor_habilidades": {
+    "version": "1.0.0",
+    "configuracion": {
+      "progresion_por_uso": true,
+      "limite_nivel": 100,
+      "frecuencia_actualizacion_ticks": 140
+    }
+  }
+}
