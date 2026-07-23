@@ -1,434 +1,103 @@
+// =================================
 // Guardador avanzado de datos - Village Soul
-
-
-const fs = require("fs");
-
-const path = require("path");
-
-
-
-
-
-
-
-// =================================
-// OBTENER RUTA
+// (Minecraft Bedrock Script API)
 // =================================
 
+import { world } from "@minecraft/server";
 
-function obtenerRuta(nombre){
+// =================================
+// NORMALIZAR CLAVE DE ALMACENAMIENTO
+// =================================
 
+function normalizarClave(nombre) {
+    if (!nombre) return "";
 
-    nombre = nombre.replace(
-
-        /^(\.\.\/|\.\/)+/,
-
-        ""
-
-    );
-
-
-
-    return path.join(
-
-        __dirname,
-
-        "..",
-
-        nombre
-
-    );
-
-
+    // Convierte "../datos/memorias.json" en una clave limpia: "datos_memorias"
+    return nombre
+        .replace(/^(\.\.\/|\.\/)+/, "")
+        .replace(/\//g, "_")
+        .replace(/\.json$/, "");
 }
 
-
-
-
-
-
-
-
-
 // =================================
-// GUARDAR ARCHIVO JSON
+// GUARDAR ARCHIVO JSON / DATOS
 // =================================
 
-
-function guardarArchivo(
-nombre,
-datos
-){
-
-
-
-    try{
-
-
-
-        if(!nombre){
-
-
-            console.log(
-                "Nombre inválido."
-            );
-
-
+function guardarArchivo(nombre, datos) {
+    try {
+        if (!nombre) {
+            console.warn("Nombre inválido.");
             return false;
-
-
         }
 
-
-
-
-
-
-        if(datos === undefined){
-
-
-            console.log(
-
-                "Datos inválidos:",
-
-                nombre
-
-            );
-
-
+        if (datos === undefined) {
+            console.warn("Datos inválidos para:", nombre);
             return false;
-
-
         }
 
-
-
-
-
-
-
-
-        const rutaCompleta =
-
-        obtenerRuta(nombre);
-
-
-
-
-
-
-
-
-        const carpeta =
-
-        path.dirname(
-            rutaCompleta
-        );
-
-
-
-
-
-
-        if(
-            !fs.existsSync(carpeta)
-        ){
-
-
-            fs.mkdirSync(
-
-                carpeta,
-
-                {
-                    recursive:true
-                }
-
-            );
-
-
-        }
-
-
-
-
-
-
-
-
-        const contenido =
-
-        JSON.stringify(
-
-            datos,
-
-            null,
-
-            4
-
-        );
-
-
-
-
-
-
-
-        const temporal =
-
-        rutaCompleta +
-
-        ".temp";
-
-
-
-
-
-
-
-        fs.writeFileSync(
-
-            temporal,
-
-            contenido,
-
-            "utf8"
-
-        );
-
-
-
-
-
-
-        fs.renameSync(
-
-            temporal,
-
-            rutaCompleta
-
-        );
-
-
-
-
-
-
-
-
+        const clave = normalizarClave(nombre);
+        const contenido = JSON.stringify(datos);
+
+        // Guardado directo en el almacenamiento persistente del mundo
+        world.setDynamicProperty(clave, contenido);
         return true;
 
-
-
-    }
-
-
-    catch(error){
-
-
-
-        console.log(
-
-            "ERROR GUARDANDO:",
-
-            nombre
-
-        );
-
-
-
-        console.log(
-
-            error.message
-
-        );
-
-
+    } catch (error) {
+        console.warn("===============================");
+        console.warn(" ERROR GUARDANDO DATOS ");
+        console.warn("===============================");
+        console.warn("Archivo/Clave:", nombre);
+        console.warn("Mensaje:", error.message);
 
         return false;
-
-
     }
-
-
 }
 
-
-
-
-
-
-
-
-
 // =================================
-// BACKUP
+// CREAR BACKUP DE SEGURIDAD
 // =================================
 
+function crearBackup(nombre) {
+    try {
+        const clave = normalizarClave(nombre);
+        const contenidoOriginal = world.getDynamicProperty(clave);
 
-function crearBackup(
-nombre
-){
-
-
-
-    try{
-
-
-        const origen =
-
-        obtenerRuta(nombre);
-
-
-
-
-
-
-        if(
-            !fs.existsSync(origen)
-        ){
-
+        if (!contenidoOriginal) {
             return false;
-
         }
 
+        const fecha = new Date()
+            .toISOString()
+            .replace(/:/g, "-")
+            .split(".")[0];
 
+        const claveBackup = `${clave}_backup_${fecha}`;
 
-
-
-
-        const fecha =
-
-        new Date()
-
-        .toISOString()
-
-        .replace(
-
-            /:/g,
-
-            "-"
-
-        )
-
-        .split(".")[0];
-
-
-
-
-
-
-
-        const copia =
-
-        origen +
-
-        ".backup_" +
-
-        fecha;
-
-
-
-
-
-
-
-
-        fs.copyFileSync(
-
-            origen,
-
-            copia
-
-        );
-
-
-
-
-
-
-
+        // Guardar la copia de respaldo con la fecha en la clave
+        world.setDynamicProperty(claveBackup, contenidoOriginal);
         return true;
 
-
-
-    }
-
-
-    catch(error){
-
-
-
-        console.log(
-
-            "Error creando backup:",
-
-            error.message
-
-        );
-
-
-
+    } catch (error) {
+        console.warn("Error creando backup:", error.message);
         return false;
-
-
     }
-
-
 }
-
-
-
-
-
-
-
-
 
 // =================================
 // GUARDADO SEGURO IMPORTANTE
 // =================================
 
-
-function guardarConBackup(
-nombre,
-datos
-){
-
-
-
+function guardarConBackup(nombre, datos) {
     crearBackup(nombre);
-
-
-
-    return guardarArchivo(
-
-        nombre,
-
-        datos
-
-    );
-
-
+    return guardarArchivo(nombre, datos);
 }
 
+// =================================
+// EXPORTAR (ES6)
+// =================================
 
-
-
-
-
-
-
-module.exports={
-
-
+export {
     guardarArchivo,
-
-
     crearBackup,
-
-
     guardarConBackup
-
-
-
 };
