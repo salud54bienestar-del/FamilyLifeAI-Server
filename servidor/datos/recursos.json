@@ -1,21 +1,12 @@
 {
     "recursos": {
-
         "alimentos": {},
-
         "materiales": {},
-
         "economia": {
-
-            "esmeraldas":0,
-
-            "comercio":0,
-
-            "prosperidad":50
-
+            "esmeraldas": 0,
+            "comercio": 0,
+            "prosperidad": 50
         },
-
-        "energia":100
-
+        "energia": 100
     }
 }
