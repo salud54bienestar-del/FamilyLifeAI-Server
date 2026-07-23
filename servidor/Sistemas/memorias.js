@@ -280,6 +280,15 @@ ubicacion=null
         memoria
     );
 
+    console.log(
+    "TOTAL MEMORIAS GUARDADAS:",
+    datos.memorias.length
+);
+
+console.log(
+    "ULTIMO ID:",
+    datos.memorias[datos.memorias.length - 1].id
+);
 
 
 // Limitar memorias por habitante
