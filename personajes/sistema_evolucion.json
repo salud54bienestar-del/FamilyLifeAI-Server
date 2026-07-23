@@ -1,0 +1,11 @@
+{
+  "format_version": "1.16.0",
+  "village_soul:sistema_evolucion": {
+    "version": "1.0.0",
+    "reglas": {
+      "envejecimiento_activo": true,
+      "actualizacion_memorias": true,
+      "dinamica_relaciones": true
+    }
+  }
+}
