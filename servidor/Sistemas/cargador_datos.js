@@ -1,385 +1,98 @@
+// =================================
 // Cargador avanzado de datos - Village Soul
-
-
-const fs = require("fs");
-
-const path = require("path");
-
-
-
-
-
-
-
-// =================================
-// CREAR RUTA COMPLETA
+// (Minecraft Bedrock Script API)
 // =================================
 
+import { world } from "@minecraft/server";
 
-function obtenerRuta(nombre){
+// =================================
+// LIMPIAR CLAVE DE ALMACENAMIENTO
+// =================================
 
-
-    nombre = nombre.replace(
-
-        /^(\.\.\/|\.\/)+/,
-
-        ""
-
-    );
-
-
-
-    return path.join(
-
-        __dirname,
-
-        "..",
-
-        nombre
-
-    );
-
-
+function normalizarClave(nombre) {
+    if (!nombre) return "";
+    
+    // Limpia rutas como "../datos/memorias.json" a una clave simple "datos_memorias"
+    return nombre
+        .replace(/^(\.\.\/|\.\/)+/, "")
+        .replace(/\//g, "_")
+        .replace(/\.json$/, "");
 }
 
-
-
-
-
-
-
-
-
 // =================================
-// CARGAR ARCHIVO JSON
+// CARGAR DATOS
 // =================================
 
-
-function cargarArchivo(nombre){
-
-
-
-    try{
-
-
-        if(!nombre){
-
-
-            console.log(
-                "Nombre de archivo inválido."
-            );
-
-
+function cargarArchivo(nombre) {
+    try {
+        if (!nombre) {
+            console.warn("Nombre de archivo o clave inválida.");
             return null;
-
-
         }
 
+        const clave = normalizarClave(nombre);
+        const contenidoRaw = world.getDynamicProperty(clave);
 
-
-
-
-
-        const rutaCompleta =
-
-        obtenerRuta(nombre);
-
-
-
-
-
-
-
-        if(
-            !fs.existsSync(rutaCompleta)
-        ){
-
-
-            console.log(
-
-                "Archivo no encontrado:",
-
-                nombre
-
-            );
-
-
+        if (!contenidoRaw) {
+            console.warn("Datos no encontrados para la clave:", clave);
             return null;
-
-
         }
 
-
-
-
-
-
-
-
-        const contenido =
-
-        fs.readFileSync(
-
-            rutaCompleta,
-
-            "utf8"
-
-        );
-
-
-
-
-
-
-        if(
-            !contenido.trim()
-        ){
-
-
-            console.log(
-
-                "Archivo vacío:",
-
-                nombre
-
-            );
-
-
+        if (typeof contenidoRaw !== "string" || !contenidoRaw.trim()) {
+            console.warn("Datos vacíos para:", clave);
             return null;
-
-
         }
 
+        return JSON.parse(contenidoRaw);
 
-
-
-
-
-
-
-        return JSON.parse(
-            contenido
-        );
-
-
-
-
-    }
-
-    catch(error){
-
-
-
-        console.log(
-            "==============================="
-        );
-
-
-        console.log(
-            " ERROR JSON "
-        );
-
-
-        console.log(
-            "==============================="
-        );
-
-
-
-        console.log(
-            "Archivo:",
-            nombre
-        );
-
-
-
-        console.log(
-            "Mensaje:",
-            error.message
-        );
-
-
+    } catch (error) {
+        console.warn("===============================");
+        console.warn(" ERROR AL CARGAR DATOS JSON ");
+        console.warn("===============================");
+        console.warn("Clave/Archivo:", nombre);
+        console.warn("Mensaje:", error.message);
 
         return null;
-
-
     }
-
-
-
 }
 
-
-
-
-
-
-
-
-
 // =================================
-// GUARDAR ARCHIVO BASE
+// GUARDAR / CREAR DATOS BASE
 // =================================
 
+function crearArchivoSiNoExiste(nombre, contenido = {}) {
+    try {
+        const clave = normalizarClave(nombre);
+        const existente = world.getDynamicProperty(clave);
 
-function crearArchivoSiNoExiste(
-nombre,
-contenido={}
-){
-
-
-
-    try{
-
-
-        const ruta =
-
-        obtenerRuta(nombre);
-
-
-
-
-
-        const carpeta =
-
-        path.dirname(ruta);
-
-
-
-
-
-        if(
-            !fs.existsSync(carpeta)
-        ){
-
-
-            fs.mkdirSync(
-
-                carpeta,
-
-                {
-                    recursive:true
-                }
-
-            );
-
-
+        if (existente === undefined || existente === null) {
+            const dataString = JSON.stringify(contenido);
+            world.setDynamicProperty(clave, dataString);
         }
-
-
-
-
-
-
-
-        if(
-            !fs.existsSync(ruta)
-        ){
-
-
-
-            fs.writeFileSync(
-
-                ruta,
-
-                JSON.stringify(
-
-                    contenido,
-
-                    null,
-
-                    4
-
-                ),
-
-                "utf8"
-
-            );
-
-
-
-        }
-
-
-
 
         return true;
-
-
-
-    }
-
-
-    catch(error){
-
-
-        console.log(
-
-            "Error creando archivo:",
-
-            error.message
-
-        );
-
-
+    } catch (error) {
+        console.warn("Error creando propiedad de datos:", error.message);
         return false;
-
-
     }
-
-
-
 }
 
-
-
-
-
-
-
-
-
 // =================================
-// VERIFICAR ARCHIVO
+// VERIFICAR SI EXISTEN DATOS
 // =================================
 
-
-function existeArchivo(nombre){
-
-
-
-    const ruta =
-
-    obtenerRuta(nombre);
-
-
-
-
-    return fs.existsSync(ruta);
-
-
-
+function existeArchivo(nombre) {
+    const clave = normalizarClave(nombre);
+    const dato = world.getDynamicProperty(clave);
+    return dato !== undefined && dato !== null;
 }
 
+// =================================
+// EXPORTAR (ES6)
+// =================================
 
-
-
-
-
-
-
-module.exports={
-
-
-
+export {
     cargarArchivo,
-
-
     existeArchivo,
-
-
     crearArchivoSiNoExiste
-
-
-
 };
