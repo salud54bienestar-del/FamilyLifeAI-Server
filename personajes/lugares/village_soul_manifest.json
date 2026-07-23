@@ -1,0 +1,4 @@
+{
+  "archivo": "village_soul_manifest.json",
+  "codigo": "{\n  \"format_version\": 2,\n  \"header\": {\n    \"name\": \"Village Soul Behavior Add-on\",\n    \"description\": \"Sistema avanzado de habitantes, familias, emociones y evolución para Minecraft Bedrock\",\n    \"uuid\": \"1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d\",\n    \"version\": [1, 0, 0],\n    \"min_engine_version\": [1, 16, 0]\n  },\n  \"modules\": [\n    {\n      \"type\": \"data\",\n      \"uuid\": \"2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e\",\n      \"version\": [1, 0, 0]\n    }\n  ]\n}"
+}
