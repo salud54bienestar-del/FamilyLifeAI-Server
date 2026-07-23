@@ -1,8 +1,7 @@
 // Sistema avanzado de memorias - Village Soul v2.0
 
-const cargarArchivo =
-require("./cargador_datos.js");
-
+const cargarArchivo = require("./cargador_datos.js");
+const guardarArchivo = require("./guardador_datos.js");
 const guardarArchivo =
 require("./guardador_datos.js");
 
