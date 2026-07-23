@@ -1,0 +1,11 @@
+{
+  "format_version": "1.16.0",
+  "village_soul:motor_comercio": {
+    "version": "1.0.0",
+    "configuracion": {
+      "economia_dinamica": true,
+      "intercambio_habitantes": true,
+      "frecuencia_actualizacion_mercado_ticks": 240
+    }
+  }
+}
