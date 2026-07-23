@@ -1,0 +1,11 @@
+{
+  "format_version": "1.16.0",
+  "village_soul:motor_gustos": {
+    "version": "1.0.0",
+    "configuracion": {
+      "desarrollo_afinidad": true,
+      "impacto_emocional_preferencias": true,
+      "frecuencia_evaluacion_ticks": 180
+    }
+  }
+}
