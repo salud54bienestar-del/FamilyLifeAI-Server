@@ -2,48 +2,34 @@
   "viviendas": [
     {
       "id": 1,
-
       "nombre": "Casa Inicial",
-
       "tipo": "casa",
-
       "estado": "habitada",
-
       "familia_id": null,
-
       "habitantes": [],
-
       "ubicacion": {
         "dimension": "overworld",
         "x": 0,
         "y": 64,
         "z": 0
       },
-
       "habitaciones": {
         "dormitorios": 1,
         "baños": 1,
         "cocina": 1,
         "sala": 1
       },
-
       "camas": 2,
-
       "capacidad": 2,
-
       "inventario": {
         "alimentos": 0,
         "agua": 0,
         "herramientas": [],
         "materiales": []
       },
-
       "nivel": 1,
-
       "seguridad": 100,
-
       "limpieza": 100,
-
       "energia": 100
     }
   ]
