@@ -1,0 +1,11 @@
+{
+  "format_version": "1.16.0",
+  "village_soul:motor_etapas": {
+    "version": "1.0.0",
+    "configuracion": {
+      "transicion_automatica_edad": true,
+      "actualizacion_caracteristicas": true,
+      "frecuencia_verificacion_ticks": 200
+    }
+  }
+}
