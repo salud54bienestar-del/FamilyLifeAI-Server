@@ -1,0 +1,11 @@
+{
+  "format_version": "1.16.0",
+  "village_soul:motor_personalidades": {
+    "version": "1.0.0",
+    "configuracion": {
+      "influencia_comportamiento": true,
+      "modulacion_respuestas": true,
+      "frecuencia_analisis_ticks": 160
+    }
+  }
+}
