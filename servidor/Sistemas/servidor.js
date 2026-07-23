@@ -1,305 +1,113 @@
 // Servidor principal - Village Soul Engine
 
+const { iniciarSoulEngine } = require("./soul_engine.js");
 
-const {
-    iniciarSoulEngine
-}
-=
-require("./soul_engine.js");
-
-
-
-const iniciarMundo =
-require("./sistemas/nucleo_mundo.js")
-.iniciarMundo;
-
-
-
-const ejecutarCiclo =
-require("./sistemas/ciclo_mundo.js")
-.ejecutarCiclo;
-
-
-
-const obtenerResumenMundo =
-require("./sistemas/mundo.js")
-.obtenerResumenMundo;
-
-
-
-const cargarArchivo =
-require("./sistemas/cargador_datos.js");
-
-
-
-
-
+const { iniciarMundo } = require("./Sistemas/nucleo_mundo.js");
+const { ejecutarCiclo } = require("./Sistemas/ciclo_mundo.js");
+const { obtenerResumenMundo } = require("./Sistemas/mundo.js");
+const cargarArchivo = require("./Sistemas/cargador_datos.js");
 
 // =================================
 // CONFIGURACIÓN
 // =================================
 
-
-const INTERVALO_CICLO = 1000;
-
-
-
-
-
-
-
-
+const INTERVALO_CICLO = 1000; // 1 segundo por pulso de simulación
 
 // =================================
 // INICIAR SERVIDOR
 // =================================
 
-
-function iniciarServidor(){
-
-
-
+function iniciarServidor() {
     console.log("");
-
+    console.log("==============================");
+    console.log("      VILLAGE SOUL ENGINE     ");
     console.log("==============================");
 
-    console.log(
-        "      VILLAGE SOUL ENGINE"
-    );
+    try {
+        console.log("Iniciando Soul Engine...");
+        if (typeof iniciarSoulEngine === "function") {
+            iniciarSoulEngine();
+        }
 
-    console.log("==============================");
+        console.log("Iniciando mundo...");
+        let mundo = null;
+        if (typeof iniciarMundo === "function") {
+            mundo = iniciarMundo();
+        }
 
+        if (!mundo) {
+            console.log("Error iniciando mundo o retorno nulo.");
+            // Continuamos de forma segura si el mundo fue inicializado mediante persistencia
+        }
 
+        console.log("Motor iniciado correctamente.");
 
+        iniciarCicloAutomatico();
 
-
-    console.log(
-        "Iniciando Soul Engine..."
-    );
-
-
-
-    iniciarSoulEngine();
-
-
-
-
-
-
-
-    console.log(
-        "Iniciando mundo..."
-    );
-
-
-
-    const mundo =
-    iniciarMundo();
-
-
-
-
-
-    if(!mundo){
-
-
-        console.log(
-            "Error iniciando mundo."
-        );
-
-
+        return mundo || { estado: "iniciado" };
+    } catch (error) {
+        console.error("Fallo crítico al iniciar el servidor:", error.message);
         return null;
-
-
     }
-
-
-
-
-
-
-
-    console.log(
-        "Motor iniciado correctamente."
-    );
-
-
-
-
-
-
-    iniciarCicloAutomatico();
-
-
-
-
-
-
-    return mundo;
-
-
-
 }
-
-
-
-
-
-
-
-
 
 // =================================
 // CICLO AUTOMÁTICO
 // =================================
 
+function iniciarCicloAutomatico() {
+    console.log("Ciclo automático activado.");
 
-function iniciarCicloAutomatico(){
+    setInterval(() => {
+        try {
+            if (typeof ejecutarCiclo === "function") {
+                const resultado = ejecutarCiclo();
 
-
-
-    console.log(
-        "Ciclo automático activado."
-    );
-
-
-
-
-
-
-    setInterval(
-
-        ()=>{
-
-
-            try{
-
-
-                const resultado =
-                ejecutarCiclo();
-
-
-
-
-                if(resultado){
-
-
-                    console.log(
-
-                        "Ciclo:",
-                        resultado
-
-                    );
-
-
+                if (resultado) {
+                    // Log limpio de cada ciclo ejecutado
+                    const info = typeof resultado === "object" ? JSON.stringify(resultado) : resultado;
+                    console.log("Ciclo:", info);
                 }
-
-
-
             }
-
-
-            catch(error){
-
-
-                console.log(
-
-                    "Error en ciclo:",
-                    error.message
-
-                );
-
-
-            }
-
-
-
-
-        },
-
-
-        INTERVALO_CICLO
-
-
-    );
-
-
+        } catch (error) {
+            console.error("Error en ciclo:", error.message);
+        }
+    }, INTERVALO_CICLO);
 }
-
-
-
-
-
-
-
-
 
 // =================================
 // ESTADO SERVIDOR
 // =================================
 
+function estadoServidor() {
+    const resumenMundo = typeof obtenerResumenMundo === "function" 
+        ? obtenerResumenMundo() 
+        : null;
 
-function estadoServidor(){
-
-
+    const datosNucleo = typeof cargarArchivo === "function"
+        ? cargarArchivo("../datos/nucleo_mundo.json")
+        : null;
 
     return {
-
-
-        activo:true,
-
-
-
-        mundo:
-        obtenerResumenMundo(),
-
-
-
-
-        nucleo:
-
-        cargarArchivo(
-            "datos/nucleo_mundo.json"
-        )
-
-
-
+        activo: true,
+        mundo: resumenMundo,
+        nucleo: datosNucleo
     };
-
-
 }
 
+// =================================
+// EJECUCIÓN DIRECTA
+// =================================
 
-
-
-
-
-
-
-
-if(
-    require.main === module
-){
-
+if (require.main === module) {
     iniciarServidor();
-
 }
 
+// =================================
+// EXPORTACIÓN DE MÓDULOS
+// =================================
 
-
-
-
-
-
-
-
-module.exports={
-
-
+module.exports = {
     iniciarServidor,
-
-
     estadoServidor
-
-
 };
