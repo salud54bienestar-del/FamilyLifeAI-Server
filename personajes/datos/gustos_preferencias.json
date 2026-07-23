@@ -1,0 +1,81 @@
+{
+  "format_version": "1.16.0",
+  "village_soul:gustos_preferencias": {
+    "categorias": {
+      "comida": [
+        {
+          "nombre": "frutas",
+          "preferencia": "alta",
+          "efecto": "aumenta_felicidad",
+          "conversacion": "puede_compartir_gustos"
+        },
+        {
+          "nombre": "comida_casera",
+          "preferencia": "media",
+          "efecto": "aumenta_bienestar",
+          "conversacion": "crea_recuerdos_familiares"
+        }
+      ],
+      "animales": [
+        {
+          "nombre": "perros",
+          "preferencia": "alta",
+          "efecto": "aumenta_compañia"
+        },
+        {
+          "nombre": "caballos",
+          "preferencia": "media",
+          "efecto": "aumenta_aventura"
+        }
+      ],
+      "arte": [
+        {
+          "nombre": "pintura",
+          "preferencia": "media",
+          "efecto": "aumenta_creatividad"
+        },
+        {
+          "nombre": "escultura",
+          "preferencia": "media",
+          "efecto": "aumenta_concentracion"
+        }
+      ],
+      "musica": [
+        {
+          "nombre": "instrumental",
+          "preferencia": "media",
+          "efecto": "reduce_estres"
+        }
+      ],
+      "hobbies": [
+        {
+          "nombre": "cultivar",
+          "efecto": "aumenta_felicidad",
+          "habilidad_relacionada": "agricultura"
+        },
+        {
+          "nombre": "explorar",
+          "efecto": "aumenta_experiencia",
+          "habilidad_relacionada": "aprendizaje"
+        },
+        {
+          "nombre": "cocinar",
+          "efecto": "mejora_relaciones",
+          "habilidad_relacionada": "cocina"
+        }
+      ],
+      "lugares": [
+        {
+          "nombre": "naturaleza",
+          "efecto": "reduce_estres",
+          "actividad": "descansar"
+        },
+        {
+          "nombre": "aldea",
+          "efecto": "aumenta_seguridad",
+          "actividad": "socializar"
+        }
+      ]
+    }
+  }
+}
