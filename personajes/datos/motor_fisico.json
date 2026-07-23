@@ -1,0 +1,11 @@
+{
+  "format_version": "1.16.0",
+  "village_soul:motor_fisico": {
+    "version": "1.0.0",
+    "configuracion": {
+      "actualizacion_crecimiento": true,
+      "sincronizar_etapas_vida": true,
+      "frecuencia_renderizado_ticks": 60
+    }
+  }
+}
