@@ -1,161 +1,98 @@
 // Sistema avanzado de comportamiento de habitantes - Village Soul
 
+const cargarArchivo = require("./cargador_datos.js");
+const guardarArchivo = require("./guardador_datos.js");
+const crearEvento = require("./eventos.js");
+const crearMemoria = require("./memorias.js");
 
-const cargarArchivo =
-require("./cargador_datos.js");
+const MAX_HISTORIAL = 100;
 
+// =================================
+// GUARDAR COMPORTAMIENTO (AUXILIAR)
+// =================================
 
-const guardarArchivo =
-require("./guardador_datos.js");
+function guardarComportamiento(comportamiento) {
+    let datos = cargarArchivo("../datos/comportamientos.json");
 
+    if (!datos) {
+        datos = { comportamientos: [] };
+    }
 
-const crearEvento =
-require("./eventos.js");
+    if (!Array.isArray(datos.comportamientos)) {
+        datos.comportamientos = [];
+    }
 
+    const indice = datos.comportamientos.findIndex(
+        c => String(c.id) === String(comportamiento.id) || String(c.habitante_id) === String(comportamiento.habitante_id)
+    );
 
-const crearMemoria =
-require("./memorias.js");
+    if (indice !== -1) {
+        datos.comportamientos[indice] = comportamiento;
+    } else {
+        datos.comportamientos.push(comportamiento);
+    }
 
-
-
-
-
+    guardarArchivo("../datos/comportamientos.json", datos);
+    return comportamiento;
+}
 
 // =================================
 // OBTENER COMPORTAMIENTO
 // =================================
 
-function obtenerComportamiento(
-    habitante_id
-){
+function obtenerComportamiento(habitante_id) {
+    const datos = cargarArchivo("../datos/comportamientos.json");
 
-
-    const datos =
-    cargarArchivo("../datos/comportamientos.json");
-
-
-    if(!datos){
-
+    if (!datos || !Array.isArray(datos.comportamientos)) {
         return null;
-
     }
 
-
-
     return datos.comportamientos.find(
-
-        c=>c.habitante_id===habitante_id
-
+        c => String(c.habitante_id) === String(habitante_id)
     ) || null;
-
-
 }
-
-
-
-
-
-
 
 // =================================
 // CREAR COMPORTAMIENTO
 // =================================
 
-function crearComportamiento(
-    habitante_id
-){
+function crearComportamiento(habitante_id) {
+    let datos = cargarArchivo("../datos/comportamientos.json");
 
-
-    const datos =
-    cargarArchivo("../datos/comportamientos.json");
-
-
-    if(!datos){
-
-        return null;
-
+    if (!datos) {
+        datos = { comportamientos: [] };
     }
 
+    if (!Array.isArray(datos.comportamientos)) {
+        datos.comportamientos = [];
+    }
 
+    const existente = obtenerComportamiento(habitante_id);
+    if (existente) {
+        return existente;
+    }
+
+    const nuevoId = datos.comportamientos.length > 0
+        ? Math.max(...datos.comportamientos.map(c => Number(c.id) || 0)) + 1
+        : 1;
 
     const comportamiento = {
-
-
-        id:
-        datos.comportamientos.length + 1,
-
-
+        id: nuevoId,
         habitante_id,
-
-
-
-        estado_actual:
-        "idle",
-
-
-
-        accion_actual:
-        "descansar",
-
-
-
-        destino:null,
-
-
-
-        siguiendo:null,
-
-
-
-        objetivo_actual:null,
-
-
-
-        ultima_accion:null,
-
-
-
-        historial:[]
-
-
-
+        estado_actual: "idle",
+        accion_actual: "descansar",
+        destino: null,
+        siguiendo: null,
+        objetivo_actual: null,
+        ultima_action: null,
+        historial: []
     };
 
-
-
-
-
-    datos.comportamientos.push(
-        comportamiento
-    );
-
-
-
-
-
-    guardarArchivo(
-
-        "../datos/comportamientos.json",
-
-        datos
-
-    );
-
-
-
-
+    datos.comportamientos.push(comportamiento);
+    guardarArchivo("../datos/comportamientos.json", datos);
 
     return comportamiento;
-
-
 }
-
-
-
-
-
-
-
 
 // =================================
 // EJECUTAR ACCIÓN
@@ -164,485 +101,153 @@ function crearComportamiento(
 function ejecutarAccion(
     habitante_id,
     accion,
-    datosExtra={}
-){
+    datosExtra = {}
+) {
+    let comportamiento = obtenerComportamiento(habitante_id);
 
-
-
-    let comportamiento =
-    obtenerComportamiento(
-        habitante_id
-    );
-
-
-
-    if(!comportamiento){
-
-
-        comportamiento =
-        crearComportamiento(
-            habitante_id
-        );
-
-
+    if (!comportamiento) {
+        comportamiento = crearComportamiento(habitante_id);
     }
 
+    comportamiento.accion_actual = accion;
+    comportamiento.estado_actual = "ejecutando";
+    comportamiento.ultima_accion = new Date().toISOString();
 
-
-
-
-
-
-    comportamiento.accion_actual =
-    accion;
-
-
-
-    comportamiento.estado_actual =
-    "ejecutando";
-
-
-
-    comportamiento.ultima_accion =
-    new Date().toISOString();
-
-
-
-
-
+    if (!Array.isArray(comportamiento.historial)) {
+        comportamiento.historial = [];
+    }
 
     comportamiento.historial.push({
-
-
         accion,
-
-
-        fecha:
-        comportamiento.ultima_accion,
-
-
-        datos:
-        datosExtra
-
-
+        fecha: comportamiento.ultima_accion,
+        datos: datosExtra
     });
 
-
-
-
-
-
+    if (comportamiento.historial.length > MAX_HISTORIAL) {
+        comportamiento.historial.shift();
+    }
 
     realizarAccionBase(
-
         comportamiento,
-
         accion,
-
         datosExtra
-
     );
 
+    guardarComportamiento(comportamiento);
 
+    if (typeof crearEvento === "function") {
+        crearEvento(
+            "accion_habitante",
+            [habitante_id],
+            { accion }
+        );
+    }
 
-
-
-
-    guardarComportamiento(
-
-        comportamiento
-
-    );
-
-
-
-
-
-    crearEvento(
-
-        "accion_habitante",
-
-        [
-
-            habitante_id
-
-        ],
-
-        {
-
-            accion
-
-        }
-
-    );
-
-
-
-
-
-    crearMemoria(
-
-        habitante_id,
-
-        "accion",
-
-        "Realizó la acción: "+accion,
-
-        "baja"
-
-    );
-
-
-
-
-
+    if (typeof crearMemoria === "function") {
+        crearMemoria(
+            habitante_id,
+            "accion",
+            "Realizó la acción: " + accion,
+            "baja"
+        );
+    }
 
     return comportamiento;
-
-
 }
-
-
-
-
-
-
-
 
 // =================================
 // ACCIONES DISPONIBLES
 // =================================
 
 function realizarAccionBase(
-comportamiento,
-accion,
-datos
-){
-
-
-
-    switch(accion){
-
-
-
+    comportamiento,
+    accion,
+    datos
+) {
+    switch (String(accion).toLowerCase()) {
         case "caminar":
-
-
-            comportamiento.estado_actual =
-            "movimiento";
-
-
-        break;
-
-
-
-
-
+            comportamiento.estado_actual = "movimiento";
+            break;
 
         case "dormir":
-
-
-            comportamiento.estado_actual =
-            "descansando";
-
-
-        break;
-
-
-
-
-
+            comportamiento.estado_actual = "descansando";
+            break;
 
         case "trabajar":
-
-
-            comportamiento.estado_actual =
-            "trabajando";
-
-
-        break;
-
-
-
-
-
+            comportamiento.estado_actual = "trabajando";
+            break;
 
         case "comer":
-
-
-            comportamiento.estado_actual =
-            "alimentandose";
-
-
-        break;
-
-
-
-
-
+            comportamiento.estado_actual = "alimentandose";
+            break;
 
         case "hablar":
-
-
-            comportamiento.estado_actual =
-            "socializando";
-
-
-        break;
-
-
-
-
-
+            comportamiento.estado_actual = "socializando";
+            break;
 
         case "ayudar":
-
-
-            comportamiento.estado_actual =
-            "ayudando";
-
-
-        break;
-
-
-
-
-
+            comportamiento.estado_actual = "ayudando";
+            break;
 
         case "proteger":
-
-
-            comportamiento.estado_actual =
-            "defendiendo";
-
-
-        break;
-
-
-
-
-
+            comportamiento.estado_actual = "defendiendo";
+            break;
 
         case "explorar":
-
-
-            comportamiento.estado_actual =
-            "explorando";
-
-
-        break;
-
-
-
-
-
+            comportamiento.estado_actual = "explorando";
+            break;
 
         case "seguir_jugador":
-
-
-            comportamiento.siguiendo =
-            datos.jugador || null;
-
-
-        break;
-
-
-
-
-
+            comportamiento.siguiendo = datos?.jugador || null;
+            break;
 
         case "ir_a_casa":
-
-
-            comportamiento.destino =
-            datos.casa || null;
-
-
-        break;
-
-
-
-
-
+            comportamiento.destino = datos?.casa || null;
+            break;
 
         default:
-
-
-            comportamiento.estado_actual =
-            "idle";
-
-
+            comportamiento.estado_actual = "idle";
     }
-
-
-
 }
-
-
-
-
-
-
-
-
 
 // =================================
 // CAMBIAR ESTADO
 // =================================
 
 function cambiarEstado(
-habitante_id,
-estado
-){
+    habitante_id,
+    estado
+) {
+    let comportamiento = obtenerComportamiento(habitante_id);
 
-
-
-    const comportamiento =
-    obtenerComportamiento(
-        habitante_id
-    );
-
-
-
-    if(!comportamiento){
-
-        return null;
-
+    if (!comportamiento) {
+        comportamiento = crearComportamiento(habitante_id);
     }
 
-
-
-    comportamiento.estado_actual =
-    estado;
-
-
-
-    guardarComportamiento(
-        comportamiento
-    );
-
-
+    comportamiento.estado_actual = estado;
+    guardarComportamiento(comportamiento);
 
     return comportamiento;
-
-
 }
-
-
-
-
-
-
-
 
 // =================================
 // OBTENER ACCIÓN ACTUAL
 // =================================
 
-function obtenerAccionActual(
-habitante_id
-){
-
-
-
-    const comportamiento =
-    obtenerComportamiento(
-        habitante_id
-    );
-
-
-
-    return comportamiento
-    ?
-    comportamiento.accion_actual
-    :
-    null;
-
-
+function obtenerAccionActual(habitante_id) {
+    const comportamiento = obtenerComportamiento(habitante_id);
+    return comportamiento ? comportamiento.accion_actual : null;
 }
 
-
-
-
-
-
-
-
 // =================================
-// GUARDAR
+// EXPORTACIÓN DE MÓDULOS
 // =================================
 
-function guardarComportamiento(
-comportamiento
-){
-
-
-
-    const datos =
-    cargarArchivo("../datos/comportamientos.json");
-
-
-
-    if(!datos){
-
-        return null;
-
-    }
-
-
-
-
-    const indice =
-    datos.comportamientos.findIndex(
-
-        c=>c.id===comportamiento.id
-
-    );
-
-
-
-    if(indice!==-1){
-
-        datos.comportamientos[indice]=comportamiento;
-
-    }
-
-
-
-
-    guardarArchivo(
-
-        "../datos/comportamientos.json",
-
-        datos
-
-    );
-
-
-
-    return comportamiento;
-
-
-}
-
-
-
-
-
-
-
-module.exports={
-
-
+module.exports = {
     obtenerComportamiento,
-
     crearComportamiento,
-
     ejecutarAccion,
-
     cambiarEstado,
-
     obtenerAccionActual
-
-
 };
+    
