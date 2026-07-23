@@ -1,5 +1,6 @@
 {
-  "perfil": {
+  "format_version": "1.16.0",
+  "village_soul:perfil_base": {
     "id": 1,
     "nombre": "",
     "edad": 0,
@@ -9,18 +10,14 @@
     "gustos": [],
     "profesion": "",
     "estado_emocional": "neutral",
-
     "familia": {
       "padre": null,
       "madre": null,
       "pareja": null,
       "hijos": []
     },
-
     "relaciones": [],
-
     "memorias": [],
-
     "estado": {
       "hambre": 100,
       "energia": 100,
