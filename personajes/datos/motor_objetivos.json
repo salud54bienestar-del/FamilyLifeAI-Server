@@ -1,0 +1,11 @@
+{
+  "format_version": "1.16.0",
+  "village_soul:motor_objetivos": {
+    "version": "1.0.0",
+    "configuracion": {
+      "evaluacion_metas": true,
+      "cumplimiento_autonomo": true,
+      "frecuencia_actualizacion_ticks": 220
+    }
+  }
+}
