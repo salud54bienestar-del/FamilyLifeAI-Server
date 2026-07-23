@@ -1,0 +1,81 @@
+{
+  "format_version": "1.16.0",
+  "village_soul:decisiones_habitantes": {
+    "decisiones": [
+      {
+        "nombre": "buscar_compañia",
+        "descripcion": "El habitante busca interactuar con otros cuando necesita conexión social.",
+        "condiciones": [
+          "soledad_alta",
+          "personalidad_social"
+        ],
+        "acciones": [
+          "conversar",
+          "visitar_amigos",
+          "crear_relaciones"
+        ]
+      },
+      {
+        "nombre": "cuidar_familia",
+        "descripcion": "El habitante prioriza proteger y ayudar a sus familiares.",
+        "condiciones": [
+          "tiene_hijos",
+          "familia_necesita_ayuda"
+        ],
+        "acciones": [
+          "alimentar_bebe",
+          "ayudar_hijo",
+          "acompañar_familia"
+        ]
+      },
+      {
+        "nombre": "trabajar",
+        "descripcion": "El habitante realiza actividades relacionadas con su profesión.",
+        "condiciones": [
+          "tiene_profesion",
+          "necesita_recursos"
+        ],
+        "acciones": [
+          "ir_trabajo",
+          "mejorar_habilidad"
+        ]
+      },
+      {
+        "nombre": "descansar",
+        "descripcion": "El habitante busca recuperar energía.",
+        "condiciones": [
+          "energia_baja"
+        ],
+        "acciones": [
+          "dormir",
+          "relajarse"
+        ]
+      },
+      {
+        "nombre": "formar_relacion",
+        "descripcion": "El habitante intenta crear un vínculo con otra persona.",
+        "condiciones": [
+          "confianza_suficiente",
+          "compatibilidad"
+        ],
+        "acciones": [
+          "hablar",
+          "invitar",
+          "crear_romance"
+        ]
+      },
+      {
+        "nombre": "proteger_comunidad",
+        "descripcion": "El habitante ayuda a mantener segura la aldea.",
+        "condiciones": [
+          "peligro_cercano",
+          "personalidad_protectora"
+        ],
+        "acciones": [
+          "defender",
+          "avisar_habitantes"
+        ]
+      }
+    ]
+  }
+}
