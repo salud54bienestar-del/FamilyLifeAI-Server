@@ -3,42 +3,27 @@
     {
       "id": 1,
       "habitante_id": 1,
-
       "tipo": "social",
-
       "descripcion": "Luna conoció a Maya por primera vez en la aldea.",
-
       "importancia": "media",
-
       "emocion": "curiosidad",
-
       "personas_relacionadas": [
         2
       ],
-
       "impacto_comportamiento": "aumento_confianza",
-
       "fecha": "2026-07-21T18:00:00.000Z"
     },
-
     {
       "id": 2,
       "habitante_id": 2,
-
       "tipo": "social",
-
       "descripcion": "Maya conoció a Luna durante su llegada a la aldea.",
-
       "importancia": "media",
-
       "emocion": "felicidad",
-
       "personas_relacionadas": [
         1
       ],
-
       "impacto_comportamiento": "aumento_confianza",
-
       "fecha": "2026-07-21T18:00:00.000Z"
     }
   ]
