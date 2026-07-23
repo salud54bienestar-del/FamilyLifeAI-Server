@@ -1,6 +1,21 @@
 {
-  "nombre": "village-soul-server",
+  "name": "village-soul-server",
   "version": "0.1.0",
-  "descripcion": "Servidor de almas, memorias e inteligencia artificial para Village Soul",
-  "inicio": "app.js"
+  "description": "Servidor de almas, memorias e inteligencia artificial para Village Soul",
+  "main": "app.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node app.js"
+  },
+  "keywords": [
+    "village-soul",
+    "soul-engine",
+    "ai",
+    "simulation",
+    "RPG"
+  ],
+  "author": "Village Soul Team",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {}
 }
