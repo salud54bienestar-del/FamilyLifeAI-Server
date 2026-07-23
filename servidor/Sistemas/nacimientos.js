@@ -1,94 +1,31 @@
-// Sistema avanzado de nacimientos de Village Soul
+// Sistema avanzado de nacimientos - Village Soul 2.0
 
+const cargarArchivo = require("./cargador_datos.js");
+const guardarArchivo = require("./guardador_datos.js");
+const crearEvento = require("./eventos.js");
+const crearMemoria = require("./memorias.js");
 
-const cargarArchivo =
-require("./cargador_datos.js");
-
-
-const guardarArchivo =
-require("./guardador_datos.js");
-
-
-const crearEvento =
-require("./eventos.js");
-
-
-const crearMemoria =
-require("./memorias.js");
-
-
-
-const {
-    crearAlma
-}
-=
-require("./almas.js");
-
-
-
-const {
-    agregarHijo
-}
-=
-require("./familias.js");
-
-
-
-const {
-    crearNecesidades
-}
-=
-require("./necesidades.js");
-
-
-
-const {
-    crearEmocion
-}
-=
-require("./emociones.js");
-
-
-
-
+const { crearAlma } = require("./almas.js");
+const { agregarHijo } = require("./familias.js");
+const { crearNecesidades } = require("./necesidades.js");
+const { crearEmocion } = require("./emociones.js");
 
 // =================================
 // TEMPERAMENTO
 // =================================
 
-function generarTemperamento(){
-
-
-    const lista=[
-
+function generarTemperamento() {
+    const lista = [
         "tranquilo",
-
         "curioso",
-
         "activo",
-
         "sensible",
-
         "cariñoso",
-
         "reservado"
-
     ];
 
-
-    return lista[
-        Math.floor(
-            Math.random()*lista.length
-        )
-    ];
-
+    return lista[Math.floor(Math.random() * lista.length)];
 }
-
-
-
-
-
-
 
 // =================================
 // REGISTRAR NACIMIENTO
@@ -97,447 +34,154 @@ function generarTemperamento(){
 function registrarNacimiento(
     embarazo_id,
     familia_id,
-    datosBebe={}
-){
+    datosBebe = {}
+) {
+    const embarazos = cargarArchivo("../datos/embarazos.json");
+    const tiempo = cargarArchivo("../datos/tiempo.json");
 
-
-
-    const embarazos =
-    cargarArchivo(
-        "../datos/embarazos.json"
-    );
-
-
-    const tiempo =
-    cargarArchivo(
-        "../datos/tiempo.json"
-    );
-
-
-
-    if(
-        !embarazos ||
-        !tiempo
-    ){
-
+    if (!embarazos || !embarazos.embarazos || !tiempo) {
         return null;
-
     }
 
+    const embarazo = embarazos.embarazos.find(e => e.id === embarazo_id);
 
-
-
-
-
-    const embarazo =
-    embarazos.embarazos.find(
-
-        e=>e.id===embarazo_id
-
-    );
-
-
-
-
-    if(!embarazo){
-
-        console.log(
-            "No existe embarazo."
-        );
-
+    if (!embarazo) {
+        console.log("No existe el registro de embarazo.");
         return null;
-
     }
 
-
-
-
-
-
-    if(
-        embarazo.estado==="finalizado"
-    ){
-
-        console.log(
-            "Este nacimiento ya fue registrado."
-        );
-
+    if (embarazo.estado === "finalizado") {
+        console.log("Este nacimiento ya fue registrado anteriormente.");
         return null;
-
     }
 
-
-
-
-
-
-    const temperamento =
-    generarTemperamento();
-
-
-
-
-
-
-
+    const temperamento = generarTemperamento();
 
     // =================================
     // CREAR ALMA DEL BEBÉ
     // =================================
 
-
-
-    const bebe =
-    crearAlma({
-
-
-        nombre:
-
-        datosBebe.nombre ||
-        "Nuevo habitante",
-
-
-
-        edad:0,
-
-
-
-        tipo:
-        "habitante",
-
-
-
+    const bebe = crearAlma({
+        nombre: datosBebe.nombre || "Nuevo habitante",
+        edad: 0,
+        tipo: "habitante",
         temperamento,
-
-
-
-        rasgos_iniciales:[
-
-            temperamento
-
-        ],
-
-
-
-
-        padres:[
-
-            embarazo.madre,
-
-            embarazo.padre
-
-        ],
-
-
-
-        objetivos:[
-
+        rasgos_iniciales: [temperamento],
+        padres: [embarazo.madre, embarazo.padre].filter(Boolean),
+        objetivos: [
             "crecer",
-
             "aprender",
-
             "crear vínculos"
-
         ],
-
-
-
-
-        profesion:{
-
-            nombre:"ninguna",
-
-            categoria:"infancia",
-
-            nivel:0,
-
-            experiencia:0,
-
-            estado:"inactivo"
-
+        profesion: {
+            nombre: "ninguna",
+            categoria: "infancia",
+            nivel: 0,
+            experiencia: 0,
+            estado: "inactivo"
         }
-
-
-
     });
 
-
-
-
-
-
-
-    if(!bebe){
-
+    if (!bebe) {
+        console.log("No se pudo crear el alma del bebé.");
         return null;
-
     }
-
-
-
-
-
-
-
 
     // =================================
     // FAMILIA
     // =================================
 
-
-
-    if(familia_id){
-
-
+    if (familia_id) {
         agregarHijo(
-
             familia_id,
-
             bebe.id,
-
             "biologico"
-
         );
-
-
     }
 
-
-
-
-
-
-
-
-
     // =================================
-    // NECESIDADES DEL BEBÉ
+    // NECESIDADES Y EMOCIONES DEL BEBÉ
     // =================================
 
+    if (typeof crearNecesidades === "function") {
+        crearNecesidades(bebe.id, "bebe");
+    }
 
-    crearNecesidades(
-
-        bebe.id,
-
-        "bebe"
-
-    );
-
-
-
-
-
-
-
-
-    // =================================
-    // EMOCIONES DEL BEBÉ
-    // =================================
-
-
-    crearEmocion(
-
-        bebe.id
-
-    );
-
-
-
-
-
-
-
+    if (typeof crearEmocion === "function") {
+        crearEmocion(bebe.id);
+    }
 
     // =================================
     // ACTUALIZAR EMBARAZO
     // =================================
 
+    embarazo.estado = "finalizado";
+    embarazo.estado_final = "nacimiento";
+    embarazo.bebe_id = bebe.id;
 
-
-    embarazo.estado =
-    "finalizado";
-
-
-    embarazo.estado_final =
-    "nacimiento";
-
-
-    embarazo.bebe_id =
-    bebe.id;
-
-
-
-    embarazo.fecha_nacimiento={
-
-
-        dia:
-        tiempo.tiempo.dia,
-
-
-        mes:
-        tiempo.tiempo.mes,
-
-
-        año:
-        tiempo.tiempo.año
-
-
+    const tInfo = tiempo.tiempo || tiempo;
+    embarazo.fecha_nacimiento = {
+        dia: tInfo.dia || 1,
+        mes: tInfo.mes || 1,
+        año: tInfo.año || 1
     };
 
-
-
-
-
-
-
-
-    guardarArchivo(
-
-        "../datos/embarazos.json",
-
-        embarazos
-
-    );
-
-
-
-
-
-
-
+    guardarArchivo("../datos/embarazos.json", embarazos);
 
     // =================================
-    // EVENTOS
+    // EVENTOS Y MEMORIAS
     // =================================
-
-
 
     crearEvento(
-
         "nacimiento",
-
-        [
-
-            embarazo.madre,
-
-            embarazo.padre,
-
-            bebe.id
-
-        ],
-
+        [embarazo.madre, embarazo.padre, bebe.id].filter(Boolean),
         {
-
-            nombre:
-            bebe.nombre,
-
-
+            nombre: bebe.nombre,
             temperamento,
-
-
             familia_id
-
         }
-
     );
 
+    if (embarazo.madre) {
+        crearMemoria(
+            embarazo.madre,
+            "nacimiento",
+            `Nació su bebé: ${bebe.nombre}`,
+            "alta",
+            [bebe.id],
+            "felicidad"
+        );
+    }
 
-
-
-
-
-
-
-    // =================================
-    // MEMORIAS
-    // =================================
-
-
-
-    crearMemoria(
-
-        embarazo.madre,
-
-        "nacimiento",
-
-        "Nació su bebé: "+
-        bebe.nombre,
-
-        "alta"
-
-    );
-
-
-
-
+    if (embarazo.padre) {
+        crearMemoria(
+            embarazo.padre,
+            "nacimiento",
+            `Nació su hijo: ${bebe.nombre}`,
+            "alta",
+            [bebe.id],
+            "felicidad"
+        );
+    }
 
     crearMemoria(
-
-        embarazo.padre,
-
-        "nacimiento",
-
-        "Nació su hijo: "+
-        bebe.nombre,
-
-        "alta"
-
-    );
-
-
-
-
-
-
-    crearMemoria(
-
         bebe.id,
-
         "origen",
-
-        "Nació dentro del mundo de Village Soul con temperamento "+temperamento,
-
-        "alta"
-
+        `Nació dentro del mundo de Village Soul con temperamento ${temperamento}`,
+        "alta",
+        [embarazo.madre, embarazo.padre].filter(Boolean),
+        "felicidad"
     );
 
-
-
-
-
-
-
-
-    console.log(
-        "Nacimiento creado:"
-    );
-
-
-    console.log(
-        bebe
-    );
-
-
-
-
-
+    console.log("👶 Nacimiento registrado con éxito:", bebe.nombre);
 
     return bebe;
-
-
 }
 
+// =================================
+// EXPORTACIÓN DE MÓDULOS
+// =================================
 
-
-
-
-
-
-
-module.exports={
-
-
+module.exports = {
     registrarNacimiento
-
-
 };
