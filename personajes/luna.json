@@ -1,14 +1,13 @@
 {
-  "personaje": {
+  "format_version": "1.16.0",
+  "village_soul:personaje_perfil": {
     "id": 1,
     "nombre": "Luna",
-
     "identidad": {
       "genero": "femenino",
       "etapa_vida": "adulto",
       "edad": 25
     },
-
     "personalidad": {
       "rasgos": [
         "amable",
@@ -16,33 +15,11 @@
       ],
       "estado_emocional": "neutral"
     },
-
-    "gustos": {
-      "comida": [],
-      "animales": [],
-      "actividades": []
-    },
-
-    "relaciones": {
-      "pareja": null,
-      "amistades": [],
-      "familia": []
-    },
-
-    "familia": {
-      "padre": null,
-      "madre": null,
-      "hijos": []
-    },
-
     "estado": {
       "hambre": 100,
       "energia": 100,
       "felicidad": 100
     },
-
-    "memorias": [],
-
     "profesion": "sin_asignar"
   }
 }
